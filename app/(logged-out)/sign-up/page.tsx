@@ -46,56 +46,37 @@ interface Props {}
 
 const formSchema = z
 	.object({
-		name: z.string(),
-		accountType: z.enum(["personal", "company"]),
-		companyName: z.string().optional(),
-		numberOfEmployees: z.coerce.number().optional(),
+		name: z.string().refine(name => name, "用户名不能为空"),
 		dob: z.date().refine(date => {
 			const today = new Date();
 			const eighteenYearsAgo = new Date(
-				today.getFullYear() - 18,
+				today.getFullYear() - 16,
 				today.getMonth(),
 				today.getDate()
 			);
 			return date <= eighteenYearsAgo;
-		}, "You must be at least 18 years old"),
+		}, "你至少 16 岁"),
 		password: z
 			.string()
-			.min(8, "Password must contain at least 8 characters")
+			.min(8, "密码至少包含 8 个字符")
 			.refine(password => {
 				// 必须至少包含一个特殊字符和一个大写字母
 				return /^(?=.*[!@#$%^&*])(?=.*[A-Z]).*$/.test(password);
-			}, "Password must contain at least 1 specail character and 1 uppercase character"),
+			}, "密码必须包含 1 个特殊字符和 1 个大写字母"),
 		passwordConfirm: z.string(),
 		acceptTerms: z
 			.boolean({
-				required_error: "You must accept the terms and conditions",
+				required_error: "你必须勾选同意条款和条件",
 			})
-			.refine(checked => checked, "You must accept the terms and conditions"),
+			.refine(checked => checked, "你必须勾选同意条款和条件"),
 	})
 	.superRefine((data, ctx) => {
 		if (data.password !== data.passwordConfirm) {
 			ctx.addIssue({
 				code: z.ZodIssueCode.custom,
 				path: ["passwordConfirm"],
-				message: "Passwords do not match",
+				message: "密码不匹配",
 			});
-		}
-		if (data.accountType === "company") {
-			if (!data.companyName) {
-				ctx.addIssue({
-					code: z.ZodIssueCode.custom,
-					path: ["companyName"],
-					message: "Company name is required",
-				});
-			}
-			if (!data.numberOfEmployees || data.numberOfEmployees < 1) {
-				ctx.addIssue({
-					code: z.ZodIssueCode.custom,
-					path: ["numberOfEmployees"],
-					message: "Number of employees is required",
-				});
-			}
 		}
 	});
 
@@ -105,12 +86,10 @@ function SignupPage(props: Props) {
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 			name: "",
-			companyName: "",
 			password: "",
 			passwordConfirm: "",
 		},
 	});
-	const accountType = form.watch("accountType");
 	const router = useRouter();
 
 	const dobFromDate = new Date();
@@ -128,8 +107,8 @@ function SignupPage(props: Props) {
 			<FolderKanbanIcon size={50} />
 			<Card className="w-full max-w-sm">
 				<CardHeader>
-					<CardTitle>Sign up</CardTitle>
-					<CardDescription>Sign up for a new Just-Dev account</CardDescription>
+					<CardTitle>注册</CardTitle>
+					<CardDescription>注册新的 Just Dev 账户</CardDescription>
 				</CardHeader>
 				<CardContent>
 					<Form {...form}>
@@ -142,9 +121,9 @@ function SignupPage(props: Props) {
 								name="name"
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Username</FormLabel>
+										<FormLabel>用户名</FormLabel>
 										<FormControl>
-											<Input placeholder="Username" {...field} />
+											<Input placeholder="用户名" {...field} />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -152,70 +131,10 @@ function SignupPage(props: Props) {
 							/>
 							<FormField
 								control={form.control}
-								name="accountType"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>AccountType</FormLabel>
-										<Select
-											onValueChange={field.onChange}
-											defaultValue={field.value}
-										>
-											<FormControl>
-												<SelectTrigger>
-													<SelectValue placeholder="Select an account type" />
-												</SelectTrigger>
-											</FormControl>
-											<SelectContent>
-												<SelectItem value="personal">Personal</SelectItem>
-												<SelectItem value="company">Company</SelectItem>
-											</SelectContent>
-										</Select>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-							{accountType === "company" && (
-								<>
-									<FormField
-										control={form.control}
-										name="companyName"
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel>Company name</FormLabel>
-												<FormControl>
-													<Input placeholder="Company name" {...field} />
-												</FormControl>
-												<FormMessage />
-											</FormItem>
-										)}
-									/>{" "}
-									<FormField
-										control={form.control}
-										name="numberOfEmployees"
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel>Number of employees</FormLabel>
-												<FormControl>
-													<Input
-														type="number"
-														min={0}
-														placeholder="Number of employees"
-														{...field}
-														value={field.value ?? ""}
-													/>
-												</FormControl>
-												<FormMessage />
-											</FormItem>
-										)}
-									/>
-								</>
-							)}
-							<FormField
-								control={form.control}
 								name="dob"
 								render={({ field }) => (
 									<FormItem className="flex flex-col pt-2">
-										<FormLabel>Date of birth</FormLabel>
+										<FormLabel>生日</FormLabel>
 										<Popover>
 											<PopoverTrigger asChild>
 												<FormControl>
@@ -224,9 +143,9 @@ function SignupPage(props: Props) {
 														className="normal-case flex justify-between pr-1"
 													>
 														{!!field.value ? (
-															format(field.value, "PPP")
+															format(field.value, "yyyy年, M月, d日")
 														) : (
-															<span>Pick a date</span>
+															<span>选择一个日期</span>
 														)}
 														<CalendarIcon />
 													</Button>
@@ -255,10 +174,14 @@ function SignupPage(props: Props) {
 								name="password"
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Password</FormLabel>
+										<FormLabel>密码</FormLabel>
 										<FormControl>
 											<PasswordInput placeholder="••••••••" {...field} />
 										</FormControl>
+										<FormDescription>
+											密码至少包含 8 个字符, 且必须包含 1 个特殊字符和 1
+											个大写字母
+										</FormDescription>
 										<FormMessage />
 									</FormItem>
 								)}
@@ -268,7 +191,7 @@ function SignupPage(props: Props) {
 								name="passwordConfirm"
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Confirm password</FormLabel>
+										<FormLabel>确认密码</FormLabel>
 										<FormControl>
 											<PasswordInput placeholder="••••••••" {...field} />
 										</FormControl>
@@ -288,29 +211,29 @@ function SignupPage(props: Props) {
 													onCheckedChange={field.onChange}
 												/>
 											</FormControl>
-											<FormLabel>I accept the terms and conditions</FormLabel>
+											<FormLabel>我同意条款和条件</FormLabel>
 										</div>
 										<FormDescription>
-											By signing up you agree to our{" "}
+											在注册前你需要同意我们的{" "}
 											<Link
 												href="/terms"
 												className="text-primary hover:underline"
 											>
-												terms and conditions
+												条款和条件
 											</Link>
 										</FormDescription>
 										<FormMessage />
 									</FormItem>
 								)}
 							/>
-							<Button type="submit">Sign up</Button>
+							<Button type="submit">注册</Button>
 						</form>
 					</Form>
 				</CardContent>
 				<CardFooter className="justify-between">
-					<small>Already have an account?</small>
+					<small>已经拥有账户?</small>
 					<Button asChild variant={"outline"} size="sm">
-						<Link href="/login">Login</Link>
+						<Link href="/login">登录</Link>
 					</Button>
 				</CardFooter>
 			</Card>

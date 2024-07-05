@@ -8,6 +8,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
+import Link from "next/link";
 
 const terms = [
 	{
@@ -29,22 +30,23 @@ const terms = [
 	},
 ];
 
-type CardProps = React.ComponentProps<typeof Card>;
-
-export default function TermsPage({ className, ...props }: CardProps) {
+export default function TermsPage() {
 	return (
-		<div className="p-8 flex flex-col justify-center items-center">
+		<div className="p-8 flex flex-col justify-center items-center gap-4">
 			<h1 className="text-3xl font-bold mb-6">条款和条件</h1>
 			<div className="grid gap-6">
 				{terms.map((term, index) => (
-					<Card key={index} className={cn("w-full", className)} {...props}>
+					<Card key={index} className={"w-full"}>
 						<CardHeader>
 							<CardTitle>{term.title}</CardTitle>
-							<CardDescription>{term.description}</CardDescription>
 						</CardHeader>
+						<CardContent>{term.description}</CardContent>
 					</Card>
 				))}
 			</div>
+			<Button asChild>
+				<Link href="/sign-up">返回注册</Link>
+			</Button>
 		</div>
 	);
 }

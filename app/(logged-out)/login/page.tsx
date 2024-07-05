@@ -86,8 +86,8 @@ function LoginPage(props: Props) {
 			<FolderKanbanIcon size={50} />
 			<Card className="w-full max-w-sm">
 				<CardHeader>
-					<CardTitle>Login</CardTitle>
-					<CardDescription>Login to your Just-Dev accout</CardDescription>
+					<CardTitle>登录</CardTitle>
+					<CardDescription>登录你的 Just Dev 账户</CardDescription>
 				</CardHeader>
 				<CardContent>
 					<Form {...form}>
@@ -100,12 +100,12 @@ function LoginPage(props: Props) {
 								name="name"
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Username</FormLabel>
+										<FormLabel>用户名</FormLabel>
 										<FormControl>
-											<Input placeholder="Username" {...field} />
+											<Input placeholder="用户名" {...field} />
 										</FormControl>
 										<FormDescription>
-											This is the name you signed up to Just-Dev with.
+											这是你已在 Just Dev 注册的用户名.
 										</FormDescription>
 										<FormMessage />
 									</FormItem>
@@ -116,22 +116,22 @@ function LoginPage(props: Props) {
 								name="password"
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Password</FormLabel>
+										<FormLabel>密码</FormLabel>
 										<FormControl>
-											<PasswordInput placeholder="Password" {...field} />
+											<PasswordInput placeholder="密码" {...field} />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
 								)}
 							/>
-							<Button type="submit">Login</Button>
+							<Button type="submit">登录</Button>
 						</form>
 					</Form>
 				</CardContent>
 				<CardFooter className="justify-between">
-					<small>Don't have an account?</small>
+					<small>还没有账户?</small>
 					<Button asChild variant={"outline"} size="sm">
-						<Link href="/sign-up">Sign up</Link>
+						<Link href="/sign-up">注册</Link>
 					</Button>
 				</CardFooter>
 			</Card>
