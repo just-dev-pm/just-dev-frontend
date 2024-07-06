@@ -16,8 +16,8 @@ interface IMenuItem {
  * @returns 被 Link 组件包裹的 children
  */
 export default function MenuItem({ children, href }: IMenuItem) {
-  const pathname = usePathname();
-  const isActive = pathname == href;
+  const pathname: string = usePathname();
+  const isActive = href == pathname;
   return (
     <li>
       <Link
