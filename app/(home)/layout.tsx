@@ -1,4 +1,4 @@
-import MainMenu from "./home/components/main-menu";
+import MainMenu from "./components/main-menu";
 
 interface ILayout {
   children: React.ReactNode;

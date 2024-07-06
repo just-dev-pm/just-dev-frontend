@@ -1,4 +1,4 @@
-import { UserView } from "./components/user-view";
+import { UserView } from "../components/user-view";
 
 export default function UserPage() {
   // TODO: 向后端发送一个空带 cookie 的请求, 根据响应决定渲染行为.
