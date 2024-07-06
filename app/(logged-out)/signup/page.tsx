@@ -179,7 +179,7 @@ function SignupPage(props: Props) {
 											<PasswordInput placeholder="••••••••" {...field} />
 										</FormControl>
 										<FormDescription>
-											密码至少包含 8 个字符, 且必须包含 1 个特殊字符和 1
+											密码由至少 8 个字符组成, 且至少包含 1 个特殊字符和 1
 											个大写字母
 										</FormDescription>
 										<FormMessage />
