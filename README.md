@@ -1,36 +1,85 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Just Dev 项目管理系统
 
-## Getting Started
+## 项目简介
 
-First, run the development server:
+这是一个基于 Next.js 和 Shadcn 组件库构建的项目管理系统前端。项目旨在为用户提供高效的项目管理和协作功能。
+
+## 特性
+
+- 用户注册与登录
+- 用户个人信息管理
+- 项目浏览、创建及角色管理
+- 项目邀请功能
+- 项目切换与退出
+- 通知查看、接收与处理
+- 私有草稿管理
+- 私有日程安排
+- 任务管理
+- 项目集成信息设置（管理员权限）
+- 项目信息查看
+- 项目日程管理
+- 项目任务管理与外部集成
+- 项目需求管理
+- 草稿协作与双链设置
+- 项目成员 @ 通知
+
+## 安装与运行
+
+### 环境要求
+
+- Node.js
+- pnpm
+
+### 安装依赖
+
+在项目根目录下运行以下命令以安装所有依赖：
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm i
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 启动开发服务器
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+安装依赖后，运行以下命令以启动开发服务器：
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+```bash
+pnpm run dev
+```
 
-## Learn More
+开发服务器启动后，可以在浏览器中打开 [http://localhost:3000](http://localhost:3000) 以访问项目。
 
-To learn more about Next.js, take a look at the following resources:
+## 功能说明
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 用户相关功能
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+- **注册与登录**：用户可以注册新账户并登录系统。
+- **个人信息管理**：用户可以查看和修改自己的个人信息。
+- **项目管理**：用户可以浏览、创建和加入项目，并管理自己的角色。
+- **项目邀请**：用户可以邀请其他人加入自己管理的项目。
+- **项目切换与退出**：用户可以进入、切换和退出已加入的项目。
+- **通知管理**：用户可以查看、接收和处理通知。
+- **私有草稿**：用户可以创建私有草稿。
+- **私有日程**：用户可以安排私有日程。
+- **任务管理**：用户可以创建、完成和管理自己的任务。
 
-## Deploy on Vercel
+### 项目管理员功能
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **项目集成信息设置**：管理员可以设置项目的集成信息。
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+### 项目成员功能
+
+- **项目信息查看**：项目成员可以查看项目信息。
+- **项目日程管理**：项目成员可以查看、新增、修改和删除项目日程。
+- **项目任务管理**：项目成员可以查看、新增、修改、删除、分配、关联、设置状态及外部集成项目任务。任务被修改后，被分配的人员会收到通知。
+- **项目需求管理**：项目成员可以查看、新增、修改和删除项目需求。
+- **草稿协作**：项目成员可以新增和协作草稿，并为草稿设置双链。
+- **通知功能**：项目成员可以通过 @ 通知其他项目成员。
+- **需求和任务覆盖关系**：项目成员可以设置需求和任务的正向和反向覆盖关系。
+
+## 贡献
+
+欢迎任何形式的贡献！请提交 pull request 或创建 issue 来报告问题和提供建议。
+
+## 许可证
+
+本项目使用 MIT 许可证。详细信息请参阅 LICENSE 文件。
