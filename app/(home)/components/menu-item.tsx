@@ -17,7 +17,18 @@ interface IMenuItem {
  */
 export default function MenuItem({ children, href }: IMenuItem) {
   const pathname: string = usePathname();
-  const isActive = href == pathname;
+  /**
+   * /projects 属于个人空间
+   * /projects/:any* 属于项目空间
+   * 因此区别
+   */
+  const isActive =
+    pathname.startsWith(href) &&
+    (pathname.startsWith("/projects")
+      ? pathname == "/projects"
+        ? href == pathname
+        : href != "/projects"
+      : true);
   return (
     <li>
       <Link
