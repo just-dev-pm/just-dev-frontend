@@ -34,7 +34,6 @@ export default function ProjectMenu() {
   }
   return (
     <>
-      <small>项目空间</small>
       <ProjectsSelect
         projects={projects}
         project={defaultProject}
