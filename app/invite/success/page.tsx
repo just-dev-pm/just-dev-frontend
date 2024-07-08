@@ -1,28 +1,22 @@
 "use client";
 import { useEffect, useState } from "react";
-import InvitationView, { InvitationData } from "../components/invitation-view";
+import JoinSuccessView, { JoinSuccessData } from "../components/join-success";
 
-interface IProps {
-  params: { invitation_id: string };
-}
-
-export default function InvitePage({ params }: IProps) {
-  const { invitation_id } = params;
-  const [data, setData] = useState<InvitationData | null>(null);
+export default function InvitePage() {
+  const [data, setData] = useState<JoinSuccessData | null>(null);
 
   useEffect(() => {
     async function fetchInvitation() {
       // const res = await fetch(`/api/invitation/${invitation_id}`);
       // const result = await res.json();
-      const result: InvitationData = {
-        invitee: "Dawn Chan",
-        inviter: "Dawn Chan",
+      const result: JoinSuccessData = {
+        member: "Dawn Chan",
         project: "Just Dev",
       };
       setData(result);
     }
     fetchInvitation();
-  }, [invitation_id]);
+  }, []);
 
   if (!data)
     return (
@@ -31,5 +25,5 @@ export default function InvitePage({ params }: IProps) {
       </div>
     );
 
-  return <InvitationView data={data} />;
+  return <JoinSuccessView data={data} />;
 }
