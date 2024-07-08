@@ -1,8 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import MenuItem from "../../components/menu-item";
 import ProjectsSelect from "./projects-select";
+import { useProjectStore } from "@/store/projectStore";
+import { useShallow } from "zustand/react/shallow";
+import { usePathname } from "next/navigation";
 
 export interface IProject {
   project_id: string;
@@ -10,25 +13,35 @@ export interface IProject {
 }
 
 export default function ProjectMenu() {
-  const projects: IProject[] = [
-    { project_id: "a", project_name: "just dev" },
-    { project_id: "b", project_name: "nymph" },
-  ];
-  const [project, setProject] = useState<string>();
+  const adaptee = useProjectStore(state => state.projects);
+  const defaultProject = useProjectStore(state => state.defaultId);
+  const setDefaultProject = useProjectStore(state => state.setDefaultId);
+  const projects: IProject[] = adaptee.map(({ id, name }) => ({
+    project_id: id,
+    project_name: name,
+  }));
+  const pathname = usePathname();
+  useEffect(() => {
+    const match = pathname.match(/^\/projects\/([^\/]+).*$/);
+    if (match) {
+      const project_id = pathname.split("/")[2];
+      setDefaultProject(project_id);
+    }
+  });
 
   function to(path: string) {
-    return `/projects/${project}${path}`;
+    return `/projects/${defaultProject}${path}`;
   }
   return (
     <>
       <small>项目空间</small>
       <ProjectsSelect
         projects={projects}
-        project={project}
-        setProject={setProject}
+        project={defaultProject}
+        setProject={setDefaultProject}
         className="px-4"
       />
-      {project && (
+      {defaultProject && (
         <>
           <MenuItem href={to("/dashboard")}>仪表盘</MenuItem>
           <MenuItem href={to("/requirements")}>需求</MenuItem>
