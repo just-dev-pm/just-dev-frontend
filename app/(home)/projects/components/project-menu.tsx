@@ -16,18 +16,21 @@ export default function ProjectMenu() {
   const adaptee = useProjectStore(state => state.projects);
   const defaultProject = useProjectStore(state => state.defaultId);
   const setDefaultProject = useProjectStore(state => state.setDefaultId);
+  const idExists = useProjectStore(state => state.idExists);
   const projects: IProject[] = adaptee.map(({ id, name }) => ({
     project_id: id,
     project_name: name,
   }));
-  const pathname = usePathname();
-  useEffect(() => {
-    const match = pathname.match(/^\/projects\/([^\/]+).*$/);
-    if (match) {
-      const project_id = pathname.split("/")[2];
-      setDefaultProject(project_id);
-    }
-  });
+  // const pathname = usePathname();
+  // useEffect(() => {
+  //   const match = pathname.match(/^\/projects\/([^\/]+).*$/);
+  //   if (match) {
+  //     const project_id = pathname.split("/")[2];
+
+  //     if (project_id === defaultProject && idExists(project_id))
+  //       setDefaultProject(project_id);
+  //   }
+  // });
 
   function to(path: string) {
     return `/projects/${defaultProject}${path}`;
@@ -38,7 +41,7 @@ export default function ProjectMenu() {
         projects={projects}
         project={defaultProject}
         setProject={setDefaultProject}
-        className="px-4"
+        className="px-4 my-2"
       />
       {defaultProject && (
         <>

@@ -15,6 +15,7 @@ interface ProjectStore {
   addProject: (id: string, name: string) => void;
   getProjectNameById: (id: string) => string | undefined;
   getProjectList: () => Project[];
+  idExists: (id: string) => boolean;
 }
 
 export const useProjectStore = create<ProjectStore>()(
@@ -37,6 +38,8 @@ export const useProjectStore = create<ProjectStore>()(
         getProjectNameById: (id: string) =>
           get().projects.find(project => project.id === id)?.name,
         getProjectList: () => get().projects,
+        idExists: (id: string) =>
+          get().projects.some(project => project.id === id),
       }),
       { name: "project-store" }
     )
