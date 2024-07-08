@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 interface IProjectsSelect extends SelectTriggerProps {
   projects: IProject[];
   project: string | undefined;
-  setProject: Dispatch<SetStateAction<string | undefined>>;
+  setProject: (id: string) => void;
 }
 export default function ProjectsSelect({
   projects,
