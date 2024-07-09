@@ -35,45 +35,73 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 const data: Payment[] = [
   {
     id: "m5gr84i9",
-    amount: 316,
+    name:"吃饭",
     status: "success",
-    email: "ken99@yahoo.com",
+    deadline: "2024-07-09",
+    collaborators:["https://github.com/shadcn.png","https://github.com/shadcn.png"]
   },
   {
     id: "3u1reuv4",
-    amount: 242,
+    name:"喝水",
     status: "success",
-    email: "Abe45@gmail.com",
+    deadline: "2024-07-10",
+    collaborators:["https://github.com/shadcn.png","https://github.com/shadcn.png"]
   },
   {
     id: "derv1ws0",
-    amount: 837,
+    name:"睡觉",
     status: "processing",
-    email: "Monserrat44@gmail.com",
+    deadline: "2024-07-11",
+    collaborators:["https://github.com/shadcn.png","https://github.com/shadcn.png"]
   },
   {
     id: "5kma53ae",
-    amount: 874,
+    name:"开发",
     status: "success",
-    email: "Silas22@gmail.com",
+    deadline: "2024-07-12",
+    collaborators:["https://github.com/shadcn.png","https://github.com/shadcn.png"]
   },
   {
     id: "bhqecj4p",
-    amount: 721,
+    name:"打电动",
     status: "failed",
-    email: "carmella@hotmail.com",
+    deadline: "2024-07-12",
+    collaborators:["https://github.com/shadcn.png","https://github.com/shadcn.png"]
+  },
+  {
+    id: "bhqecj4pas",
+    name:"打电动",
+    status: "failed",
+    deadline: "2024-07-12",
+    collaborators:["https://github.com/shadcn.png","https://github.com/shadcn.png"]
+  },
+  {
+    id: "bhqecj4p1",
+    name:"打电动",
+    status: "failed",
+    deadline: "2024-07-12",
+    collaborators:["https://github.com/shadcn.png","https://github.com/shadcn.png"]
+  },
+  {
+    id: "bhqecj4p2",
+    name:"打电动",
+    status: "failed",
+    deadline: "2024-07-12",
+    collaborators:["https://github.com/shadcn.png","https://github.com/shadcn.png"]
   },
 ]
 
 export type Payment = {
   id: string
-  amount: number
+  name: string
   status: "pending" | "processing" | "success" | "failed"
-  email: string
+  deadline: string
+  collaborators:string[]
 }
 
 export const columns: ColumnDef<Payment>[] = [
@@ -99,6 +127,26 @@ export const columns: ColumnDef<Payment>[] = [
     enableSorting: false,
     enableHiding: false,
   },
+    {
+    accessorKey: "name",
+    header: "Name",
+    cell: ({ row }) => (
+      <div className="capitalize">{row.getValue("name")}</div>
+    ),
+  },
+  {
+    accessorKey: "collaborators",
+    header: "Collaborators",
+    cell: ({ row }) => {
+      const collaborator:string[] = row.getValue("collaborators");
+      let coll = collaborator.map((c)=>{
+        return <Avatar className="inline-block">
+          <AvatarImage src={c}></AvatarImage>
+          <AvatarFallback>CN</AvatarFallback>
+        </Avatar>})
+      return coll
+  },
+  },
   {
     accessorKey: "status",
     header: "Status",
@@ -107,35 +155,21 @@ export const columns: ColumnDef<Payment>[] = [
     ),
   },
   {
-    accessorKey: "email",
+    accessorKey: "deadline",
     header: ({ column }) => {
       return (
-        <Button
+        <Button className=""
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Email
+          Deadline
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
     },
-    cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
+    cell: ({ row }) => <div className="lowercase">{row.getValue("deadline")}</div>,
   },
-  {
-    accessorKey: "amount",
-    header: () => <div className="text-right">Amount</div>,
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("amount"))
 
-      // Format the amount as a dollar amount
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(amount)
-
-      return <div className="text-right font-medium">{formatted}</div>
-    },
-  },
   {
     id: "actions",
     enableHiding: false,
@@ -199,10 +233,10 @@ export function DataTableDemo() {
     <div className="w-full">
       <div className="flex items-center py-4">
         <Input
-          placeholder="Filter emails..."
-          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
+          placeholder="Filter deadline..."
+          value={(table.getColumn("deadline")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
+            table.getColumn("deadline")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
@@ -284,10 +318,10 @@ export function DataTableDemo() {
         </Table>
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="flex-1 text-sm text-muted-foreground">
+        {/* <div className="flex-1 text-sm text-muted-foreground">
           {table.getFilteredSelectedRowModel().rows.length} of{" "}
           {table.getFilteredRowModel().rows.length} row(s) selected.
-        </div>
+        </div> */}
         <div className="space-x-2">
           <Button
             variant="outline"

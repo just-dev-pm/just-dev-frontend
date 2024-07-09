@@ -11,21 +11,25 @@ import {
 import { NoStyleInput } from "./noStyleInput"
 import { X } from "lucide-react"
 import TaskDialog from "./taskDialogButton"
+import { Switch } from "@/components/ui/switch"
+import { usePathname, useRouter } from "next/navigation"
+import Link from "next/link"
 
 
 type Props = {
     todoListName:string
-    tasks: {id:number,name:string}[]
+    tasks: {id:string,name:string,isComplete:boolean}[]
     dialogMessage: string
     dialogMembers:{id:number,name:string}[]
 }
 
 
-
 function TodoList({todoListName,tasks,dialogMessage,dialogMembers}:Props) {
-    const [isShow,SetShow] = React.useState(true);
+    const path = usePathname()
+    const [isShow,setShow] = React.useState(true);
+    const [isCompleted,setCompleted] = React.useState();
     const handleShowChange = ()=>{
-        SetShow(!isShow)
+      setShow(!isShow)
     }
   return (
     isShow && <Card className="w-[350px]">
@@ -43,8 +47,12 @@ function TodoList({todoListName,tasks,dialogMessage,dialogMembers}:Props) {
     </CardHeader>
     <CardContent className="flex flex-col gap-2">
       {tasks.map((task)=>(
-          <NoStyleInput className="border-slate-200 border-solid border rounded-md" value={task.name} key={task.id}>
-          </NoStyleInput>
+        <div className="flex items-center justify-between" key={task.id}>
+          <Switch ></Switch>
+          <Button className="text-black bg-gray-50 w-full hover:bg-gray-50" asChild>
+            <Link href={`${path}/${task.id}`}>{task.name}</Link>
+          </Button>
+        </div>
       ))}
     </CardContent>
     <CardFooter>

@@ -1,12 +1,12 @@
 "use client"
 
-import { JustDevPieChart } from "../components/pieChart";
+import { ChartCard } from "../components/chartCard";
 import { DataTableDemo } from "../components/tasksTable";
 
 
 export default function DashboardPage() {
   return <>
-  <JustDevPieChart></JustDevPieChart>
+  <ChartCard></ChartCard>
   <DataTableDemo></DataTableDemo>
   </>;
 }
