@@ -105,7 +105,7 @@ export default function ProjectsView() {
             <CardContent>
               <p>
                 <div className="flex gap-2">
-                  <span className="  p-0.5">状态池</span>
+                  <span className="line-clamp-1">状态池</span>
                   <CompleteStatusView status={project.status_pool.complete} />
 
                   {project.status_pool.incomplete.map(task => (
