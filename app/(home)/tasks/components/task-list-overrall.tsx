@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { TaskList } from "@/types/tasks";
+import Link from "next/link";
 
 export default function TaskListOverrall({
   taskLists,
@@ -15,19 +16,24 @@ export default function TaskListOverrall({
       </div>
       <div className="grid grid-cols-2 gap-4">
         {taskLists.map(taskList => (
-          <div key={taskList.id} className="p-4 border border-gray-200 rounded">
-            <div className="flex m-2">
-              <h2 className="text-xl font-semibold mb-2">{taskList.name}</h2>
-              <Button className="ml-auto">查看</Button>
+          <Link href={`./tasks/${taskList.id}`}>
+            <div
+              key={taskList.id}
+              className="p-4 border border-gray-200 rounded"
+            >
+              <div className="flex m-2">
+                <h2 className="text-xl font-semibold mb-2">{taskList.name}</h2>
+                <Button className="ml-auto">查看</Button>
+              </div>
+              <div className="grid grid-cols-[1fr_1fr] gap-4 mt-4">
+                <StatisticsView name="任务数" count={taskList.tasks.length} />
+                <StatisticsView
+                  name="被分配者数"
+                  count={countAssignees(taskList)}
+                />
+              </div>
             </div>
-            <div className="grid grid-cols-[1fr_1fr] gap-4 mt-4">
-              <StatisticsView name="任务数" count={taskList.tasks.length} />
-              <StatisticsView
-                name="被分配者数"
-                count={countAssignees(taskList)}
-              />
-            </div>
-          </div>
+          </Link>
         ))}
       </div>
     </div>
