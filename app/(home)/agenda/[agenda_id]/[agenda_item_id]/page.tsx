@@ -7,11 +7,11 @@ import { agenda_items_data } from "@/lib/Mockdata";
 
 
 interface IProps {
-  params: { agenda_item_id: string };
+  params: { agenda_id:string,agenda_item_id: string };
 }
 export default function AgendaItemPage({ params }: IProps) {
 
-  const { agenda_item_id } = params;
+  const { agenda_id,agenda_item_id } = params;
   const mockData = agenda_items_data[parseInt(agenda_item_id)]
   
   return <div className="">

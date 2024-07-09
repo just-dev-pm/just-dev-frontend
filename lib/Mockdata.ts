@@ -15,6 +15,13 @@ export const events = [
   },
 ];
 
+export const agenda_calendar = [
+    {id:"1",name:"Google"},
+    {id:"2",name:"小新"},
+    {id:"3",name:"ASUS"},
+    {id:"4",name:"H3C"},
+]
+
 export const agenda_items_data = [
   {
     agenda_item_id: "1",
@@ -208,3 +215,83 @@ export const pieChartData = [
       color: "hsl(var(--chart-5))",
     },
   }
+
+  export type draftsTablePayment = {
+    id: string
+    name:string
+    description:string
+    email: string
+  }
+
+  export const draftsData: draftsTablePayment[] = [
+    {
+      id: "1",
+      name: "需求分析图",
+      description:"进行需求分析",
+      email: "ken99@yahoo.com",
+    },
+    {
+      id: "2",
+      name: "聊天室",
+      description:"讨论工作交接",
+      email: "Abe45@gmail.com",
+    },
+    {
+      id: "3",
+      name: "概念设计白板",
+      description:"进行概念设计",
+      email: "Monserrat44@gmail.com",
+    },
+    {
+      id: "4",
+      name: "技术讲解",
+      description:"技术学习",
+      email: "Silas22@gmail.com",
+    },
+    {
+      id: "5",
+      name: "团队建设",
+      description:"团队建设协商",
+      email: "carmella@hotmail.com",
+    },
+  ]
+
+  export type requirmentTablePayment = {
+    id: string
+    name:string
+    description:string
+    email: string
+  }
+
+  export const requirmentData: requirmentTablePayment[] = [
+    {
+      id: "1",
+      name: "需求分析图",
+      description:"进行需求分析",
+      email: "ken99@yahoo.com",
+    },
+    {
+      id: "2",
+      name: "聊天室",
+      description:"讨论工作交接",
+      email: "Abe45@gmail.com",
+    },
+    {
+      id: "3",
+      name: "概念设计白板",
+      description:"进行概念设计",
+      email: "Monserrat44@gmail.com",
+    },
+    {
+      id: "4",
+      name: "技术讲解",
+      description:"技术学习",
+      email: "Silas22@gmail.com",
+    },
+    {
+      id: "5",
+      name: "团队建设",
+      description:"团队建设协商",
+      email: "carmella@hotmail.com",
+    },
+  ]

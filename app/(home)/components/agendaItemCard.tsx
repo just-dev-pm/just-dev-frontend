@@ -11,6 +11,7 @@ import { NoStyleInput } from "./noStyleInput";
 import { useState } from "react";
 import { Edit3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 type Props = {
   title: string;
@@ -23,7 +24,7 @@ export default function AgendaItemCard({
   title,
   description="请添加事件描述",
   time,
-  place,
+  place
 }: Props) {
   const [isAbleToEdit, setAbleTOEdit] = useState(false);
   return (
@@ -70,7 +71,7 @@ export default function AgendaItemCard({
         </CardContent>
         <CardFooter className="flex gap-6 justify-end">
           <Button>保存</Button>
-          <Button>返回</Button>
+          <Button><Link href={`./`}>返回</Link></Button>
         </CardFooter>
       </Card>
     )
