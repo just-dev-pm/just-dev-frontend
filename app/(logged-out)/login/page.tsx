@@ -50,7 +50,7 @@ function LoginPage(props: Props) {
     console.log(data);
 
     try {
-      const url = `${baseUrl}/m1/4770610-0-default/login`;
+      const url = `${baseUrl}/api/auth/login`
       const { name, password } = data;
       const requestOptions = {
         method: "POST",
@@ -73,13 +73,6 @@ function LoginPage(props: Props) {
       console.log("Error!", error);
     }
   };
-
-  // function onSubmit(values: z.infer<typeof formSchema>) {
-  //   // Do something with the form values.
-  //   // ✅ This will be type-safe and validated.
-  //   console.log(values);
-  //   router.push("/dashboard");
-  // }
 
   return (
     <>

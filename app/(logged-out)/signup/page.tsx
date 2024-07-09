@@ -33,6 +33,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
+import { baseUrl } from "@/lib/global";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { CalendarIcon, FolderKanbanIcon } from "lucide-react";
@@ -95,11 +96,30 @@ function SignupPage(props: Props) {
 	const dobFromDate = new Date();
 	dobFromDate.setFullYear(dobFromDate.getFullYear() - 120);
 
-	function onSubmit(values: z.infer<typeof formSchema>) {
+	async function onSubmit(values: z.infer<typeof formSchema>) {
 		// Do something with the form values.
 		// ✅ This will be type-safe and validated.
 		console.log(values);
-		router.push("/dashboard");
+		try{
+			const url = `${baseUrl}/api/auth/signup`
+			const { name , password } = values;
+			const requestOptions = {
+				method: "POST",
+				headers: {
+					"Content-Type":"json",
+				},
+				body: JSON.stringify({name,password}),
+			};
+			const response = await fetch(url,requestOptions);
+			const responseData = await response.json()
+			if(!response.ok){
+				throw new Error(`Error! ErrorInfo:${responseData.error}`)
+			}
+			console.log(responseData);
+		}
+		catch(error){
+			console.log("Error!",error);
+		}
 	}
 
 	return (
