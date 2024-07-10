@@ -11,6 +11,7 @@ import {
   import { useState } from "react";
   import { Edit3 } from "lucide-react";
   import { Button } from "@/components/ui/button";
+import Link from "next/link";
   
   type Props = {
     title: string;
@@ -48,7 +49,7 @@ import {
           </CardContent>
           <CardFooter className="flex gap-6 justify-end">
             <Button>保存</Button>
-            <Button>返回</Button>
+            <Button><Link href={`./`}>返回</Link></Button>
           </CardFooter>
         </Card>
       )

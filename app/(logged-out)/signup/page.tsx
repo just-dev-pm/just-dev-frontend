@@ -33,7 +33,9 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import { baseUrl } from "@/lib/global";
+import {  mockBaseUrl } from "@/lib/global";
+import { useUserStore } from "@/store/userStore";
+import { useUser } from "@/SWRhooks/userUser";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { CalendarIcon, FolderKanbanIcon } from "lucide-react";
@@ -47,7 +49,7 @@ interface Props {}
 
 const formSchema = z
 	.object({
-		name: z.string().refine(name => name, "用户名不能为空"),
+		username: z.string().refine(name => name, "用户名不能为空"),
 		dob: z.date().refine(date => {
 			const today = new Date();
 			const eighteenYearsAgo = new Date(
@@ -82,11 +84,12 @@ const formSchema = z
 	});
 
 function SignupPage(props: Props) {
+	const {data,error,trigger} = useUser("/api/auth/signup");
 	const {} = props;
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-			name: "",
+			username: "",
 			password: "",
 			passwordConfirm: "",
 		},
@@ -100,26 +103,28 @@ function SignupPage(props: Props) {
 		// Do something with the form values.
 		// ✅ This will be type-safe and validated.
 		console.log(values);
-		try{
-			const url = `${baseUrl}/api/auth/signup`
-			const { name , password } = values;
-			const requestOptions = {
-				method: "POST",
-				headers: {
-					"Content-Type":"json",
-				},
-				body: JSON.stringify({name,password}),
-			};
-			const response = await fetch(url,requestOptions);
-			const responseData = await response.json()
-			if(!response.ok){
-				throw new Error(`Error! ErrorInfo:${responseData.error}`)
-			}
-			console.log(responseData);
-		}
-		catch(error){
-			console.log("Error!",error);
-		}
+		trigger(values);
+		console.log(data);
+		// try{
+		// 	const url = `${baseUrl}/api/auth/signup`
+		// 	const { name , password } = values;
+		// 	const requestOptions = {
+		// 		method: "POST",
+		// 		headers: {
+		// 			"Content-Type":"json",
+		// 		},
+		// 		body: JSON.stringify({name,password}),
+		// 	};
+		// 	const response = await fetch(url,requestOptions);
+		// 	const responseData = await response.json()
+		// 	if(!response.ok){
+		// 		throw new Error(`Error! ErrorInfo:${responseData.error}`)
+		// 	}
+		// 	console.log(responseData);
+		// }
+		// catch(error){
+		// 	console.log("Error!",error);
+		// }
 	}
 
 	return (
@@ -138,7 +143,7 @@ function SignupPage(props: Props) {
 						>
 							<FormField
 								control={form.control}
-								name="name"
+								name="username"
 								render={({ field }) => (
 									<FormItem>
 										<FormLabel>用户名</FormLabel>

@@ -5,6 +5,8 @@ import { Calendar } from "../page";
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 import { events } from "@/lib/Mockdata";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 interface IProps {
   params: { agenda_id: string };
@@ -35,6 +37,9 @@ export default function ConcreteAgendaPage({ params }: IProps) {
         views={["month", "week", "day"]}
         onSelectEvent={handleEventClick}
       ></Calendar>
+      <div className="flex justify-end mt-5">
+        <Button><Link href={`./`}>返回</Link></Button>
+      </div>
     </div>
   );
 }

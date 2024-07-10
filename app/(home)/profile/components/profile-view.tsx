@@ -13,8 +13,8 @@ import EditProfile from "./edit-profile";
 export interface IUserData {
   id: string;
   username: string;
-  email: string;
-  avatarUrl: string;
+  email?: string;
+  avatar?: string;
 }
 export const ProfileView = ({ userData }: { userData: IUserData }) => {
   return (
@@ -23,7 +23,7 @@ export const ProfileView = ({ userData }: { userData: IUserData }) => {
         <CardHeader>
           <div className="flex">
             <Avatar>
-              <AvatarImage src={userData.avatarUrl} />
+              <AvatarImage src={userData?.avatar} />
               <AvatarFallback>DC</AvatarFallback>
             </Avatar>
             <EditProfile className="ml-auto" />
@@ -33,7 +33,7 @@ export const ProfileView = ({ userData }: { userData: IUserData }) => {
         </CardHeader>
         <CardContent></CardContent>
         <CardFooter>
-          <p className="text-center">{userData.email}</p>
+          <p className="text-center">{userData?.email}</p>
         </CardFooter>
       </Card>
     </div>

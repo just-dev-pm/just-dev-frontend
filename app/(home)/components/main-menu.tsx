@@ -8,8 +8,10 @@ import Link from "next/link";
 import ProjectsSelect from "../projects/components/projects-select";
 import ProjectMenu from "../projects/components/project-menu";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import useSWR from "swr";
 
 export default function MainMenu() {
+
   return (
     <nav className="bg-muted overflow-auto p-4 flex flex-col">
       <header className="border-b dark:border-b-black border-b-zinc-300 pb-4">

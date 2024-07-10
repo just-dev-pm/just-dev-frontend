@@ -23,59 +23,44 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FolderKanbanIcon } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { baseUrl } from "@/lib/global";
+import { useUserStore } from "@/store/userStore";
+import useSWR from "swr";
+import { useUser } from "@/SWRhooks/userUser";
+// import { useToast } from '@/components/ui/use-toast'
 
 interface Props {}
 
 const formSchema = z.object({
-  name: z.string(),
+  username: z.string(),
   password: z.string(),
 });
 
 function LoginPage(props: Props) {
+  const {error,trigger} = useUser("/api/auth/login");
+  // const {toast} = useToast()
   const {} = props;
   const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
+      username: "",
       password: "",
     },
   });
 
-  const handleSubmit = async (data: any) => {
-    console.log(data);
-
-    try {
-      const url = `${baseUrl}/api/auth/login`
-      const { name, password } = data;
-      const requestOptions = {
-        method: "POST",
-        headers: {
-          "Content-Type": "json",
-        },
-        body: JSON.stringify({ name, password }),
-      };
-
-      const response = await fetch(url, requestOptions);
-      if (!response.ok) {
-        throw new Error(`Error! status:${response.status}`);
-      }
-
-      const responseData = await response.json();
-      console.log("send success!");
-      console.log(responseData);
-      //router.push("/dashboard");
-    } catch (error) {
-      console.log("Error!", error);
-    }
+  const handleSubmit = async (formData: {username:string,password:string}) => {
+    console.log(formData);
+    await trigger(formData);
+    if(!error) router.push(`dashboard`)
+      else console.log(error);
   };
 
   return (
     <>
+    {error&& <pre><code>{JSON.stringify(error,null,2)}</code></pre>}
       <FolderKanbanIcon size={50} />
       <Card className="w-full max-w-sm">
         <CardHeader>
@@ -90,7 +75,7 @@ function LoginPage(props: Props) {
             >
               <FormField
                 control={form.control}
-                name="name"
+                name="username"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>用户名</FormLabel>
