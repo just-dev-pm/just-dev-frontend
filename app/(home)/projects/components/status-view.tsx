@@ -14,12 +14,12 @@ export function CompleteStatusView({ status }: ICompleteStatusView) {
     <>
       <HoverCard>
         <HoverCardTrigger asChild>
-          <Badge className="bg-green-600  hover:bg-green-400 hover:cursor-default">
+          <Badge className=" hover:cursor-default">
             {status.name}
           </Badge>
         </HoverCardTrigger>
         <HoverCardContent className="w-80">
-          <Badge className="bg-green-600  hover:bg-green-400 hover:cursor-default">
+          <Badge className=" hover:cursor-default">
             {status.name}
           </Badge>
           <div className="p-4">{status.description}</div>

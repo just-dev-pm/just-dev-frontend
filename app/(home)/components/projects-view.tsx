@@ -19,6 +19,7 @@ import { BASE_URL } from "@/lib/global";
 import { Suspense } from "react";
 import { Incomplete } from "@/types/project";
 import { useProjectStore } from "@/store/projectStore";
+import Link from "next/link";
 
 // 生成三个示例项目数据
 
@@ -58,7 +59,7 @@ export default function ProjectsView({ projects }: { projects: Project[] }) {
                     </Avatar>
                     <CardTitle>{data.name}</CardTitle>
                   </div>
-                  <Button>进入项目</Button>
+                  <Button><Link href={`./projects/${project_id}/dashboard`}>进入项目</Link></Button>
                 </div>
                 <CardDescription>{project.position}</CardDescription>
               </CardHeader>

@@ -6,6 +6,7 @@ import ProjectsSelect from "./projects-select";
 import { useProjectStore } from "@/store/projectStore";
 import { useShallow } from "zustand/react/shallow";
 import { usePathname } from "next/navigation";
+import { Separator } from "@/components/ui/separator";
 
 export interface IProject {
   project_id: string;
@@ -46,10 +47,12 @@ export default function ProjectMenu() {
       {defaultProject && (
         <>
           <MenuItem href={to("/dashboard")}>仪表盘</MenuItem>
+          <Separator className="my-2"/>
           <MenuItem href={to("/requirements")}>需求</MenuItem>
           <MenuItem href={to("/agenda")}>日程</MenuItem>
           <MenuItem href={to("/tasks")}>任务</MenuItem>
           <MenuItem href={to("/draft")}>草稿</MenuItem>
+          <Separator className="my-2"/>
           <MenuItem href={to("/settings")}>设置</MenuItem>
         </>
       )}

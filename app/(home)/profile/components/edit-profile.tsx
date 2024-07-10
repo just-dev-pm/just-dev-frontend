@@ -1,6 +1,7 @@
 import { Button, ButtonProps } from "@/components/ui/button";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -124,10 +125,12 @@ export default function EditProfile({ className }: {} & ButtonProps) {
                 </FormItem>
               )}
             />
-        <DialogFooter>
-          <Button type="submit" onClick={()=>{
-            mutate(userId?[url, userId]:null)
-          }}>保存更改</Button>
+        <DialogFooter className="mt-4">
+          <DialogClose>
+            <Button type="submit" onClick={()=>{
+              mutate(userId?[url, userId]:null)
+            }}>保存更改</Button>
+          </DialogClose>
         </DialogFooter>
           </form>
         </Form>

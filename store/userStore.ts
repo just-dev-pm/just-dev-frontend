@@ -46,7 +46,7 @@ export const useUserStore = create<User>()(
                 setStatusPool:(statusPool:User["status_pool"]) => set(state => {state.status_pool = statusPool})
             }),
             {
-                name: 'user-store',
+                name: 'user-store-1',
             }
         )
     )

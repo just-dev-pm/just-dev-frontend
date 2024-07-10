@@ -105,6 +105,8 @@ function SignupPage(props: Props) {
 		console.log(values);
 		trigger(values);
 		console.log(data);
+		if(!error) router.push("/dashboard")
+			else alert(error)
 		// try{
 		// 	const url = `${baseUrl}/api/auth/signup`
 		// 	const { name , password } = values;

@@ -18,16 +18,15 @@ import Link from "next/link"
 
 type Props = {
     todoListName:string
-    tasks: {id:string,name:string,isComplete:boolean}[]
+    tasks: {id:string,name:string}[]
     dialogMessage: string
-    dialogMembers:{id:number,name:string}[]
+    dialogMembers:{id:string}[]
 }
 
 
 function TodoList({todoListName,tasks,dialogMessage,dialogMembers}:Props) {
     const path = usePathname()
     const [isShow,setShow] = React.useState(true);
-    const [isCompleted,setCompleted] = React.useState();
     const handleShowChange = ()=>{
       setShow(!isShow)
     }
@@ -36,7 +35,7 @@ function TodoList({todoListName,tasks,dialogMessage,dialogMembers}:Props) {
     <CardHeader>
       <CardTitle className="flex justify-between items-center">
           <div className="flex items-center">
-              <NoStyleInput className="h-10" value={todoListName}/>
+              <NoStyleInput className="h-10" defaultValue={todoListName}/>
           </div>
           <div className="flex items-center h-10">
             <Button  onClick={handleShowChange} className="bg-white text-black hover:bg-white">

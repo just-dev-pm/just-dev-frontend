@@ -35,7 +35,7 @@ import { Plus } from "lucide-react";
 
 type Props = {
   message: string;
-  members: { id: number; name: string }[];
+  members: { id: string}[];
 };
 
 const formSchema = z.object({
@@ -68,7 +68,7 @@ function TaskDialog({ message, members }: Props) {
     <>
       <Dialog>
         <DialogTrigger asChild>
-          <Button><Plus></Plus>{message}</Button>
+          <Button><Plus></Plus>新增任务</Button>
         </DialogTrigger>
 
         <DialogContent>
@@ -135,13 +135,13 @@ function TaskDialog({ message, members }: Props) {
                             {...field}
                           ></SelectValue>
                         </SelectTrigger>
-                        <SelectContent>
+                        {/* <SelectContent>
                           {members.map((member) => (
                             <SelectItem key={member.id} value={member.name}>
                               {member.name}
                             </SelectItem>
                           ))}
-                        </SelectContent>
+                        </SelectContent> */}
                       </Select>
                     </FormControl>
                     <FormMessage></FormMessage>

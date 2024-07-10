@@ -27,10 +27,10 @@ export default function TaskListOverrall({
               </div>
               <div className="grid grid-cols-[1fr_1fr] gap-4 mt-4">
                 <StatisticsView name="任务数" count={taskList.tasks.length} />
-                <StatisticsView
+                {/* <StatisticsView
                   name="被分配者数"
                   count={countAssignees(taskList)}
-                />
+                /> */}
               </div>
             </div>
           </Link>
