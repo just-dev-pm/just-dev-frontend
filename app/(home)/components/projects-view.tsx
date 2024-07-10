@@ -103,16 +103,14 @@ export default function ProjectsView() {
           </CardContent>
           {project.status_pool && (
             <CardContent>
-              <p>
-                <div className="flex gap-2">
-                  <span className="line-clamp-1">状态池</span>
-                  <CompleteStatusView status={project.status_pool.complete} />
+              <div className="flex gap-2">
+                <span className="line-clamp-1">状态池</span>
+                <CompleteStatusView status={project.status_pool.complete} />
 
-                  {project.status_pool.incomplete.map(task => (
-                    <InCompleteStatusView c={task} key={task.id} />
-                  ))}
-                </div>
-              </p>
+                {project.status_pool.incomplete.map(task => (
+                  <InCompleteStatusView c={task} key={task.id} />
+                ))}
+              </div>
 
               <ul></ul>
             </CardContent>
