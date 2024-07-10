@@ -2,7 +2,7 @@
 
 import useSWR from "swr";
 import { ProfileView } from "./components/profile-view";
-import { testBaseUrl } from "@/lib/global";
+import { BASE_URL } from "@/lib/global";
 import { useUserStore } from "@/store/userStore";
 import { Suspense } from "react";
 const userData = {
@@ -16,10 +16,10 @@ export default function ProfilePage() {
   console.log(userId);
   const url = `/api/users/`;
   const { data, error } = useSWR(
-    [url, userId],
+    userId?[url, userId]:null,
     ([url, userId]) =>
-      fetch(testBaseUrl + url + userId, {
-        credentials: "include",
+      fetch(BASE_URL + url + userId, {
+        credentials: "include"
       }).then((res) => res.json()),{suspense:true,fallbackData:{username:""}}
   );
 

@@ -28,7 +28,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useUserStore } from "@/store/userStore";
 import useSWR from "swr";
-import { useUser } from "@/SWRhooks/userUser";
+import { useUser } from "@/SWRhooks/useUser";
 // import { useToast } from '@/components/ui/use-toast'
 
 interface Props {}

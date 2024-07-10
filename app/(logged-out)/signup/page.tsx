@@ -35,7 +35,7 @@ import {
 } from "@/components/ui/select";
 import {  mockBaseUrl } from "@/lib/global";
 import { useUserStore } from "@/store/userStore";
-import { useUser } from "@/SWRhooks/userUser";
+import { useUser } from "@/SWRhooks/useUser";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { CalendarIcon, FolderKanbanIcon } from "lucide-react";

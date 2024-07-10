@@ -1,4 +1,4 @@
-import { testBaseUrl } from "@/lib/global";
+import { BASE_URL } from "@/lib/global";
 import { useUserStore } from "@/store/userStore";
 import useSWRMutation from "swr/mutation";
 
@@ -21,7 +21,8 @@ export function useUser(url:string){
             headers:{
                 'Content-Type':"application/json; charset=UTF-8",
             },
-            body: JSON.stringify(arg)
+            body: JSON.stringify(arg),
+            credentials:"include"
         })
         if (!res.ok) {
             const error = new Error('An error occurred while fetching the data.')
@@ -30,7 +31,7 @@ export function useUser(url:string){
             }
         return res.json();
         };
-    const {data,error,trigger} = useSWRMutation(`${testBaseUrl}${url}`,fetcher,{
+    const {data,error,trigger} = useSWRMutation(`${BASE_URL}${url}`,fetcher,{
         onSuccess(data, key, config) {
             if(data){
                 setUserId(data.id);
