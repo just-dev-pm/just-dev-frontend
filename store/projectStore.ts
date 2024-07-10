@@ -22,10 +22,7 @@ export const useProjectStore = create<ProjectStore>()(
   immer(
     persist(
       (set, get) => ({
-        projects: [
-          { id: "1", name: "Just-Dev" },
-          { id: "2", name: "Nymph" },
-        ],
+        projects: [{id:"1",name:"Just-dev"},{id:"2",name:"Nymph"}],
         defaultId: "",
         setDefaultId: (id: string) =>
           set(state => {
@@ -41,7 +38,7 @@ export const useProjectStore = create<ProjectStore>()(
         idExists: (id: string) =>
           get().projects.some(project => project.id === id),
       }),
-      { name: "project-store" }
+      { name: "project-store-1" }
     )
   )
 );

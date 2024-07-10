@@ -13,7 +13,7 @@ const userData = {
 };
 export default function ProfilePage() {
   const userId = useUserStore((state) => state.userId);
-  console.log(userId);
+  //console.log(userId);
   const url = `/api/users/`;
   const { data, error } = useSWR(
     userId?[url, userId]:null,

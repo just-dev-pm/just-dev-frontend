@@ -1,3 +1,4 @@
+import { Project } from "@/types/project";
 import moment from "moment";
 
 export const events = [
@@ -305,3 +306,63 @@ export const pieChartData = [
       email: "carmella@hotmail.com",
     },
   ]
+
+  export const fakeProjects: Project[] = [
+    {
+      id: "1",
+      name: "Project A",
+      description: "This is project A description.",
+      avatar: "/images/avatar1.jpg",
+      status_pool: {
+        complete: { name: "Complete", description: "Project A is complete." },
+        incomplete: [
+          {
+            id: "1",
+            status: { name: "Task 1", description: "Task 1 is incomplete." },
+          },
+          {
+            id: "2",
+            status: { name: "Task 2", description: "Task 2 is incomplete." },
+          },
+        ],
+      },
+    },
+    {
+      id: "2",
+      name: "Project B",
+      description: "This is project B description.",
+      avatar: "/images/avatar2.jpg",
+      status_pool: {
+        complete: { name: "Complete", description: "Project B is complete." },
+        incomplete: [
+          {
+            id: "3",
+            status: { name: "Task 3", description: "Task 3 is incomplete." },
+          },
+          {
+            id: "4",
+            status: { name: "Task 4", description: "Task 4 is incomplete." },
+          },
+        ],
+      },
+    },
+    {
+      id: "3",
+      name: "干饭人干饭魂",
+      description: "This is project C description.",
+      avatar: "/images/avatar3.jpg",
+      status_pool: {
+        complete: { name: "吃完了", description: "真香." },
+        incomplete: [
+          {
+            id: "5",
+            status: { name: "干饭中", description: "吭哧吭哧." },
+          },
+          {
+            id: "6",
+            status: { name: "赶路中", description: "正在骑马赶来的路上." },
+          },
+        ],
+      },
+    },
+  ];

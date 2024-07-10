@@ -1,3 +1,6 @@
+'use client'
+
+import InviteDialog from "../../components/invite-dialog";
 import { ISettingsGroup, SettingsGroup } from "../../components/settings-group";
 
 const fakeData1: ISettingsGroup = {
@@ -27,7 +30,12 @@ const fakeData3: ISettingsGroup = {
   ],
 };
 
-export default function SettingsPage() {
+interface IProps{
+  params:{project_id:string};
+}
+
+export default function SettingsPage({params}:IProps) {
+  const { project_id } = params;
   return (
     <div className="flex flex-col items-center">
       <h1 className="text-2xl font-bold mb-4">设置</h1>
@@ -35,6 +43,7 @@ export default function SettingsPage() {
         <SettingsGroup {...fakeData1} />
         <SettingsGroup {...fakeData2} />
         <SettingsGroup {...fakeData3} />
+        <InviteDialog project_id={project_id} />
       </div>
     </div>
   );
