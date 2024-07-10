@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import EditProfile from "./edit-profile";
+import EditProfileController from "./edit-profile-controller";
 
 export interface IUserData {
   id: string;
@@ -26,7 +27,7 @@ export const ProfileView = ({ userData }: { userData: IUserData }) => {
               <AvatarImage src={userData?.avatar} />
               <AvatarFallback>DC</AvatarFallback>
             </Avatar>
-            <EditProfile className="ml-auto" />
+            <EditProfileController className="ml-auto" />
           </div>
           <CardTitle>{userData.username}</CardTitle>
           <CardDescription>User ID: {userData.id}</CardDescription>
