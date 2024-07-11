@@ -1,3 +1,4 @@
+"use client";
 import {
   Dialog,
   DialogContent,
@@ -21,12 +22,17 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Incomplete, StatusItem, User } from "@/types/user";
 import { FilterUndefined } from "@/lib/type";
+import { nanoid } from "nanoid";
+import { useUserStore } from "@/store/userStore";
+import { useEffect, useState } from "react";
+import { Textarea, TextareaProps } from "@/components/ui/textarea";
+import { mutate } from "swr";
 
 export type UserData = Omit<User, "id">;
 
 interface EditProfileFormProps {
   oldData: UserData;
-  onSubmit: (newData: UserData) => void;
+  onSubmit: (newData: UserData) => Promise<void>;
 }
 
 /**
@@ -63,10 +69,29 @@ const formSchema = z.object({
 const EditProfileForm: React.FC<
   EditProfileFormProps & Omit<ButtonProps, "onSubmit">
 > = ({ oldData, onSubmit, ...props }) => {
+  const userId = useUserStore.getState().userId;
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: oldData,
   });
+
+  useEffect(() => {
+    form.reset(oldData);
+  }, [oldData]);
+
+  function handleAddIncompleteStatus() {
+    const oldArray = form.getValues("status_pool.incomplete");
+    const newId = userId + nanoid(25);
+
+    const newItem: Incomplete = {
+      id: newId,
+      status: {
+        name: "",
+        description: "",
+      },
+    };
+    form.setValue("status_pool.incomplete", [...oldArray, newItem]);
+  }
 
   return (
     <Dialog>
@@ -75,7 +100,7 @@ const EditProfileForm: React.FC<
           编辑资料
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] max-h-[75%] overflow-auto">
         <DialogHeader>
           <DialogTitle>编辑资料</DialogTitle>
           <DialogDescription>
@@ -98,7 +123,7 @@ const EditProfileForm: React.FC<
                     className="col-span-3"
                     {...field}
                   />
-                  <FormMessage></FormMessage>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -153,12 +178,7 @@ const EditProfileForm: React.FC<
                     className="col-span-3"
                     {...field}
                   />
-                  <FormMessage>
-                    {
-                      form.formState.errors?.status_pool?.complete?.name
-                        ?.message
-                    }
-                  </FormMessage>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -173,18 +193,13 @@ const EditProfileForm: React.FC<
                   >
                     完成状态描述
                   </FormLabel>
-                  <Input
+                  <Textarea
                     id="complete-description"
                     placeholder="输入完成状态描述"
                     className="col-span-3"
                     {...field}
                   />
-                  <FormMessage>
-                    {
-                      form.formState.errors?.status_pool?.complete?.description
-                        ?.message
-                    }
-                  </FormMessage>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -216,7 +231,14 @@ const EditProfileForm: React.FC<
                 </FormItem>
               )}
             />
-            <DialogFooter className="my-4">
+            <DialogFooter className="mt-4">
+              <Button
+                variant="outline"
+                type="button"
+                onClick={handleAddIncompleteStatus}
+              >
+                添加未完成态
+              </Button>
               <Button type="submit">保存更改</Button>
             </DialogFooter>
           </form>
@@ -235,7 +257,7 @@ interface StatusGroupProps {
   index: number;
   status: StatusItem;
   onChangeName: OnChange;
-  onChangeDescription: OnChange;
+  onChangeDescription: FilterUndefined<TextareaProps["onChange"]>;
 }
 export function StatusGroup({
   label,
@@ -246,7 +268,7 @@ export function StatusGroup({
   onChangeDescription,
 }: StatusGroupProps) {
   return (
-    <div className="grid grid-cols-2 gap-4">
+    <div>
       <div>
         <FormLabel htmlFor={label} className="text-right">
           {labelName}
@@ -264,7 +286,7 @@ export function StatusGroup({
         <FormLabel htmlFor={label} className="text-right">
           描述
         </FormLabel>
-        <Input
+        <Textarea
           id={`${label}-${index}`}
           placeholder={`${labelName}描述 ${index + 1}`}
           className="col-span-3"

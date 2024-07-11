@@ -1,41 +1,55 @@
 "use client";
-import { mutate } from "swr";
+import useSWR, { mutate } from "swr";
 import { useUserStore } from "@/store/userStore";
 import EditProfileForm, { UserData } from "./edit-profile-form";
 import { ButtonProps } from "@/components/ui/button";
+import useSWRMutation from "swr/mutation";
+import { BASE_URL } from "@/lib/global";
+import { useToast } from "@/components/ui/use-toast";
+import Loading from "@/components/ui/loading";
 
 const EditProfileController: React.FC<Omit<ButtonProps, "onSubmit">> = ({
   ...props
 }) => {
-  const userId = useUserStore(state => state.userId);
-  const url = `/api/users/`;
+  const userId = useUserStore.getState().userId;
+  const { toast } = useToast();
 
-  const oldData: UserData = {
-    avatar: "",
-    username: "",
-    email: "",
-    status_pool: {
-      complete: {
-        name: "c1",
-        description: "1",
-      },
-      incomplete: [
-        {
-          id: "2",
-          status: {
-            name: "i1",
-            description: "3",
-          },
+  const { data: oldData, isLoading } = useSWR<UserData>(
+    "/api/users",
+    url =>
+      fetch(`${BASE_URL}${url}/${userId}`, {
+        credentials: "include",
+      }).then(res => res.json()),
+    { fallbackData: { username: "", avatar: "", email: "" } }
+  );
+
+  const { error, trigger } = useSWRMutation(
+    "/api/users",
+    (url, { arg }: { arg: UserData }) =>
+      fetch(`${BASE_URL}${url}/${userId}`, {
+        method: "PATCH",
+        body: JSON.stringify(arg),
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
         },
-      ],
-    },
+        credentials: "include",
+      }).then(res => res.json()),
+    {
+      onSuccess: (data, key, config) => {
+        toast({
+          title: "更新用户信息成功",
+        });
+      },
+    }
+  );
+
+  const onSubmit = async (newData: UserData) => {
+    // 处理表单提交逻辑，发送API请求
+    await trigger(newData);
+    mutate("/api/users");
   };
 
-  const onSubmit = (newData: UserData) => {
-    // mutate(userId ? [url, userId] : null);
-    // 处理表单提交逻辑，例如发送API请求等
-    console.log(newData);
-  };
+  if (!oldData || isLoading) return <Loading />;
 
   return <EditProfileForm oldData={oldData} onSubmit={onSubmit} {...props} />;
 };
