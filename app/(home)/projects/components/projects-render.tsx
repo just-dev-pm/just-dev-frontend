@@ -8,6 +8,7 @@ import ProjectCard from "./project-card";
 import { useEffect } from "react";
 import useProjectStore from "@/store/projectStore";
 import useMenuTabStore from "@/store/menuTabStore";
+import { AlertDestructive } from "@/components/ui/alert-destructive";
 
 interface ProjectsRenderProps {
   projects: Projects;
@@ -29,12 +30,17 @@ interface ProjectRenderProps {
 }
 export function ProjectRender({ rawProject }: ProjectRenderProps) {
   const setRipeProject = useProjectStore(state => state.setRipeProject);
-  const { data } = useSWR<Project>(
+  const { data, error, isLoading } = useSWR<Project>(
     rawProject.id,
     projectId =>
       fetch(`${BASE_URL}/api/projects/${projectId}`, {
         credentials: "include",
-      }).then(res => res.json()),
+      })
+        .then(res => {
+          if (!res.ok) throw new Error();
+          return res;
+        })
+        .then(res => res.json()),
 
     { fallbackData: { id: "", description: "", name: "" } }
   );
@@ -47,7 +53,14 @@ export function ProjectRender({ rawProject }: ProjectRenderProps) {
   function onEnterProject() {
     useMenuTabStore.getState().setValue("project");
   }
-  if (!data) return <Loading />;
+  if (error)
+    return (
+      <AlertDestructive
+        title={`获取项目信息(ID=${rawProject.id})时遇到错误`}
+        description="请检查你的网络并等待服务器恢复正常"
+      />
+    );
+  if (isLoading || !data) return <Loading />;
   return (
     <ProjectCard
       data={data}
