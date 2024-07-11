@@ -41,7 +41,6 @@ export function ProjectRender({ rawProject }: ProjectRenderProps) {
   useEffect(() => {
     if (data) {
       setRipeProject(data);
-      console.log("data::: ", data);
     }
   }, [data]);
 
@@ -49,5 +48,11 @@ export function ProjectRender({ rawProject }: ProjectRenderProps) {
     useMenuTabStore.getState().setValue("project");
   }
   if (!data) return <Loading />;
-  return <ProjectCard data={data} onEnterProject={onEnterProject} />;
+  return (
+    <ProjectCard
+      data={data}
+      position={rawProject.position === "admin" ? "管理员" : "成员"}
+      onEnterProject={onEnterProject}
+    />
+  );
 }

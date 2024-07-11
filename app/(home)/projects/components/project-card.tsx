@@ -16,10 +16,12 @@ import Link from "next/link";
  */
 interface ProjectCardProps {
   data: Project;
+  position: string;
   onEnterProject: () => void;
 }
 export default function ProjectCard({
   data,
+  position,
   onEnterProject,
 }: ProjectCardProps) {
   return (
@@ -47,7 +49,7 @@ export default function ProjectCard({
             </Link>
           </Button>
         </div>
-        <CardDescription>{data.position}</CardDescription>
+        <CardDescription>{position}</CardDescription>
       </CardHeader>
       <CardContent>
         <p>{data.description}</p>
