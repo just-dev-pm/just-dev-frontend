@@ -13,13 +13,13 @@ export function CompleteStatusView({ status }: ICompleteStatusView) {
   return (
     <>
       <HoverCard>
-        <HoverCardTrigger asChild>
-          <Badge className=" hover:cursor-default">
+        <HoverCardTrigger>
+          <Badge className="bg-green-600  hover:bg-green-400 hover:cursor-default">
             {status.name}
           </Badge>
         </HoverCardTrigger>
         <HoverCardContent className="w-80">
-          <Badge className=" hover:cursor-default">
+          <Badge className="bg-green-600  hover:bg-green-400 hover:cursor-default">
             {status.name}
           </Badge>
           <div className="p-4">{status.description}</div>
@@ -36,7 +36,7 @@ export function InCompleteStatusView({ c, ...props }: IInCompleteStatusView) {
   return (
     <>
       <HoverCard>
-        <HoverCardTrigger asChild>
+        <HoverCardTrigger>
           <Badge
             className=" hover:cursor-default hover:text-gray-300"
             variant={"secondary"}
