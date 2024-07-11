@@ -26,7 +26,9 @@ export default function DraftPage() {
     { suspense: true, fallbackData: { drafts: [] } }
   );
   const drafts = data.drafts;
-  return (
+  return error ? (
+    <div>{error}</div>
+  ) : (
     <div>
       <div className="flex justify-between">
         <Label className="font-bold text-xl">草稿总览</Label>

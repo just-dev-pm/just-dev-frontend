@@ -30,12 +30,12 @@ import {
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import AddTaskButton from "./taskAddButton";
+import AddTaskButton from "../../components/taskAddButton";
 import { Plus } from "lucide-react";
 
 type Props = {
   message: string;
-  members: { id: string}[];
+  members: { id: string }[];
 };
 
 const formSchema = z.object({
@@ -68,17 +68,20 @@ function TaskDialog({ message, members }: Props) {
     <>
       <Dialog>
         <DialogTrigger asChild>
-          <Button><Plus></Plus>新增任务</Button>
+          <Button>
+            <Plus></Plus>新增任务
+          </Button>
         </DialogTrigger>
 
         <DialogContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="flex flex-col gap-4"
+            >
               <DialogHeader>
                 <DialogTitle>Task</DialogTitle>
-                <DialogDescription>
-                  
-                </DialogDescription>
+                <DialogDescription></DialogDescription>
               </DialogHeader>
 
               <FormField
@@ -152,9 +155,7 @@ function TaskDialog({ message, members }: Props) {
               <DialogFooter className="flex gap-4">
                 <Button type="submit">Save</Button>
                 <DialogClose asChild>
-                  <Button type="button">
-                    Delete
-                  </Button>
+                  <Button type="button">Delete</Button>
                 </DialogClose>
               </DialogFooter>
             </form>

@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -12,11 +12,11 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
+} from "@tanstack/react-table";
+import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
 
-import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -25,8 +25,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -34,113 +34,156 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
-import Link from "next/link"
-import { number } from "zod"
+} from "@/components/ui/table";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
+import { number } from "zod";
+import useSWR from "swr";
+import { BASE_URL } from "@/lib/global";
+import { useUserInfo } from "@/app/api/useUserInfo";
 
-const data: Payment[] = [
-  {
-    id: "1",
-    list_id:"1",
-    name:"吃饭",
-    status: "success",
-    deadline: "2024-07-09",
-    collaborators:["https://github.com/shadcn.png","https://github.com/shadcn.png"]
-  },
-  {
-    id: "2",
-    list_id:"1",
-    name:"喝水",
-    status: "success",
-    deadline: "2024-07-10",
-    collaborators:["https://github.com/shadcn.png","https://github.com/shadcn.png"]
-  },
-  {
-    id: "3",
-    list_id:"2",
-    name:"睡觉",
-    status: "processing",
-    deadline: "2024-07-11",
-    collaborators:["https://github.com/shadcn.png","https://github.com/shadcn.png"]
-  },
-  {
-    id: "3",
-    list_id:"2",
-    name:"开发",
-    status: "success",
-    deadline: "2024-07-12",
-    collaborators:["https://github.com/shadcn.png","https://github.com/shadcn.png"]
-  },
-  {
-    id: "4",
-    list_id:"2",
-    name:"打电动",
-    status: "failed",
-    deadline: "2024-07-12",
-    collaborators:["https://github.com/shadcn.png","https://github.com/shadcn.png"]
-  },
-  {
-    id: "5",
-    list_id:"2",
-    name:"打电动",
-    status: "failed",
-    deadline: "2024-07-12",
-    collaborators:["https://github.com/shadcn.png","https://github.com/shadcn.png"]
-  },
-  {
-    id: "4",
-    list_id:"3",
-    name:"打电动",
-    status: "failed",
-    deadline: "2024-07-12",
-    collaborators:["https://github.com/shadcn.png","https://github.com/shadcn.png"]
-  },
-  {
-    id: "2",
-    list_id:"3",
-    name:"打电动",
-    status: "failed",
-    deadline: "2024-07-12",
-    collaborators:["https://github.com/shadcn.png","https://github.com/shadcn.png"]
-  },
-  {
-    id: "3",
-    list_id:"2",
-    name:"打电动",
-    status: "failed",
-    deadline: "2024-07-12",
-    collaborators:["https://github.com/shadcn.png","https://github.com/shadcn.png"]
-  },
-  {
-    id: "3",
-    list_id:"1",
-    name:"打电动",
-    status: "failed",
-    deadline: "2024-07-12",
-    collaborators:["https://github.com/shadcn.png","https://github.com/shadcn.png"]
-  },
-  {
-    id: "2",
-    list_id:"1",
-    name:"打电动",
-    status: "failed",
-    deadline: "2024-07-12",
-    collaborators:["https://github.com/shadcn.png","https://github.com/shadcn.png"]
-  },
-]
+// const testdata: Task[] = [
+//   {
+//     id: "1",
+//     name: "吃饭",
+//     status: "success",
+//     deadline: "2024-07-09",
+//     collaborators: [
+//       "https://github.com/shadcn.png",
+//       "https://github.com/shadcn.png",
+//     ],
+//     description: "",
+//   },
+//   {
+//     id: "2",
+//     name: "喝水",
+//     status: "success",
+//     deadline: "2024-07-10",
+//     collaborators: [
+//       "https://github.com/shadcn.png",
+//       "https://github.com/shadcn.png",
+//     ],
+//     description: "",
+//   },
+//   {
+//     id: "3",
+//     name: "睡觉",
+//     status: "processing",
+//     deadline: "2024-07-11",
+//     collaborators: [
+//       "https://github.com/shadcn.png",
+//       "https://github.com/shadcn.png",
+//     ],
+//     description: "",
+//   },
+//   {
+//     id: "3",
+//     name: "开发",
+//     status: "success",
+//     deadline: "2024-07-12",
+//     collaborators: [
+//       "https://github.com/shadcn.png",
+//       "https://github.com/shadcn.png",
+//     ],
+//     description: "",
+//   },
+//   {
+//     id: "4",
+//     name: "打电动",
+//     status: "failed",
+//     deadline: "2024-07-12",
+//     collaborators: [
+//       "https://github.com/shadcn.png",
+//       "https://github.com/shadcn.png",
+//     ],
+//     description: "",
+//   },
+//   {
+//     id: "5",
+//     list_id: "2",
+//     name: "打电动",
+//     status: "failed",
+//     deadline: "2024-07-12",
+//     collaborators: [
+//       "https://github.com/shadcn.png",
+//       "https://github.com/shadcn.png",
+//     ],
+//     description: "",
+//   },
+//   {
+//     id: "4",
+//     list_id: "3",
+//     name: "打电动",
+//     status: "failed",
+//     deadline: "2024-07-12",
+//     collaborators: [
+//       "https://github.com/shadcn.png",
+//       "https://github.com/shadcn.png",
+//     ],
+//     description: "",
+//   },
+//   {
+//     id: "2",
+//     list_id: "3",
+//     name: "打电动",
+//     status: "failed",
+//     deadline: "2024-07-12",
+//     collaborators: [
+//       "https://github.com/shadcn.png",
+//       "https://github.com/shadcn.png",
+//     ],
+//     description: "",
+//   },
+//   {
+//     id: "3",
+//     list_id: "2",
+//     name: "打电动",
+//     status: "failed",
+//     deadline: "2024-07-12",
+//     collaborators: [
+//       "https://github.com/shadcn.png",
+//       "https://github.com/shadcn.png",
+//     ],
+//     description: "",
+//   },
+//   {
+//     id: "3",
+//     list_id: "1",
+//     name: "打电动",
+//     status: "failed",
+//     deadline: "2024-07-12",
+//     collaborators: [
+//       "https://github.com/shadcn.png",
+//       "https://github.com/shadcn.png",
+//     ],
+//     description: "",
+//   },
+//   {
+//     id: "2",
+//     list_id: "1",
+//     name: "打电动",
+//     status: "failed",
+//     deadline: "2024-07-12",
+//     collaborators: [
+//       "https://github.com/shadcn.png",
+//       "https://github.com/shadcn.png",
+//     ],
+//     description: "",
+//   },
+// ];
 
-export type Payment = {
-  id: string
-  name: string
-  list_id:string
-  status: "pending" | "processing" | "success" | "failed"
-  deadline: string
-  collaborators:string[]
-}
+export type Task = {
+  id: string;
+  list_id: string;
+  name: string;
+  description: string;
+  status: "pending" | "processing" | "success" | "failed";
+  deadline: string;
+  assignees: string[];
+};
 
-export const columns: ColumnDef<Payment>[] = [
+export const columns: ColumnDef<Task>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -163,56 +206,76 @@ export const columns: ColumnDef<Payment>[] = [
     enableSorting: false,
     enableHiding: false,
   },
-    {
+  {
     accessorKey: "name",
     header: "Name",
     cell: ({ row }) => {
-      const index:number = parseInt(row.id);
-      const d = data[index]
-      return <Link href={`/tasks/${d.list_id}/${d.id}`} className="capitalize">{row.getValue("name")}</Link>
+      const list_id = row.original.list_id;
+      const id = row.original.id;
+      return (
+        <Link href={`./${list_id}/${id}`} className="capitalize">
+          {row.getValue("name")}
+        </Link>
+      );
     },
   },
   {
-    accessorKey: "collaborators",
-    header: "Collaborators",
-    cell: ({ row }) => {
-      const collaborator:string[] = row.getValue("collaborators");
-      let coll = collaborator.map((c)=>{
-        return <Avatar className="inline-block">
-          <AvatarImage src={c}></AvatarImage>
-          <AvatarFallback>CN</AvatarFallback>
-        </Avatar>})
-      return coll
+    accessorKey: "description",
+    header: "Description",
+    cell: ({ row }) => (
+      <div className="capitalize">{row.getValue("description")}</div>
+    ),
   },
+  {
+    accessorKey: "assignees",
+    header: "Assignees",
+    cell: ({ row }) => {
+      const collaborators: string[] = row.original.assignees;
+      if (collaborators)
+        return collaborators.map((c_user_id) => {
+          const { data, error } = useUserInfo({ userId: c_user_id });
+          const avatar = data.avatar;
+          return (
+            <Avatar className="inline-block">
+              <AvatarImage src={avatar}></AvatarImage>
+              <AvatarFallback>CN</AvatarFallback>
+            </Avatar>
+          );
+        });
+    },
   },
   {
     accessorKey: "status",
     header: "Status",
-    cell: ({ row }) => (
-      <Badge className="capitalize">{row.getValue("status")}</Badge>
-    ),
+    cell: ({ row }) => {
+      const status: any = row.getValue("status");
+      const status_item = status.status_item.category;
+      return <Badge className="capitalize">{status_item}</Badge>;
+    },
   },
   {
     accessorKey: "deadline",
     header: ({ column }) => {
       return (
-        <Button className=""
+        <Button
+          className=""
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           Deadline
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
-      )
+      );
     },
-    cell: ({ row }) => <div className="lowercase">{row.getValue("deadline")}</div>,
+    cell: ({ row }) => (
+      <div className="lowercase">{row.getValue("deadline")}</div>
+    ),
   },
-
   {
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const payment = row.original
+      const payment = row.original;
 
       return (
         <DropdownMenu>
@@ -224,32 +287,52 @@ export const columns: ColumnDef<Payment>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
-            >
-              Copy payment ID
-            </DropdownMenuItem>
+            <DropdownMenuItem>Copy payment ID</DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>View customer</DropdownMenuItem>
             <DropdownMenuItem>View payment details</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-      )
+      );
     },
   },
-]
+];
 
-export function DataTableDemo() {
-  const [sorting, setSorting] = React.useState<SortingState>([])
+export function DataTableDemo({ task_list_id }: { task_list_id: string }) {
+  const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
-  )
+  );
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({})
-  const [rowSelection, setRowSelection] = React.useState({})
+    React.useState<VisibilityState>({});
+  const [rowSelection, setRowSelection] = React.useState({});
+
+  const urlPrefix = `/api/task_lists/`;
+  const urlSuffix = `/tasks`;
+  const { data, error } = useSWR(
+    task_list_id ? [urlPrefix, task_list_id, urlSuffix] : null,
+    ([urlPrefix, task_list_id, urlSuffix]) =>
+      fetch(BASE_URL + urlPrefix + task_list_id + urlSuffix, {
+        credentials: "include",
+      }).then((res) => {
+        if (!res.ok) {
+          throw new Error(`Error! Status:${res.status}`);
+        }
+        return res.json();
+      }),
+    { suspense: true, fallbackData: { tasks: [] } }
+  );
+  const dialog_data: Task[] = data.tasks;
+
+  dialog_data.forEach((task) => {
+    // 直接添加 list_id 属性到每个 Task 对象
+    task.list_id = task_list_id;
+  });
+
+  console.log("dialog_data_with_list_id", dialog_data);
 
   const table = useReactTable({
-    data,
+    data: dialog_data,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -265,14 +348,16 @@ export function DataTableDemo() {
       columnVisibility,
       rowSelection,
     },
-  })
+  });
 
   return (
     <div className="w-full">
       <div className="flex items-center py-4">
         <Input
           placeholder="Filter deadline..."
-          value={(table.getColumn("deadline")?.getFilterValue() as string) ?? ""}
+          value={
+            (table.getColumn("deadline")?.getFilterValue() as string) ?? ""
+          }
           onChange={(event) =>
             table.getColumn("deadline")?.setFilterValue(event.target.value)
           }
@@ -300,7 +385,7 @@ export function DataTableDemo() {
                   >
                     {column.id}
                   </DropdownMenuCheckboxItem>
-                )
+                );
               })}
           </DropdownMenuContent>
         </DropdownMenu>
@@ -320,7 +405,7 @@ export function DataTableDemo() {
                             header.getContext()
                           )}
                     </TableHead>
-                  )
+                  );
                 })}
               </TableRow>
             ))}
@@ -380,5 +465,5 @@ export function DataTableDemo() {
         </div>
       </div>
     </div>
-  )
+  );
 }

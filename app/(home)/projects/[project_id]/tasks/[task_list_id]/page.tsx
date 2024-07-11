@@ -1,28 +1,34 @@
-"use client"
+"use client";
 
-import { TaskDialog } from "@/app/(home)/components/taskDialogList"
-import { DataTableDemo } from "@/app/(home)/components/tasksTable"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-
-
+import { TasksBoardView } from "@/app/(home)/tasks/components/taskDialog";
+import { DataTableDemo } from "@/app/(home)/components/tasksTable";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import useTaskList from "@/app/api/useTaskList";
 
 interface IProps {
   params: { task_list_id: string };
 }
 export default function TaskListPage({ params }: IProps) {
   const { task_list_id } = params;
-  return <div>
-    <Tabs defaultValue="board">
-      <TabsList>
-        <TabsTrigger value="board">看板</TabsTrigger>
-        <TabsTrigger value="list">列表</TabsTrigger>
-      </TabsList>
-      <TabsContent value="board">
-        <TaskDialog></TaskDialog>
-      </TabsContent>
-      <TabsContent value="list">
-        <DataTableDemo></DataTableDemo>
-      </TabsContent>
-    </Tabs>
-  </div>;
+  const { data, error } = useTaskList({ task_list_id });
+  const list_name = data.name;
+  return (
+    <div>
+      <Tabs defaultValue="board">
+        <TabsList>
+          <TabsTrigger value="board">看板</TabsTrigger>
+          <TabsTrigger value="list">列表</TabsTrigger>
+        </TabsList>
+        <TabsContent value="board">
+          <TasksBoardView
+            task_list_id={task_list_id}
+            list_name={list_name}
+          ></TasksBoardView>
+        </TabsContent>
+        <TabsContent value="list">
+          <DataTableDemo task_list_id={task_list_id}></DataTableDemo>
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
 }

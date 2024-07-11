@@ -28,7 +28,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useUserStore } from "@/store/userStore";
 import useSWR from "swr";
-import { useUser } from "@/SWRhooks/useUser";
+import { useUserIn } from "@/app/api/useUserIn";
 // import { useToast } from '@/components/ui/use-toast'
 
 interface Props {}
@@ -39,7 +39,7 @@ const formSchema = z.object({
 });
 
 function LoginPage(props: Props) {
-  const {error,trigger} = useUser("/api/auth/login");
+  const { error, trigger } = useUserIn("/api/auth/login");
   // const {toast} = useToast()
   const {} = props;
   const router = useRouter();
@@ -51,16 +51,23 @@ function LoginPage(props: Props) {
     },
   });
 
-  const handleSubmit = async (formData: {username:string,password:string}) => {
+  const handleSubmit = async (formData: {
+    username: string;
+    password: string;
+  }) => {
     console.log(formData);
     await trigger(formData);
-    if(!error) router.push(`dashboard`)
-      else console.log(error);
+    if (!error) router.push(`dashboard`);
+    else console.log(error);
   };
 
   return (
     <>
-    {error&& <pre><code>{JSON.stringify(error,null,2)}</code></pre>}
+      {error && (
+        <pre>
+          <code>{JSON.stringify(error, null, 2)}</code>
+        </pre>
+      )}
       <FolderKanbanIcon size={50} />
       <Card className="w-full max-w-sm">
         <CardHeader>

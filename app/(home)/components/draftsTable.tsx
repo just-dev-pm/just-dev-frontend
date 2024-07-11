@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -12,11 +12,11 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
+} from "@tanstack/react-table";
+import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
 
-import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -25,8 +25,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -34,9 +34,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import Link from "next/link"
-import { draftsData,draftsTablePayment } from "@/lib/Mockdata"
+} from "@/components/ui/table";
+import Link from "next/link";
+import { draftsData, draftsTablePayment } from "@/lib/Mockdata";
 
 const data = draftsData;
 
@@ -45,15 +45,19 @@ export const columns: ColumnDef<draftsTablePayment>[] = [
     accessorKey: "name",
     header: "Name",
     cell: ({ row }) => {
-        const d = data[parseInt(row.id)];
-      return <Link href={`./draft/${d.id}`} className="capitalize">{row.getValue("name")}</Link>
+      const d = data[parseInt(row.id)];
+      return (
+        <Link href={`./draft/${d.id}`} className="capitalize">
+          {row.getValue("name")}
+        </Link>
+      );
     },
   },
   {
     accessorKey: "description",
     header: "Title",
     cell: ({ row }) => {
-      return <div className="capitalize">{row.getValue("description")}</div>
+      return <div className="capitalize">{row.getValue("description")}</div>;
     },
   },
   {
@@ -67,7 +71,7 @@ export const columns: ColumnDef<draftsTablePayment>[] = [
           Email
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
-      )
+      );
     },
     cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
   },
@@ -75,7 +79,7 @@ export const columns: ColumnDef<draftsTablePayment>[] = [
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const payment = row.original
+      const payment = row.original;
 
       return (
         <DropdownMenu>
@@ -97,19 +101,19 @@ export const columns: ColumnDef<draftsTablePayment>[] = [
             <DropdownMenuItem>View payment details</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-      )
+      );
     },
   },
-]
+];
 
 export function DraftsTable() {
-  const [sorting, setSorting] = React.useState<SortingState>([])
+  const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
-  )
+  );
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({})
-  const [rowSelection, setRowSelection] = React.useState({})
+    React.useState<VisibilityState>({});
+  const [rowSelection, setRowSelection] = React.useState({});
 
   const table = useReactTable({
     data,
@@ -128,7 +132,7 @@ export function DraftsTable() {
       columnVisibility,
       rowSelection,
     },
-  })
+  });
 
   return (
     <div className="w-full">
@@ -163,7 +167,7 @@ export function DraftsTable() {
                   >
                     {column.id}
                   </DropdownMenuCheckboxItem>
-                )
+                );
               })}
           </DropdownMenuContent>
         </DropdownMenu>
@@ -183,7 +187,7 @@ export function DraftsTable() {
                             header.getContext()
                           )}
                     </TableHead>
-                  )
+                  );
                 })}
               </TableRow>
             ))}
@@ -239,5 +243,5 @@ export function DraftsTable() {
         </div>
       </div>
     </div>
-  )
+  );
 }
