@@ -7,6 +7,7 @@ import useSWR from "swr";
 import ProjectCard from "./project-card";
 import { useEffect } from "react";
 import useProjectStore from "@/store/projectStore";
+import useMenuTabStore from "@/store/menuTabStore";
 
 interface ProjectsRenderProps {
   projects: Projects;
@@ -43,6 +44,10 @@ export function ProjectRender({ rawProject }: ProjectRenderProps) {
       console.log("data::: ", data);
     }
   }, [data]);
+
+  function onEnterProject() {
+    useMenuTabStore.getState().setValue("project");
+  }
   if (!data) return <Loading />;
-  return <ProjectCard data={data} />;
+  return <ProjectCard data={data} onEnterProject={onEnterProject} />;
 }

@@ -14,35 +14,42 @@ import { BASE_URL } from "@/lib/global";
 import { useUserStore } from "@/store/userStore";
 import { error } from "console";
 import { Separator } from "@/components/ui/separator";
+import useMenuTabStore from "@/store/menuTabStore";
 
 export default function MainMenu() {
-
-  const userId = useUserStore((state) => state.userId);
+  const userId = useUserStore(state => state.userId);
   const user_url = `/api/users/`;
   const { data } = useSWR(
-    userId?[user_url, userId]:null,
+    userId ? [user_url, userId] : null,
     ([url, userId]) =>
       fetch(BASE_URL + url + userId, {
-        credentials: "include"
-      }).then((res) => res.json()),{suspense:true,fallbackData:{username:""}}
+        credentials: "include",
+      }).then(res => res.json()),
+    { suspense: true, fallbackData: { username: "" } }
   );
 
-
   const url = `/api/auth/logout`;
-  const fetcher = (url:string)=> {
-    fetch(url,{
-    method:"POST",
-    credentials:"include"
-}).then((res)=>{
-    if(!res.ok){
-        throw new Error("Error! status:"+res.status)
-    }
-    return res.json()
-})}
-  const {error,trigger} = useSWRMutation(`${BASE_URL}${url}`,fetcher);
-  const logOut = ()=>{
+  const fetcher = (url: string) => {
+    fetch(url, {
+      method: "POST",
+      credentials: "include",
+    }).then(res => {
+      if (!res.ok) {
+        throw new Error("Error! status:" + res.status);
+      }
+      return res.json();
+    });
+  };
+  const { error, trigger } = useSWRMutation(`${BASE_URL}${url}`, fetcher);
+  const logOut = () => {
     trigger();
-    if(error) alert(error)
+    if (error) alert(error);
+  };
+
+  const tabValue = useMenuTabStore(s => s.value);
+  const setTabValue = useMenuTabStore(s => s.setValue);
+  function handleTabValueChange(newValue: string) {
+    setTabValue(newValue as "person" | "project");
   }
   return (
     <nav className="bg-muted overflow-auto p-4 flex flex-col">
@@ -50,19 +57,23 @@ export default function MainMenu() {
         <MenuTitle />
       </header>
       <ul className="py-4 flex flex-col gap-1 grow">
-        <Tabs defaultValue="person">
+        <Tabs
+          defaultValue="person"
+          value={tabValue}
+          onValueChange={handleTabValueChange}
+        >
           <TabsList className="">
             <TabsTrigger value="person">个人空间</TabsTrigger>
             <TabsTrigger value="project">项目空间</TabsTrigger>
           </TabsList>
           <TabsContent value="person">
             <MenuItem href="/projects">项目列表</MenuItem>
-            <Separator className="my-2"/>
+            <Separator className="my-2" />
             <MenuItem href="/dashboard">仪表盘</MenuItem>
             <MenuItem href="/agenda">日程</MenuItem>
             <MenuItem href="/tasks">任务</MenuItem>
             <MenuItem href="/draft">草稿</MenuItem>
-            <Separator className="my-2"/>
+            <Separator className="my-2" />
             <MenuItem href="/inbox">收件箱</MenuItem>
             <MenuItem href="/profile">个人资料</MenuItem>
           </TabsContent>
@@ -78,7 +89,9 @@ export default function MainMenu() {
           </AvatarFallback>
         </Avatar>
         <Button variant={"outline"} asChild>
-          <Link href="/" onClick={logOut}>登出</Link>
+          <Link href="/" onClick={logOut}>
+            登出
+          </Link>
         </Button>
         <LightDarkToggle className="ml-auto" />
       </footer>

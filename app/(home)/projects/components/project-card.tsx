@@ -9,11 +9,19 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Incomplete, Project } from "@/types/project";
 import { CompleteStatusView, InCompleteStatusView } from "./status-view";
+import Link from "next/link";
 
+/**
+ * @params onEnterProject 进入项目: 更改 menuTab
+ */
 interface ProjectCardProps {
   data: Project;
+  onEnterProject: () => void;
 }
-export default function ProjectCard({ data }: ProjectCardProps) {
+export default function ProjectCard({
+  data,
+  onEnterProject,
+}: ProjectCardProps) {
   return (
     <Card>
       <CardHeader>
@@ -30,7 +38,14 @@ export default function ProjectCard({ data }: ProjectCardProps) {
             </Avatar>
             <CardTitle>{data.name}</CardTitle>
           </div>
-          <Button>进入项目</Button>
+          <Button asChild>
+            <Link
+              href={`/projects/${data.id}/dashboard`}
+              onClick={() => onEnterProject()}
+            >
+              进入项目
+            </Link>
+          </Button>
         </div>
         <CardDescription>{data.position}</CardDescription>
       </CardHeader>
