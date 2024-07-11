@@ -1,4 +1,3 @@
-"use client";
 import {
   Dialog,
   DialogContent,
@@ -15,88 +14,82 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input, InputProps } from "@/components/ui/input";
-import { Button, ButtonProps } from "@/components/ui/button";
-import { z } from "zod";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Incomplete, StatusItem, User } from "@/types/user";
-import { FilterUndefined } from "@/lib/type";
+import { z, ZodType } from "zod";
 import { nanoid } from "nanoid";
 import { useUserStore } from "@/store/userStore";
-import { useEffect, useState } from "react";
-import { Textarea, TextareaProps } from "@/components/ui/textarea";
-import { mutate } from "swr";
+import { useEffect } from "react";
+import { User } from "@/types/user";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { DeleteButton } from "./delete-button";
+import { DialogClose } from "@radix-ui/react-dialog";
 
+// 用户数据模型
 export type UserData = Omit<User, "id">;
-
-interface EditProfileFormProps {
-  oldData: UserData;
-  onSubmit: (newData: UserData) => Promise<void>;
-}
-
-/**
- * status_item Schema
- */
-const statusItemSchema = z.object({
-  description: z.string(),
-  name: z.string(),
-});
-
-/**
- * incomplete Schema
- */
-const incompleteSchema = z.object({
-  id: z.string(),
-  status: statusItemSchema,
-});
-
-/**
- * status_pool Schema
- */
-const statusPoolSchema = z.object({
-  complete: statusItemSchema,
-  incomplete: z.array(incompleteSchema),
-});
-
+// 定义表单验证模式
 const formSchema = z.object({
   avatar: z.string().url(),
   username: z.string(),
   email: z.string().email(),
-  status_pool: statusPoolSchema.optional(),
+  status_pool: z
+    .object({
+      complete: z.object({
+        name: z.string(),
+        description: z.string(),
+      }),
+      incomplete: z.array(
+        z.object({
+          id: z.string(),
+          status: z.object({
+            name: z.string(),
+            description: z.string(),
+          }),
+        })
+      ),
+    })
+    .optional(),
 });
-
-const EditProfileForm: React.FC<
-  EditProfileFormProps & Omit<ButtonProps, "onSubmit">
-> = ({ oldData, onSubmit, ...props }) => {
+// 编辑资料表单组件
+const EditProfileForm: React.FC<{
+  oldData: UserData;
+  onSubmit: (newData: UserData) => Promise<void>;
+}> = ({ oldData, onSubmit }) => {
   const userId = useUserStore.getState().userId;
-  const form = useForm<z.infer<typeof formSchema>>({
+
+  const formMethods = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: oldData,
   });
 
+  // 表单重置
   useEffect(() => {
-    form.reset(oldData);
+    formMethods.reset(oldData);
   }, [oldData]);
 
+  // 添加未完成状态
   function handleAddIncompleteStatus() {
-    const oldArray = form.getValues("status_pool.incomplete");
+    const oldArray = formMethods.getValues("status_pool.incomplete");
     const newId = userId + nanoid(25);
+    const newItem = { id: newId, status: { name: "", description: "" } };
+    formMethods.setValue("status_pool.incomplete", [...oldArray, newItem]);
+  }
 
-    const newItem: Incomplete = {
-      id: newId,
-      status: {
-        name: "",
-        description: "",
-      },
-    };
-    form.setValue("status_pool.incomplete", [...oldArray, newItem]);
+  // 删除未完成状态
+  function handleDeleteIncompleteStatus(id: string) {
+    const oldArray = formMethods.getValues("status_pool.incomplete");
+    formMethods.setValue(
+      "status_pool.incomplete",
+      oldArray.filter(({ id: status_id }) => status_id !== id)
+    );
   }
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" {...props}>
+        <Button variant="outline" className="ml-auto">
           编辑资料
         </Button>
       </DialogTrigger>
@@ -107,10 +100,11 @@ const EditProfileForm: React.FC<
             在这里更改你的资料. 当你完成修改时请点击保存.
           </DialogDescription>
         </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
+
+        <Form {...formMethods}>
+          <form onSubmit={formMethods.handleSubmit(onSubmit)}>
             <FormField
-              control={form.control}
+              control={formMethods.control}
               name="avatar"
               render={({ field }) => (
                 <FormItem>
@@ -128,7 +122,7 @@ const EditProfileForm: React.FC<
               )}
             />
             <FormField
-              control={form.control}
+              control={formMethods.control}
               name="username"
               render={({ field }) => (
                 <FormItem>
@@ -141,12 +135,12 @@ const EditProfileForm: React.FC<
                     className="col-span-3"
                     {...field}
                   />
-                  <FormMessage></FormMessage>
+                  <FormMessage />
                 </FormItem>
               )}
             />
             <FormField
-              control={form.control}
+              control={formMethods.control}
               name="email"
               render={({ field }) => (
                 <FormItem>
@@ -160,12 +154,19 @@ const EditProfileForm: React.FC<
                     className="col-span-3"
                     {...field}
                   />
-                  <FormMessage></FormMessage>
+                  <FormMessage />
                 </FormItem>
               )}
             />
+
+            <DialogHeader className="my-4">
+              <DialogTitle>编辑状态池</DialogTitle>
+              <DialogDescription>
+                状态池包含一个完成状态和多个未完成状态
+              </DialogDescription>
+            </DialogHeader>
             <FormField
-              control={form.control}
+              control={formMethods.control}
               name="status_pool.complete.name"
               render={({ field }) => (
                 <FormItem>
@@ -183,7 +184,7 @@ const EditProfileForm: React.FC<
               )}
             />
             <FormField
-              control={form.control}
+              control={formMethods.control}
               name="status_pool.complete.description"
               render={({ field }) => (
                 <FormItem>
@@ -204,30 +205,45 @@ const EditProfileForm: React.FC<
               )}
             />
             <FormField
-              control={form.control}
+              control={formMethods.control}
               name="status_pool.incomplete"
               render={({ field }) => (
                 <FormItem>
-                  {field.value.map((item: Incomplete, index: number) => (
-                    <div key={index}>
+                  {field.value.map(
+                    (
+                      item: {
+                        id: string;
+                        status: { name: string; description: string };
+                      },
+                      index: number
+                    ) => (
                       <StatusGroup
-                        label="incomplete"
-                        labelName="未完成状态"
+                        key={index}
                         index={index}
+                        id={item.id}
                         status={item.status}
+                        handleDeleteIncompleteStatus={
+                          handleDeleteIncompleteStatus
+                        }
                         onChangeName={e => {
                           const newItems = [...field.value];
                           newItems[index].status.name = e.target.value;
-                          form.setValue("status_pool.incomplete", newItems);
+                          formMethods.setValue(
+                            "status_pool.incomplete",
+                            newItems
+                          );
                         }}
                         onChangeDescription={e => {
                           const newItems = [...field.value];
                           newItems[index].status.description = e.target.value;
-                          form.setValue("status_pool.incomplete", newItems);
+                          formMethods.setValue(
+                            "status_pool.incomplete",
+                            newItems
+                          );
                         }}
                       />
-                    </div>
-                  ))}
+                    )
+                  )}
                 </FormItem>
               )}
             />
@@ -239,7 +255,9 @@ const EditProfileForm: React.FC<
               >
                 添加未完成态
               </Button>
-              <Button type="submit">保存更改</Button>
+              <Button type="submit" asChild>
+                <DialogClose>保存更改</DialogClose>
+              </Button>
             </DialogFooter>
           </form>
         </Form>
@@ -248,55 +266,50 @@ const EditProfileForm: React.FC<
   );
 };
 
-type OnChange = (
-  e: Parameters<FilterUndefined<InputProps["onChange"]>>[0]
-) => void;
-interface StatusGroupProps {
-  label: string;
-  labelName: string;
+// 未完成状态组件
+const StatusGroup: React.FC<{
   index: number;
-  status: StatusItem;
-  onChangeName: OnChange;
-  onChangeDescription: FilterUndefined<TextareaProps["onChange"]>;
-}
-export function StatusGroup({
-  label,
-  labelName,
+  id: string;
+  status: { name: string; description: string };
+  onChangeName: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChangeDescription: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  handleDeleteIncompleteStatus: (id: string) => void;
+}> = ({
   index,
+  id,
   status,
   onChangeName,
   onChangeDescription,
-}: StatusGroupProps) {
-  return (
-    <div>
-      <div>
-        <FormLabel htmlFor={label} className="text-right">
-          {labelName}
-        </FormLabel>
-        <Input
-          id={`incomplete-${index}`}
-          placeholder={`${labelName} ${index + 1}`}
-          className="col-span-3"
-          value={status.name}
-          onChange={onChangeName}
-        />
-        <FormMessage />
-      </div>
-      <div>
-        <FormLabel htmlFor={label} className="text-right">
-          描述
-        </FormLabel>
-        <Textarea
-          id={`${label}-${index}`}
-          placeholder={`${labelName}描述 ${index + 1}`}
-          className="col-span-3"
-          value={status.description}
-          onChange={onChangeDescription}
-        />
-        <FormMessage />
-      </div>
-    </div>
-  );
-}
+  handleDeleteIncompleteStatus,
+}) => (
+  <div>
+    <FormLabel htmlFor={`incomplete-${index}`} className="text-right">
+      未完成状态 {index + 1}
+      <DeleteButton onClick={() => handleDeleteIncompleteStatus(id)} />
+    </FormLabel>
+    <Input
+      id={`incomplete-${index}`}
+      placeholder={`状态名`}
+      className="col-span-3"
+      value={status.name}
+      onChange={onChangeName}
+    />
+    <FormMessage />
+    <FormLabel
+      htmlFor={`incomplete-description-${index}`}
+      className="text-right"
+    >
+      描述
+    </FormLabel>
+    <Textarea
+      id={`incomplete-description-${index}`}
+      placeholder={`描述`}
+      className="col-span-3"
+      value={status.description}
+      onChange={onChangeDescription}
+    />
+    <FormMessage />
+  </div>
+);
 
 export default EditProfileForm;
