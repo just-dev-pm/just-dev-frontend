@@ -5,6 +5,8 @@ import { Project } from "@/types/project";
 import { Project as RawProject, Projects } from "@/types/projects";
 import useSWR from "swr";
 import ProjectCard from "./project-card";
+import { useEffect } from "react";
+import useProjectStore from "@/store/projectStore";
 
 interface ProjectsRenderProps {
   projects: Projects;
@@ -25,7 +27,7 @@ interface ProjectRenderProps {
   rawProject: RawProject;
 }
 export function ProjectRender({ rawProject }: ProjectRenderProps) {
-  console.log(rawProject);
+  const setRipeProject = useProjectStore(state => state.setRipeProject);
   const { data } = useSWR<Project>(
     rawProject.id,
     projectId =>
@@ -35,6 +37,12 @@ export function ProjectRender({ rawProject }: ProjectRenderProps) {
 
     { fallbackData: { id: "", description: "", name: "" } }
   );
+  useEffect(() => {
+    if (data) {
+      setRipeProject(data);
+      console.log("data::: ", data);
+    }
+  }, [data]);
   if (!data) return <Loading />;
   return <ProjectCard data={data} />;
 }

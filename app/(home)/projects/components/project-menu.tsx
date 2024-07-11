@@ -3,9 +3,8 @@
 import { useEffect, useState } from "react";
 import MenuItem from "../../components/menu-item";
 import ProjectsSelect from "./projects-select";
-import { useProjectStore } from "@/store/projectStore";
-import { useShallow } from "zustand/react/shallow";
-import { usePathname } from "next/navigation";
+import useProjectStore from "@/store/projectStore";
+import { usePathname, useRouter } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
 
 export interface IProject {
@@ -15,44 +14,47 @@ export interface IProject {
 
 export default function ProjectMenu() {
   const adaptee = useProjectStore(state => state.projects);
-  const defaultProject = useProjectStore(state => state.defaultId);
-  const setDefaultProject = useProjectStore(state => state.setDefaultId);
-  const idExists = useProjectStore(state => state.idExists);
-  const projects: IProject[] = adaptee.map(({ id, name }) => ({
-    project_id: id,
-    project_name: name,
-  }));
-  // const pathname = usePathname();
-  // useEffect(() => {
-  //   const match = pathname.match(/^\/projects\/([^\/]+).*$/);
-  //   if (match) {
-  //     const project_id = pathname.split("/")[2];
-
-  //     if (project_id === defaultProject && idExists(project_id))
-  //       setDefaultProject(project_id);
-  //   }
-  // });
+  const [selectValue, setSelectValue] = useState<string>("");
+  const projects: IProject[] = adaptee
+    .filter(({ isValid }) => isValid)
+    .map(({ id, name }) => ({
+      project_id: id,
+      project_name: name,
+    }));
+  const pathname = usePathname();
+  const match = pathname.match(/^\/projects\/([^\/]+).*$/);
+  useEffect(() => {
+    if (match) {
+      const project_id = pathname.split("/")[2];
+      setSelectValue(project_id);
+    }
+  }, [match]);
+  const router = useRouter();
 
   function to(path: string) {
-    return `/projects/${defaultProject}${path}`;
+    return `/projects/${selectValue}${path}`;
+  }
+  function handleValueChange(newProjectId: string) {
+    router.push(`/projects/${newProjectId}/dashboard`);
+    setSelectValue(newProjectId);
   }
   return (
     <>
       <ProjectsSelect
         projects={projects}
-        project={defaultProject}
-        setProject={setDefaultProject}
+        value={selectValue}
+        handleValueChange={handleValueChange}
         className="px-4 my-2"
       />
-      {defaultProject && (
+      {!!selectValue && (
         <>
           <MenuItem href={to("/dashboard")}>仪表盘</MenuItem>
-          <Separator className="my-2"/>
+          <Separator className="my-2" />
           <MenuItem href={to("/requirements")}>需求</MenuItem>
           <MenuItem href={to("/agenda")}>日程</MenuItem>
           <MenuItem href={to("/tasks")}>任务</MenuItem>
           <MenuItem href={to("/draft")}>草稿</MenuItem>
-          <Separator className="my-2"/>
+          <Separator className="my-2" />
           <MenuItem href={to("/settings")}>设置</MenuItem>
         </>
       )}

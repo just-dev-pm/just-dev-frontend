@@ -9,21 +9,23 @@ import { ComponentType, Dispatch, SetStateAction } from "react";
 import { IProject } from "./project-menu";
 import { SelectTriggerProps } from "@radix-ui/react-select";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface IProjectsSelect extends SelectTriggerProps {
   projects: IProject[];
-  project: string | undefined;
-  setProject: (id: string) => void;
+  value: string;
+  handleValueChange: (newProjectId: string) => void;
 }
 export default function ProjectsSelect({
   projects,
-  project,
-  setProject,
+  value,
+  handleValueChange,
   className,
   ...props
 }: IProjectsSelect) {
   return (
-    <Select value={project} onValueChange={setProject}>
+    <Select value={value} onValueChange={handleValueChange}>
       <SelectTrigger
         className={cn("w-[180px] focus:ring-0 focus:ring-offset-0", className)}
         {...props}

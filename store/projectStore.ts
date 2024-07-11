@@ -1,44 +1,37 @@
 "use client";
+
+import { Project } from "@/types/project";
+import { Project as RawProject } from "@/types/projects";
 import { create } from "zustand";
-import { immer } from "zustand/middleware/immer";
-import { persist } from "zustand/middleware";
-
-interface Project {
-  id: string;
-  name: string;
+interface RipeProject extends Project {
+  isValid: boolean;
 }
-
 interface ProjectStore {
-  projects: Project[];
-  defaultId: string;
-  setDefaultId: (id: string) => void;
-  addProject: (id: string, name: string) => void;
-  getProjectNameById: (id: string) => string | undefined;
-  getProjectList: () => Project[];
-  idExists: (id: string) => boolean;
+  projects: RipeProject[];
+  setRawProjects: (rawProjects: RawProject[]) => void;
+  setRipeProject: (ripeProject: Project) => void;
 }
 
-export const useProjectStore = create<ProjectStore>()(
-  immer(
-    persist(
-      (set, get) => ({
-        projects: [{id:"1",name:"Just-dev"},{id:"2",name:"Nymph"}],
-        defaultId: "",
-        setDefaultId: (id: string) =>
-          set(state => {
-            state.defaultId = id;
-          }),
-        addProject: (id: string, name: string) =>
-          set(state => {
-            state.projects.push({ id, name });
-          }),
-        getProjectNameById: (id: string) =>
-          get().projects.find(project => project.id === id)?.name,
-        getProjectList: () => get().projects,
-        idExists: (id: string) =>
-          get().projects.some(project => project.id === id),
-      }),
-      { name: "project-store-1" }
-    )
-  )
-);
+const useProjectStore = create<ProjectStore>()(set => ({
+  projects: [],
+  setRawProjects: (rawProjects: RawProject[]) => {
+    const projects: RipeProject[] = rawProjects.map(rawProject => ({
+      ...rawProject,
+      name: "",
+      description: "",
+      isValid: false,
+    }));
+    set({ projects });
+  },
+  setRipeProject: (fullProject: Project) => {
+    set(state => ({
+      projects: state.projects.map(project =>
+        project.id === fullProject.id
+          ? { ...project, isValid: true, ...fullProject }
+          : project
+      ),
+    }));
+  },
+}));
+
+export default useProjectStore;
