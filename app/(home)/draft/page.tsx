@@ -13,7 +13,6 @@ import { DraftsDialog } from "./components/draftsDialog";
 export default function DraftPage() {
   const userId = useUserStore((stats) => stats.userId);
   const { data, error } = useUserDrafts({ user_id: userId });
-  const hostUrl = "ws://localhost:1234/ws/";
   const drafts = data.drafts;
   return error ? (
     <div>{error}</div>

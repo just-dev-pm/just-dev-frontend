@@ -1,26 +1,24 @@
 import { BASE_URL } from "@/lib/global";
 import useSWRMutation from "swr/mutation";
 
-/** @key [/api/users,{user_id},/drafts] */
+/** @key [/api/projects,{project_id},/drafts] */
 
-export function useUserDraftCreate({
-  user_id,
-  name,
+export function useProjectDraftCreate({
+  project_id,
 }: {
-  user_id: string;
-  name: string;
+  project_id: string;
 }) {
-  const urlPrefix = `/api/users/`;
+  const urlPrefix = `/api/projects/`;
   const urlSuffix = `/drafts`;
   const { data, error, trigger } = useSWRMutation(
-    user_id ? [urlPrefix, user_id, urlSuffix] : null,
-    ([urlPrefix, draft_id, urlSuffix]) =>
+    project_id ? [urlPrefix, project_id, urlSuffix] : null,
+    ([urlPrefix, draft_id, urlSuffix],arg:{arg:string}) =>
       fetch(BASE_URL + urlPrefix + draft_id + urlSuffix, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(name),
+        body: JSON.stringify(arg),
         credentials: "include",
       }).then((res) => {
         if (!res.ok) {

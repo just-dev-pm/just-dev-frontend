@@ -1,5 +1,6 @@
 'use client'
 
+import { DraftsDialog } from "@/app/(home)/draft/components/draftsDialog";
 import DraftsView from "@/app/(home)/draft/components/draftsView";
 import useProjectDrafts from "@/app/api/Draft/get-project-drafts";
 import { Button } from "@/components/ui/button";
@@ -18,7 +19,14 @@ export default function DraftPage({params}:IProps) {
   return <div>
       <div className="flex justify-between">
         <Label className="font-bold text-xl">草稿总览</Label>
-        <Button>新增草稿</Button>
+        <DraftsDialog
+          project={{
+            isProject: true,
+            project_id,
+          }}
+        >
+          新增草稿
+        </DraftsDialog>
       </div>
       <DraftsView drafts={drafts}></DraftsView>
   </div>
