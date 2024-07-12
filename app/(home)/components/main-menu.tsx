@@ -41,6 +41,9 @@ export default function MainMenu() {
   const { error, trigger } = useSWRMutation(`${BASE_URL}${url}`, fetcher);
   const logOut = () => {
     trigger();
+    // cookie 过期
+    document.cookie = "id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    useUserStore.persist.clearStorage();
     if (error) alert(error);
   };
 
