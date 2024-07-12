@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { DraftsCard } from "./draftsCard";
 
 interface Draft{
@@ -8,7 +9,9 @@ interface Draft{
 export default function DraftsView({drafts}:{drafts:Draft[]}){
     return <>
         {drafts.map(draft=>{
-        return <DraftsCard draft={draft}></DraftsCard>
+        return <Link href={`./draft/${draft.id}`}>
+            <DraftsCard draft={draft}></DraftsCard>
+        </Link>
     })}
     </>
 

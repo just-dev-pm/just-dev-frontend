@@ -20,6 +20,7 @@ type Props = {
   tasks: { id: string; name: string }[];
   dialogMessage: string;
   dialogMembers: { id: string }[];
+  project: { isProject: boolean; projectId: string };
 };
 
 function TasksList({
@@ -27,6 +28,7 @@ function TasksList({
   tasks,
   dialogMessage,
   dialogMembers,
+  project,
 }: Props) {
   const path = usePathname();
   const [isShow, setShow] = React.useState(true);
@@ -66,6 +68,7 @@ function TasksList({
         </CardContent>
         <CardFooter>
           <TaskDialog
+            project={project}
             message={dialogMessage}
             members={dialogMembers}
           ></TaskDialog>

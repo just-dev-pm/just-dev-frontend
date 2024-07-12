@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -16,6 +18,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { ToastAction } from "@/components/ui/toast";
+import { toast, useToast } from "@/components/ui/use-toast";
 import { BASE_URL } from "@/lib/global";
 import { useUserStore } from "@/store/userStore";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -35,11 +39,15 @@ type Data = {
 };
 
 export default function InviteDialog({ project_id }: { project_id: string }) {
+  const { toast } = useToast();
   const invitor_id = useUserStore((stats) => stats.userId);
   const url = `/api/invitation/generate`;
-  const fetcher = (url: string, { arg }: { arg: Data }) => {
+  const fetcher = (url: string, { arg }: { arg: Data }) =>
     fetch(url, {
       method: "POST",
+      headers:{
+        "Content-Type":"application/json;charset=UTF-8"
+      },
       body: JSON.stringify(arg),
       credentials: "include",
     }).then((res) => {
@@ -48,8 +56,23 @@ export default function InviteDialog({ project_id }: { project_id: string }) {
       }
       return res.json();
     });
-  };
-  const { data, trigger } = useSWRMutation(`${BASE_URL}${url}`, fetcher);
+  const { trigger } = useSWRMutation(`${BASE_URL}${url}`, fetcher, {
+    onSuccess: (data) => {
+      // console.log(data);
+      toast({
+        title: "",
+        description: JSON.stringify(data.invitation_token),
+        action: (
+          <ToastAction
+            altText="Copy"
+            onClick={() => navigator.clipboard.writeText(data.invitation_token)}
+          >
+            Copy
+          </ToastAction>
+        ),
+      });
+    },
+  });
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -60,7 +83,7 @@ export default function InviteDialog({ project_id }: { project_id: string }) {
   async function onSubmit(value: z.infer<typeof formSchema>) {
     const invitee_id = value.invitee_id;
     await trigger({ invitor_id, invitee_id, project_id });
-    console.log(data);
+    // if(!data) return <div>loading...</div>
   }
 
   return (

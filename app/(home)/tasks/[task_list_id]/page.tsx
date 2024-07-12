@@ -17,7 +17,7 @@ export default function TaskListPage({ params }: IProps) {
   const { data, error } = useTaskList({ task_list_id });
   const list_name = data.name;
 
-  return (
+  return error ? <div>{error}</div> :
     <div className="max-h-screen">
       <Tabs defaultValue="board">
         <TabsList>
@@ -26,6 +26,7 @@ export default function TaskListPage({ params }: IProps) {
         </TabsList>
         <TabsContent value="board">
           <TasksBoardView
+            project={{isProject:false,projectId:"-1"}}
             task_list_id={task_list_id}
             list_name={list_name}
           ></TasksBoardView>
@@ -40,5 +41,5 @@ export default function TaskListPage({ params }: IProps) {
         </Button>
       </div>
     </div>
-  );
+  
 }

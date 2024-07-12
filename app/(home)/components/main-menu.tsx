@@ -15,18 +15,12 @@ import { useUserStore } from "@/store/userStore";
 import { error } from "console";
 import { Separator } from "@/components/ui/separator";
 import useMenuTabStore from "@/store/menuTabStore";
+import { useUserInfo } from "@/app/api/useUserInfo";
+import { AvatarImage } from "@radix-ui/react-avatar";
 
 export default function MainMenu() {
   const userId = useUserStore(state => state.userId);
-  const user_url = `/api/users/`;
-  const { data } = useSWR(
-    userId ? [user_url, userId] : null,
-    ([url, userId]) =>
-      fetch(BASE_URL + url + userId, {
-        credentials: "include",
-      }).then(res => res.json()),
-    { suspense: true, fallbackData: { username: "" } }
-  );
+  const {data:user_data,error:user_error} = useUserInfo({userId}) 
 
   const url = `/api/auth/logout`;
   const fetcher = (url: string) => {
@@ -84,8 +78,9 @@ export default function MainMenu() {
       </ul>
       <footer className="flex gap-2 items-center">
         <Avatar>
+          {user_data.avatar && <AvatarImage src={user_data.avatar}></AvatarImage>}
           <AvatarFallback className="bg-pink-300 dark:bg-pink-800 select-none">
-            {data.username}
+            {(user_data.username as string).substring(0,2)}
           </AvatarFallback>
         </Avatar>
         <Button variant={"outline"} asChild>

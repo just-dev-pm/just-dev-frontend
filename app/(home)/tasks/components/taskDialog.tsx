@@ -8,9 +8,11 @@ import { Task } from "@/types/tasks_list/tasks";
 export function TasksBoardView({
   task_list_id,
   list_name,
+  project,
 }: {
   task_list_id: string;
   list_name: string;
+  project:{isProject:boolean,projectId:string}
 }) {
   const urlPrefix = `/api/task_lists/`;
   const urlSuffix = `/tasks`;
@@ -37,6 +39,7 @@ export function TasksBoardView({
           tasks={dialog_tasks}
           dialogMessage={task.name}
           dialogMembers={task.assignees}
+          project={project}
         ></TasksList>
       ))}
       <Button className="w-80">

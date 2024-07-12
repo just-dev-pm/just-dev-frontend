@@ -6,10 +6,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import useTaskList from "@/app/api/useTaskList";
 
 interface IProps {
-  params: { task_list_id: string };
+  params: {
+    project_id: string;
+    task_list_id: string;
+  };
 }
 export default function TaskListPage({ params }: IProps) {
-  const { task_list_id } = params;
+  const { project_id, task_list_id } = params;
   const { data, error } = useTaskList({ task_list_id });
   const list_name = data.name;
   return (
@@ -23,6 +26,10 @@ export default function TaskListPage({ params }: IProps) {
           <TasksBoardView
             task_list_id={task_list_id}
             list_name={list_name}
+            project={{
+              isProject: true,
+              projectId: project_id,
+            }}
           ></TasksBoardView>
         </TabsContent>
         <TabsContent value="list">

@@ -8,12 +8,13 @@ import useSWR from "swr";
 
 interface IProps {
   params: {
+    project_id: string
     task_list_id: string;
     task_id: string;
   };
 }
 export default function ConcreteTaskPage({ params }: IProps) {
-  const { task_list_id, task_id } = params;
+  const { project_id,task_list_id, task_id } = params;
   const urlPrefix = `/api/task_lists/`;
   const urlSuffix = `/tasks`;
   const { data, error } = useSWR(

@@ -13,18 +13,8 @@ const userData = {
   avatar: "https://github.com/shadcn.png",
 };
 export default function ProfilePage() {
-  const userId = useUserStore.getState().userId;
-  //console.log(userId);
-  const url = `/api/users`;
-  const { data, error } = useSWR(
-    url,
-    url =>
-      fetch(`${BASE_URL}${url}/${userId}`, {
-        credentials: "include",
-      }).then(res => res.json()),
-    { suspense: true, fallbackData: { username: "" } }
-  );
-
+  const userId = useUserStore(status => status.userId)
+  const { data, error } = useUserInfo({userId});
   // if (!data) return <div>Loading...</div>
   return error ? (
     <div>{error}</div>

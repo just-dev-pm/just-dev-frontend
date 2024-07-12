@@ -1,14 +1,14 @@
 import { BASE_URL } from "@/lib/global";
 import { useUserStore } from "@/store/userStore";
 import useSWR from "swr";
+import useSWRImmutable from 'swr'
 
 export function useUserInfo(
-  { userId }: { userId?: string } = { userId: undefined }
+  { userId }: { userId: string }
 ) {
-  const user_Id = userId || useUserStore((state) => state.userId);
   const url = `/api/users/`;
-  const { data, error } = useSWR(
-    user_Id ? [url, user_Id] : null,
+  const { data, error } = useSWRImmutable(
+    userId ? [url, userId] : null,
     ([url, user_Id]) =>
       fetch(BASE_URL + url + user_Id, {
         credentials: "include",
