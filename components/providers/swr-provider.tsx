@@ -14,11 +14,11 @@ export const SWRProvider = ({ children }: { children: React.ReactNode }) => {
         suspense: true,
         use: [logger],
         onError: error => {
-          if (error.name === "auth") {
-            throw new Error("验证错误");
-          } else {
-            throw new Error("服务器错误");
-          }
+          // if (error.name === "auth") {
+          //   throw new Error("验证错误");
+          // } else {
+          //   throw new Error("服务器错误");
+          // }
         },
       }}
     >
