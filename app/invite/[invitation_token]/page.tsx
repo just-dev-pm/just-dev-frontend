@@ -2,6 +2,8 @@
 import { useEffect, useState } from "react";
 import InvitationView, { InvitationData } from "../components/invitation-view";
 import useAccepteInvitation from "@/app/api/project/accepte-invitation";
+import { useInvitation } from "@/app/api/project/get-invitation";
+import { useUserStore } from "@/store/userStore";
 
 interface IProps {
   params: { invitation_token: string };
@@ -9,28 +11,33 @@ interface IProps {
 
 export default function InvitePage({ params }: IProps) {
   const { invitation_token } = params;
-  const [data, setData] = useState<InvitationData | null>(null);
-  const {data:invitation_data,error:invitation_error,trigger} = useAccepteInvitation({invitation_token});
-  useEffect(() => {
-    async function fetchInvitation() {
-      // const res = await fetch(`/api/invitation/${invitation_id}`);
-      // const result = await res.json();
-      const result: InvitationData = {
-        invitee: "Dawn Chan",
-        inviter: "Dawn Chan",
-        project: "Just Dev",
-      };
-      setData(result);
-    }
-    fetchInvitation();
-  }, [invitation_token]);
+  const { trigger } = useAccepteInvitation({ invitation_token });
+  const {
+    data: invitation_data,
+    error: invitation_error,
+    mutate,
+  } = useInvitation(invitation_token);
 
-  if (!data)
+  useEffect(() => {
+    mutate();
+  }, []);
+
+  if (!invitation_data?.invitor_id)
     return (
       <div className="flex justify-center items-center min-h-screen">
         Loading...
       </div>
     );
 
-  return <InvitationView data={data} onJoin={()=>{trigger()}}/>;
+  return (
+    <InvitationView
+      data={{
+        ...invitation_data,
+        invitee_id: useUserStore.getState().userId,
+      }}
+      onJoin={() => {
+        trigger();
+      }}
+    />
+  );
 }
