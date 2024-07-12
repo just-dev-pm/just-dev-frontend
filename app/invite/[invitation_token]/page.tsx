@@ -1,15 +1,16 @@
 "use client";
 import { useEffect, useState } from "react";
 import InvitationView, { InvitationData } from "../components/invitation-view";
+import useAccepteInvitation from "@/app/api/project/accepte-invitation";
 
 interface IProps {
-  params: { invitation_id: string };
+  params: { invitation_token: string };
 }
 
 export default function InvitePage({ params }: IProps) {
-  const { invitation_id } = params;
+  const { invitation_token } = params;
   const [data, setData] = useState<InvitationData | null>(null);
-
+  const {data:invitation_data,error:invitation_error,trigger} = useAccepteInvitation({invitation_token});
   useEffect(() => {
     async function fetchInvitation() {
       // const res = await fetch(`/api/invitation/${invitation_id}`);
@@ -22,7 +23,7 @@ export default function InvitePage({ params }: IProps) {
       setData(result);
     }
     fetchInvitation();
-  }, [invitation_id]);
+  }, [invitation_token]);
 
   if (!data)
     return (
@@ -31,5 +32,5 @@ export default function InvitePage({ params }: IProps) {
       </div>
     );
 
-  return <InvitationView data={data} />;
+  return <InvitationView data={data} onJoin={()=>{trigger()}}/>;
 }

@@ -20,7 +20,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { ToastAction } from "@/components/ui/toast";
 import { toast, useToast } from "@/components/ui/use-toast";
-import { BASE_URL } from "@/lib/global";
+import { BASE_URL, CLIENT_URL } from "@/lib/global";
 import { useUserStore } from "@/store/userStore";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus } from "lucide-react";
@@ -65,7 +65,7 @@ export default function InviteDialog({ project_id }: { project_id: string }) {
         action: (
           <ToastAction
             altText="Copy"
-            onClick={() => navigator.clipboard.writeText(data.invitation_token)}
+            onClick={() => navigator.clipboard.writeText(CLIENT_URL+"/invite/"+data.invitation_token)}
           >
             Copy
           </ToastAction>
