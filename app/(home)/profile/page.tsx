@@ -33,9 +33,6 @@ export default function ProfilePage() {
       <Suspense fallback={<div>loading...</div>}>
         <ProfileView userData={data} />
       </Suspense>
-      <Suspense fallback={<div>loading...</div>}>
-        <ProfileView userData={data} />
-      </Suspense>
     </>
   );
 }
