@@ -6,6 +6,7 @@ import ProjectsSelect from "./projects-select";
 import useProjectStore from "@/store/projectStore";
 import { usePathname, useRouter } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
+import { useMyProjects } from "@/app/api/project/get-my-projects";
 
 export interface IProject {
   project_id: string;
@@ -13,14 +14,8 @@ export interface IProject {
 }
 
 export default function ProjectMenu() {
-  const adaptee = useProjectStore(state => state.projects);
   const [selectValue, setSelectValue] = useState<string>("");
-  const projects: IProject[] = adaptee
-    .filter(({ isValid }) => isValid)
-    .map(({ id, name }) => ({
-      project_id: id,
-      project_name: name,
-    }));
+
   const pathname = usePathname();
   const match = pathname.match(/^\/projects\/([^\/]+).*$/);
   useEffect(() => {
@@ -38,10 +33,12 @@ export default function ProjectMenu() {
     router.push(`/projects/${newProjectId}/dashboard`);
     setSelectValue(newProjectId);
   }
+
+  const { data } = useMyProjects();
   return (
     <>
       <ProjectsSelect
-        projects={projects}
+        projects={data?.projects ?? []}
         value={selectValue}
         handleValueChange={handleValueChange}
         className="px-4 my-2"

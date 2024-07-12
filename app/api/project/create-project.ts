@@ -1,3 +1,4 @@
+"use client";
 import { BASE_URL } from "@/lib/global";
 import { Project } from "@/types/project";
 import { CreateProjectFormSchema } from "@/types/project/create-project-form";

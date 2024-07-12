@@ -1,3 +1,4 @@
+"use client";
 import { UserData } from "@/app/(home)/profile/components/edit-profile-form";
 import { useToast } from "@/components/ui/use-toast";
 import { BASE_URL } from "@/lib/global";

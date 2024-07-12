@@ -8,19 +8,23 @@ import Link from "next/link";
 import ProjectsSelect from "../projects/components/projects-select";
 import ProjectMenu from "../projects/components/project-menu";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 import useSWRMutation from "swr/mutation";
 import { BASE_URL } from "@/lib/global";
 import { useUserStore } from "@/store/userStore";
 import { error } from "console";
 import { Separator } from "@/components/ui/separator";
 import useMenuTabStore from "@/store/menuTabStore";
+import { useEffect } from "react";
+import { useMyProjects } from "@/app/api/project/get-my-projects";
+import { Project } from "@/types/projects";
+import { useProject } from "@/app/api/project/get-project";
 import { useUserInfo } from "@/app/api/useUserInfo";
 import { AvatarImage } from "@radix-ui/react-avatar";
 
 export default function MainMenu() {
   const userId = useUserStore(state => state.userId);
-  const {data:user_data,error:user_error} = useUserInfo({userId}) 
+  const { data: user_data, error: user_error } = useUserInfo({ userId });
 
   const url = `/api/auth/logout`;
   const fetcher = (url: string) => {
@@ -45,6 +49,11 @@ export default function MainMenu() {
   function handleTabValueChange(newValue: string) {
     setTabValue(newValue as "person" | "project");
   }
+  const { mutateMyProjects } = useMyProjects();
+  useEffect(() => {
+    mutateMyProjects();
+  }, []);
+
   return (
     <nav className="bg-muted overflow-auto p-4 flex flex-col">
       <header className="border-b dark:border-b-black border-b-zinc-300 pb-4">
@@ -78,9 +87,11 @@ export default function MainMenu() {
       </ul>
       <footer className="flex gap-2 items-center">
         <Avatar>
-          {user_data.avatar && <AvatarImage src={user_data.avatar}></AvatarImage>}
+          {user_data.avatar && (
+            <AvatarImage src={user_data.avatar}></AvatarImage>
+          )}
           <AvatarFallback className="bg-pink-300 dark:bg-pink-800 select-none">
-            {(user_data.username as string).substring(0,2)}
+            {(user_data.username as string).substring(0, 2)}
           </AvatarFallback>
         </Avatar>
         <Button variant={"outline"} asChild>

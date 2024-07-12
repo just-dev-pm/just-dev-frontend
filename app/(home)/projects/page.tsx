@@ -1,33 +1,17 @@
 "use client";
 
-import useSWRImmutable from "swr/immutable";
-import { fakeProjects } from "@/lib/Mockdata";
-import { useUserStore } from "@/store/userStore";
-import { BASE_URL } from "@/lib/global";
-import { Projects } from "@/types/projects";
 import ProjectsRender from "./components/projects-render";
 import Loading from "@/components/ui/loading";
-import { useEffect } from "react";
-import useProjectStore from "@/store/projectStore";
-import { Button } from "@/components/ui/button";
 import CreateProjectController from "./components/create-project-controller";
+import { useMyProjects } from "@/app/api/project/get-my-projects";
+import { useEffect } from "react";
 
 export default function ProjectsPage() {
-  const userId = useUserStore.getState().userId;
-  const setRawProjects = useProjectStore(state => state.setRawProjects);
-  const { data, error, isLoading } = useSWRImmutable<Projects>(
-    `/api/users/${userId}/projects`,
-    url =>
-      fetch(`${BASE_URL}${url}`, {
-        credentials: "include",
-      }).then(res => res.json()),
-    { fallbackData: { projects: [] } }
-  );
+  const { data, mutateMyProjects, isLoading } = useMyProjects();
   useEffect(() => {
-    if (data?.projects.length) {
-      setRawProjects(data.projects);
-    }
-  }, [data]);
+    mutateMyProjects();
+  }, []);
+
   if (!data || isLoading) return <Loading />;
   if (data?.projects.length === 0)
     return (
@@ -39,9 +23,7 @@ export default function ProjectsPage() {
         </h3>
       </div>
     );
-  return error ? (
-    <div>{error}</div>
-  ) : (
+  return (
     <div className="flex flex-col gap-4">
       <CreateProjectController />
       <div className="grid xl:grid-cols-[1fr_1fr_1fr]  gap-4">

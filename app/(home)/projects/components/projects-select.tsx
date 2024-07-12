@@ -11,9 +11,11 @@ import { SelectTriggerProps } from "@radix-ui/react-select";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import ProjectNameRender from "./project-name-render";
+import { Project } from "@/types/projects";
 
 interface IProjectsSelect extends SelectTriggerProps {
-  projects: IProject[];
+  projects: Project[];
   value: string;
   handleValueChange: (newProjectId: string) => void;
 }
@@ -35,8 +37,8 @@ export default function ProjectsSelect({
       <SelectContent>
         {projects.map((project, index) => {
           return (
-            <SelectItem key={index} value={project.project_id}>
-              {project.project_name}
+            <SelectItem key={index} value={project.id}>
+              <ProjectNameRender id={project.id} />
             </SelectItem>
           );
         })}
