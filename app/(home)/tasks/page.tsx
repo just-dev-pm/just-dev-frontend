@@ -27,7 +27,7 @@ const fakeData = {
 };
 
 const TaskListsPage: React.FC = () => {
-  const userId = useUserStore((stats) => stats.userId);
+  const userId = useUserStore(stats => stats.userId);
   const urlPrefix = `/api/users/`;
   const urlSuffix = `/task_lists`;
   const { data, error } = useSWR(
@@ -35,7 +35,7 @@ const TaskListsPage: React.FC = () => {
     ([urlPrefix, userId, urlSuffix]) =>
       fetch(BASE_URL + urlPrefix + userId + urlSuffix, {
         credentials: "include",
-      }).then((res) => {
+      }).then(res => {
         if (!res.ok) {
           throw new Error(`Error! Status:${res.status}`);
         }
@@ -43,8 +43,13 @@ const TaskListsPage: React.FC = () => {
       }),
     { suspense: true, fallbackData: { task_lists: [] } }
   );
-  return error ? <div>{error}</div> : 
-  <TaskListOverrall taskLists={data.task_lists} />;
+  return error ? (
+    <div>{error}</div>
+  ) : (
+    <div>
+      <TaskListOverrall taskLists={data.task_lists} />
+    </div>
+  );
 };
 
 export default TaskListsPage;
