@@ -57,7 +57,7 @@ export default function ProjectCard({
       {data.status_pool && (
         <CardContent>
           <div className="flex gap-2">
-            <span className="line-clamp-1">状态池</span>
+            <span className="truncate">状态池</span>
             <CompleteStatusView status={data.status_pool.complete} />
 
             {data.status_pool.incomplete.map((task: Incomplete) => (

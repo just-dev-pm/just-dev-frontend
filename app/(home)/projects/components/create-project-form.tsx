@@ -236,7 +236,18 @@ const CreateProjectForm: React.FC<
               >
                 添加未完成态
               </Button>
-              <Button type="submit">保存更改</Button>
+              <Button
+                type="submit"
+                asChild
+                onClick={e => {
+                  console.log("valid", formMethods.formState.isValid);
+                  if (!formMethods.formState.isValid) {
+                    e.preventDefault();
+                  }
+                }}
+              >
+                <DialogClose>保存更改</DialogClose>
+              </Button>
             </DialogFooter>
           </form>
         </Form>
