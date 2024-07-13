@@ -1,28 +1,15 @@
 "use client";
 
-import useSWR from "swr";
 import { ProfileView } from "./components/profile-view";
-import { BASE_URL } from "@/lib/global";
-import { useUserStore } from "@/store/userStore";
-import { Suspense } from "react";
-import { useUserInfo } from "@/app/api/useUserInfo";
-const userData = {
-  id: "12345",
-  username: "johndoe",
-  email: "johndoe@example.com",
-  avatar: "https://github.com/shadcn.png",
-};
+import { Suspense, useEffect } from "react";
+import Loading from "@/components/ui/loading";
+import { useProfile } from "@/app/api/user/get-profile";
+
 export default function ProfilePage() {
-  const userId = useUserStore(status => status.userId)
-  const { data, error } = useUserInfo({userId});
-  // if (!data) return <div>Loading...</div>
-  return error ? (
-    <div>{error}</div>
-  ) : (
-    <>
-      <Suspense fallback={<div>loading...</div>}>
-        <ProfileView userData={data} />
-      </Suspense>
-    </>
-  );
+  const { profile, mutate } = useProfile();
+  useEffect(() => {
+    mutate();
+  }, []);
+  if (!profile?.id) return <Loading />;
+  return <ProfileView userData={profile} />;
 }

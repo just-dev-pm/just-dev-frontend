@@ -7,36 +7,29 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import EditProfile from "./edit-profile";
 import EditProfileController from "./edit-profile-controller";
+import { User } from "@/types/user";
+import UserAvatar from "./user-avatar";
+import UserId from "./user-id";
 
-export interface IUserData {
-  id: string;
-  username: string;
-  email?: string;
-  avatar?: string;
-}
-export const ProfileView = ({ userData }: { userData: IUserData }) => {
+export const ProfileView = ({ userData }: { userData: User }) => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <Card className="max-w-md w-full bg-white shadow-md rounded-lg">
-        <CardHeader>
-          <div className="flex">
-            <Avatar>
-              <AvatarImage src={userData?.avatar} />
-              <AvatarFallback>DC</AvatarFallback>
-            </Avatar>
-            <EditProfileController className="ml-auto" />
+    <Card className="w-[50%] h-[50%] shadow-md rounded-lg">
+      <CardHeader>
+        <div className="flex justify-center items-center">
+          <div className="flex gap-2 items-center">
+            <UserAvatar avatar={userData?.avatar} className="w-12 h-12" />
+            <div className="flex flex-col gap-1">
+              <div>{userData?.username || ""}</div>
+              <div>
+                ID: <UserId id={userData?.id} />
+              </div>
+            </div>
           </div>
-          <CardTitle>{userData.username}</CardTitle>
-          <CardDescription>User ID: {userData.id}</CardDescription>
-        </CardHeader>
-        <CardContent></CardContent>
-        <CardFooter>
-          <p className="text-center">{userData?.email}</p>
-        </CardFooter>
-      </Card>
-    </div>
+          <EditProfileController className="ml-auto" />
+        </div>
+      </CardHeader>
+      <CardContent>邮箱: {userData?.email}</CardContent>
+    </Card>
   );
 };

@@ -6,13 +6,13 @@ import useSWRImmutable from "swr/immutable";
 
 export const useProfile = () => {
   const userId = useUserStore.getState().userId;
-  const { data: profile, mutate } = useSWRImmutable<UserData>(
+  const { data: profile, mutate } = useSWRImmutable(
     "/api/users",
     url =>
       fetch(`${BASE_URL}${url}/${userId}`, {
         credentials: "include",
       }).then(res => res.json()),
-    { fallbackData: { username: "", avatar: "", email: "" } }
+    { fallbackData: { username: "", avatar: "", email: "", id: "" } }
   );
   return { profile, mutate };
 };
