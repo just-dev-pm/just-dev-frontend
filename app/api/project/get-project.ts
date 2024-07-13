@@ -1,5 +1,6 @@
 "use client";
 import { BASE_URL } from "@/lib/global";
+import { handleResponse } from "@/lib/handle-response";
 import { useEffect } from "react";
 import useSWRImmutable from "swr/immutable";
 
@@ -10,10 +11,7 @@ export const useProject = (projectId: string) => {
       fetch(`${BASE_URL}${url}${projectId}`, {
         credentials: "include",
       })
-        .then(res => {
-          if (!res.ok) throw new Error();
-          return res;
-        })
+        .then(handleResponse("获取项目信息"))
         .then(res => res.json()),
     { fallbackData: { id: "", description: "", name: "" } }
   );

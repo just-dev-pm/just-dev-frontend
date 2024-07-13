@@ -7,11 +7,11 @@ interface ILayout {
 
 export default function DashboardLayout({ children }: ILayout) {
   return (
-    <div className="grid grid-cols-[250px_1fr] h-screen">
-      <MainMenu />
-      <div className="overflow-auto p-4">
-        <SWRProvider>{children}</SWRProvider>
+    <SWRProvider>
+      <div className="grid grid-cols-[250px_1fr] h-screen">
+        <MainMenu />
+        <div className="overflow-auto p-4">{children}</div>
       </div>
-    </div>
+    </SWRProvider>
   );
 }

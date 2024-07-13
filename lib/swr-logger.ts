@@ -6,6 +6,10 @@ export const logger: Middleware = (useSWRNext: SWRHook) => {
     // 将日志记录器添加到原始 fetcher。
     const extendedFetcher = (...args: Parameters<typeof fetch>) => {
       console.log("SWR Request:", key);
+      // if (fetcher(...args) instanceof Promise<any>) {
+
+      // };
+      // console.log(typeof fetcher(...args));
       return fetcher(...args);
     };
 

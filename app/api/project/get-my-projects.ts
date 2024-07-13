@@ -5,6 +5,7 @@ import { Project, Projects } from "@/types/projects";
 import { useEffect } from "react";
 import useSWRImmutable from "swr/immutable";
 import { mutate } from "swr";
+import { handleResponse } from "@/lib/handle-response";
 
 export const useMyProjects = () => {
   const userId = useUserStore.getState().userId;
@@ -17,7 +18,9 @@ export const useMyProjects = () => {
     ([preUrl, sufUrl]) =>
       fetch(`${BASE_URL}${preUrl + userId + sufUrl}`, {
         credentials: "include",
-      }).then(res => res.json()),
+      })
+        .then(handleResponse("获取用户关联的项目列表"))
+        .then(res => res.json()),
     { fallbackData: { projects: [] } }
   );
 
