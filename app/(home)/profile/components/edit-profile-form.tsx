@@ -31,20 +31,20 @@ import { DialogClose } from "@radix-ui/react-dialog";
 export type UserData = Omit<User, "id">;
 // 定义表单验证模式
 const formSchema = z.object({
-  avatar: z.string().url(),
-  username: z.string(),
+  avatar: z.union([z.literal(""), z.string().url("请输入正确的URL")]),
+  username: z.string().min(1, "用户名不能为空"),
   email: z.string().email(),
   status_pool: z
     .object({
       complete: z.object({
-        name: z.string(),
+        name: z.string().min(1, "状态名不能为空"),
         description: z.string(),
       }),
       incomplete: z.array(
         z.object({
           id: z.string(),
           status: z.object({
-            name: z.string(),
+            name: z.string().min(1, "状态名不能为空"),
             description: z.string(),
           }),
         })
@@ -255,8 +255,22 @@ const EditProfileForm: React.FC<{
               >
                 添加未完成态
               </Button>
-              <Button type="submit" asChild>
-                <DialogClose>保存更改</DialogClose>
+              <Button
+                type="submit"
+                asChild
+                onClick={async () => {
+                  await formMethods.trigger();
+                }}
+              >
+                <DialogClose
+                  onClick={e => {
+                    if (!formMethods.formState.isValid) {
+                      e.preventDefault();
+                    }
+                  }}
+                >
+                  保存更改
+                </DialogClose>
               </Button>
             </DialogFooter>
           </form>
