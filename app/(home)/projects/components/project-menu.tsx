@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import MenuItem from "../../components/menu-item";
 import ProjectsSelect from "./projects-select";
-import useProjectStore from "@/store/projectStore";
 import { usePathname, useRouter } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
 import { useMyProjects } from "@/app/api/project/get-my-projects";

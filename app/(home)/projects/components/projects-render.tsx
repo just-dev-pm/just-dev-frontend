@@ -6,7 +6,6 @@ import { Project as RawProject, Projects } from "@/types/projects";
 import useSWR from "swr";
 import ProjectCard from "./project-card";
 import { useEffect } from "react";
-import useProjectStore from "@/store/projectStore";
 import useMenuTabStore from "@/store/menuTabStore";
 import { AlertDestructive } from "@/components/ui/alert-destructive";
 import { useProject } from "@/app/api/project/get-project";

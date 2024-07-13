@@ -11,6 +11,7 @@ const CreateProjectController: React.FC<Omit<ButtonProps, "onSubmit">> = ({
   const { trigger } = useProjectCreate();
 
   const onSubmit = async (newData: CreateProjectFormSchema) => {
+    console.log("dlsfjd", newData);
     // 处理表单提交逻辑，发送API请求
     await trigger(newData);
   };

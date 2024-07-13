@@ -21,6 +21,7 @@ import { Project } from "@/types/projects";
 import { useProject } from "@/app/api/project/get-project";
 import { useUserInfo } from "@/app/api/useUserInfo";
 import { AvatarImage } from "@radix-ui/react-avatar";
+import { ClearUserInfo } from "@/lib/clear-user-info";
 
 export default function MainMenu() {
   const userId = useUserStore(state => state.userId);
@@ -35,15 +36,13 @@ export default function MainMenu() {
       if (!res.ok) {
         throw new Error("Error! status:" + res.status);
       }
-      return res.json();
+      return res;
     });
   };
   const { error, trigger } = useSWRMutation(`${BASE_URL}${url}`, fetcher);
-  const logOut = () => {
-    trigger();
-    // cookie 过期
-    document.cookie = "id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    useUserStore.persist.clearStorage();
+  const logOut = async () => {
+    await trigger();
+    ClearUserInfo();
     if (error) alert(error);
   };
 

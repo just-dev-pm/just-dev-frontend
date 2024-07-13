@@ -1,4 +1,5 @@
 import { BASE_URL } from "@/lib/global";
+import { handleResponse } from "@/lib/handle-response";
 import useSWRImmutable from "swr/immutable";
 
 export const useInvitation = (token: string) => {
@@ -8,12 +9,9 @@ export const useInvitation = (token: string) => {
       fetch(`${BASE_URL}${url}${token}`, {
         credentials: "include",
       })
-        .then(res => {
-          if (!res.ok) throw new Error();
-          return res;
-        })
+        .then(handleResponse("查看邀请信息时"))
         .then(res => res.json()),
-    { fallbackData: { invitor_id: "", project_id: "" } }
+    { fallbackData: { invitor_id: "", project_name: "" } }
   );
   return { data, error, mutate };
 };

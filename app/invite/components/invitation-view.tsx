@@ -11,7 +11,7 @@ import ProjectNameRender from "@/app/(home)/projects/components/project-name-ren
 export interface InvitationData {
   invitor_id: string;
   invitee_id: string;
-  project_id: string;
+  project_name: string;
 }
 export default function InvitationView({
   data,
@@ -31,10 +31,7 @@ export default function InvitationView({
         </CardHeader>
         <CardContent>
           <UserNameRender id={data.invitor_id} /> 邀请你加入{" "}
-          <span>
-            <ProjectNameRender id={data.project_id} />
-          </span>{" "}
-          项目.
+          <span>{data.project_name}</span> 项目.
         </CardContent>
         <CardFooter>
           <button
