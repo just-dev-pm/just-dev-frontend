@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -12,11 +12,11 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
+} from "@tanstack/react-table";
+import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
 
-import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -25,8 +25,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -34,75 +34,82 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import Link from "next/link"
-import { requirmentData,requirmentTablePayment } from "@/lib/Mockdata"
-import useProjectRequirements from "@/app/api/requirements/get-project-requirements"
+} from "@/components/ui/table";
+import Link from "next/link";
+import { requirmentData, requirmentTablePayment } from "@/lib/Mockdata";
+import useProjectRequirements from "@/app/api/requirements/get-project-requirements";
+import RequirementDropdown from "./requirementsTableDropdown";
+import useRequirementDelete from "@/app/api/requirements/delete-requirement";
 
 const data = requirmentData;
 
-
-export const columns: ColumnDef<requirmentTablePayment>[] = [
-  {
-    accessorKey: "name",
-    header: "Name",
-    cell: ({ row }) => {
-      const id = row.original.id
-      return <Link href={`./requirements/${id}`} className="capitalize">{row.getValue("name")}</Link>
-    },
-  },
-  {
-    accessorKey: "content",
-    header: "Content",
-    cell: ({ row }) => {
-      return <div className="capitalize">{row.getValue("content")}</div>
-    },
-  },
-  {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => {
-      const payment = row.original
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
-            >
-              Copy payment ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )
-    },
-  },
-]
-
-export function RequirementsTable({project_id}:{project_id:string}) {
-  const [sorting, setSorting] = React.useState<SortingState>([])
+export function RequirementsTable({ project_id }: { project_id: string }) {
+  const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
-  )
+  );
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({})
-  const [rowSelection, setRowSelection] = React.useState({})
-  const {data,error} = useProjectRequirements({project_id});
-  
-  const requirements = data.requirements;
+    React.useState<VisibilityState>({});
 
+  const columns: ColumnDef<requirmentTablePayment>[] = [
+    {
+      accessorKey: "name",
+      header: "Name",
+      cell: ({ row }) => {
+        const id = row.original.id;
+        return (
+          <Link href={`./requirements/${id}`} className="capitalize">
+            {row.getValue("name")}
+          </Link>
+        );
+      },
+    },
+    {
+      accessorKey: "content",
+      header: "Content",
+      cell: ({ row }) => {
+        return <div className="capitalize">{row.getValue("content")}</div>;
+      },
+    },
+    {
+      id: "actions",
+      enableHiding: false,
+      cell: ({ row }) => {
+        const id = row.original.id;
+        return (
+          <RequirementDropdown
+            handleDelete={handleDelete}
+            requirement_id={id}
+            project_id={project_id}
+          ></RequirementDropdown>
+        );
+      },
+    },
+  ];
+
+  const [rowSelection, setRowSelection] = React.useState({});
+  const { data, error, mutate } = useProjectRequirements({ project_id });
+  const { trigger } = useRequirementDelete({ project_id });
+  const requirements = data.requirements;
+  async function handleDelete(requirement_id: string) {
+    const newData = {
+      requirements: requirements.filter(
+        ({ id }: { id: string }) => id !== requirement_id
+      ),
+    };
+    mutate(
+      async () => {
+        await trigger(requirement_id);
+        return newData;
+      },
+      {
+        optimisticData: newData,
+      }
+    );
+  }
+  // console.log(requirements);
   const table = useReactTable({
-    data:requirements,
+    data: requirements,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -118,16 +125,16 @@ export function RequirementsTable({project_id}:{project_id:string}) {
       columnVisibility,
       rowSelection,
     },
-  })
+  });
 
   return (
     <div className="w-full">
       <div className="flex items-center py-4">
         <Input
-          placeholder="Filter emails..."
-          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
+          placeholder="Filter name ..."
+          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
+            table.getColumn("name")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
@@ -153,7 +160,7 @@ export function RequirementsTable({project_id}:{project_id:string}) {
                   >
                     {column.id}
                   </DropdownMenuCheckboxItem>
-                )
+                );
               })}
           </DropdownMenuContent>
         </DropdownMenu>
@@ -173,7 +180,7 @@ export function RequirementsTable({project_id}:{project_id:string}) {
                             header.getContext()
                           )}
                     </TableHead>
-                  )
+                  );
                 })}
               </TableRow>
             ))}
@@ -229,5 +236,5 @@ export function RequirementsTable({project_id}:{project_id:string}) {
         </div>
       </div>
     </div>
-  )
+  );
 }

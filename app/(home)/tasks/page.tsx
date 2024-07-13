@@ -5,26 +5,6 @@ import { BASE_URL } from "@/lib/global";
 import { useUserStore } from "@/store/userStore";
 import useSWR from "swr";
 
-const fakeData = {
-  task_lists: [
-    {
-      id: "1",
-      name: "任务列表一",
-      tasks: [
-        { id: "101", assignees: [{ id: "a1" }, { id: "a2" }] },
-        { id: "102", assignees: [{ id: "a3" }] },
-      ],
-    },
-    {
-      id: "2",
-      name: "任务列表二",
-      tasks: [
-        { id: "201", assignees: [{ id: "a4" }] },
-        { id: "202", assignees: [{ id: "a5" }, { id: "a6" }] },
-      ],
-    },
-  ],
-};
 
 const TaskListsPage: React.FC = () => {
   const userId = useUserStore(stats => stats.userId);

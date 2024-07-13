@@ -1,5 +1,6 @@
 import { useToast } from "@/components/ui/use-toast";
 import { BASE_URL } from "@/lib/global";
+import { handleResponse } from "@/lib/handle-response";
 import useSWRMutation from "swr/mutation";
 
 type Prop = {
@@ -30,12 +31,9 @@ export default function useRequirementCreate({
         },
         body: JSON.stringify({ name, content }),
         credentials: "include",
-      }).then((res) => {
-        if (!res.ok) {
-          throw new Error(`Error! Status:${res.status}`);
-        }
-        return res.json();
-      }),
+      })
+        .then(handleResponse("创建需求"))
+        .then((res) => res.json()),
     {
       onError() {
         toast({ description: "创建失败" });

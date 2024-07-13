@@ -97,7 +97,9 @@ export function RequirementDialog({project_id}:{project_id:string}) {
               )}
             />
             <DialogFooter className="flex gap-4">
-              <Button type="submit">立即新建</Button>
+              <DialogClose asChild>
+                <Button type="submit">立即新建</Button>
+              </DialogClose>
               <DialogClose asChild>
                 <Button type="button">退出</Button>
               </DialogClose>
