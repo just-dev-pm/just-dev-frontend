@@ -19,6 +19,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useUserStore } from "@/store/userStore";
@@ -43,10 +44,12 @@ const formSchema = z.object({
 export function DraftsDialog({ project, children }: Props) {
   const isProject = project.isProject;
   const userId = useUserStore((stats) => stats.userId);
-  const { trigger: userDraftCreateTrigger } =
-    useUserDraftCreate({ user_id: userId });
-  const { trigger: projectDraftCreateTrigger } =
-    useProjectDraftCreate({ project_id: project.project_id });
+  const { trigger: userDraftCreateTrigger } = useUserDraftCreate({
+    user_id: userId,
+  });
+  const { trigger: projectDraftCreateTrigger } = useProjectDraftCreate({
+    project_id: project.project_id,
+  });
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -55,12 +58,12 @@ export function DraftsDialog({ project, children }: Props) {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    if(isProject){
-        projectDraftCreateTrigger({name:values.name})
-        mutate(["/api/projects/",project.project_id,"/drafts"])
-    }else{
-        userDraftCreateTrigger({name:values.name})
-        mutate(["/api/users/",userId,"/drafts"])
+    if (isProject) {
+      projectDraftCreateTrigger({ name: values.name });
+      mutate(["/api/projects/", project.project_id, "/drafts"]);
+    } else {
+      userDraftCreateTrigger({ name: values.name });
+      mutate(["/api/users/", userId, "/drafts"]);
     }
   }
 
@@ -81,17 +84,32 @@ export function DraftsDialog({ project, children }: Props) {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>草稿名</FormLabel>
+                  <FormLabel htmlFor="name">草稿名</FormLabel>
                   <FormControl>
-                    <Input placeholder="请输入草稿名" {...field} />
+                    <Input id="name" placeholder="请输入草稿名" {...field} />
                   </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
             <DialogFooter className="mt-4">
-                <DialogClose>
-                    <Button type="submit">保存</Button>
+              <Button
+                asChild
+                type="submit"
+                onClick={async () => {
+                  await form.trigger();
+                }}
+              >
+                <DialogClose
+                  onClick={(event) => {
+                    if (!form.formState.isValid) {
+                      event.preventDefault();
+                    }
+                  }}
+                >
+                  保存
                 </DialogClose>
+              </Button>
             </DialogFooter>
           </form>
         </Form>

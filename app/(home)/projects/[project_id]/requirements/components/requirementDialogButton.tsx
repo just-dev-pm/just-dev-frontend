@@ -98,7 +98,11 @@ export function RequirementDialog({project_id}:{project_id:string}) {
             />
             <DialogFooter className="flex gap-4">
               <DialogClose asChild>
-                <Button type="submit">立即新建</Button>
+                <Button type="submit" onClick={(event)=>{
+                  if(!form.formState.isValid){
+                    event.preventDefault()
+                  }
+                }}>立即新建</Button>
               </DialogClose>
               <DialogClose asChild>
                 <Button type="button">退出</Button>
