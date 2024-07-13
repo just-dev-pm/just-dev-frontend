@@ -34,16 +34,23 @@ import AddTaskButton from "../../components/taskAddButton";
 import { Plus } from "lucide-react";
 import useSWR from "swr";
 import { BASE_URL } from "@/lib/global";
-import { MultiSelector, MultiSelectorContent, MultiSelectorInput, MultiSelectorItem, MultiSelectorList, MultiSelectorTrigger } from "@/components/ui/multi-select";
+import {
+  MultiSelector,
+  MultiSelectorContent,
+  MultiSelectorInput,
+  MultiSelectorItem,
+  MultiSelectorList,
+  MultiSelectorTrigger,
+} from "@/components/ui/multi-select";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Checkbox } from "@/components/ui/checkbox";
-import { toast } from "@/components/ui/use-toast"
-
+import { toast } from "@/components/ui/use-toast";
+import useUsersInProject from "@/app/api/project/get-users-in-project";
 
 type Props = {
   message: string;
   members: { id: string }[];
-  project:{isProject:boolean,projectId:string}
+  project: { isProject: boolean; projectId: string };
 };
 
 const formSchema = z.object({
@@ -52,8 +59,7 @@ const formSchema = z.object({
   member: z.array(z.string()).nonempty("Please select at least one person"),
 });
 
-type Form = z.infer<typeof formSchema>
-
+type Form = z.infer<typeof formSchema>;
 
 //data fetching
 const onSubmit = (data: Form) => {
@@ -65,36 +71,21 @@ const onSubmit = (data: Form) => {
         <code className="text-white">{JSON.stringify(data, null, 2)}</code>
       </pre>
     ),
-  })
+  });
 };
 
 function TaskDialog({ message, members, project }: Props) {
   const form = useForm<Form>({
     resolver: zodResolver(formSchema),
-    defaultValues:{
+    defaultValues: {
       name: "",
       description: "",
       member: [],
     },
-  })
-  const project_id = project.projectId
-  const urlPrefix = `/api/projects/`
-  const urlSuffix = `/users`
-  const {data,error} = useSWR(
-    project_id ? [urlPrefix,project_id,urlSuffix] : null,
-    ([urlPrefix,project_id,urlSuffix]) =>
-      fetch(BASE_URL+ urlPrefix+project_id+urlSuffix,{
-        credentials:"include",
-      }).then((res)=>{
-        if(!res.ok){
-          throw new Error(`Error! Status:${res.status}`);
-        }
-        return res.json();
-      }),
-      {suspense:true}
-  );
-  const users = data.users
-
+  });
+  const project_id = project.projectId;
+  const { data, error } = useUsersInProject({ project_id });
+  const users = data.users;
 
   return (
     <>
@@ -112,8 +103,8 @@ function TaskDialog({ message, members, project }: Props) {
               className="flex flex-col gap-4"
             >
               <DialogHeader>
-                <DialogTitle>Task</DialogTitle>
-                <DialogDescription></DialogDescription>
+                <DialogTitle>新增任务</DialogTitle>
+                <DialogDescription>新增一个任务</DialogDescription>
               </DialogHeader>
 
               <FormField
@@ -121,11 +112,11 @@ function TaskDialog({ message, members, project }: Props) {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Name</FormLabel>
+                    <FormLabel>任务名</FormLabel>
                     <FormControl>
                       <Input
                         id="name"
-                        placeholder="Input the task name"
+                        placeholder="请输入任务名"
                         {...field}
                       ></Input>
                     </FormControl>
@@ -139,11 +130,11 @@ function TaskDialog({ message, members, project }: Props) {
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Description</FormLabel>
+                    <FormLabel>任务描述</FormLabel>
                     <FormControl>
                       <Input
                         id="description"
-                        placeholder="Input the task description"
+                        placeholder="请输入任务描述"
                         {...field}
                       ></Input>
                     </FormControl>
@@ -156,35 +147,56 @@ function TaskDialog({ message, members, project }: Props) {
                 <FormField
                   control={form.control}
                   name="member"
-                  render={({ }) => (
+                  render={({}) => (
                     <FormItem className="w-full">
-                      <FormLabel>Assigned to</FormLabel>
-                        {users.map((user:{id:string,username:string,avatar:string})=>(
-                          <FormField key={user.username} control={form.control} name="member" render={({field})=>{
-                            return (
-                              <FormItem key={user.username} className="flex flex-row items-start space-x-3 space-y-0">
-                                <FormControl>
-                                  <Checkbox 
-                                    checked={field.value?.includes(user.username)}
-                                    onCheckedChange={(checked)=>{
-                                      const newValue =  checked ? field.onChange([...field.value,user.username])
-                                      : field.onChange(
-                                        field.value?.filter(
-                                          (value)=> value !== user.username
-                                        )
-                                      )
-                                      console.log(field.value);
-                                      return newValue
-                                    }}
-                                  />
-                                </FormControl>
-                                <FormLabel className="font-normal">
-                                  {user.username}
-                                </FormLabel>
-                              </FormItem>
-                            )
-                          }}></FormField>
-                        ))}
+                      <FormLabel>指派给</FormLabel>
+                      {users.map(
+                        (user: {
+                          id: string;
+                          username: string;
+                          avatar: string;
+                        }) => (
+                          <FormField
+                            key={user.username}
+                            control={form.control}
+                            name="member"
+                            render={({ field }) => {
+                              return (
+                                <FormItem
+                                  key={user.username}
+                                  className="flex flex-row items-start space-x-3 space-y-0"
+                                >
+                                  <FormControl>
+                                    <Checkbox
+                                      checked={field.value?.includes(
+                                        user.username
+                                      )}
+                                      onCheckedChange={(checked) => {
+                                        const newValue = checked
+                                          ? field.onChange([
+                                              ...field.value,
+                                              user.username,
+                                            ])
+                                          : field.onChange(
+                                              field.value?.filter(
+                                                (value) =>
+                                                  value !== user.username
+                                              )
+                                            );
+                                        console.log(field.value);
+                                        return newValue;
+                                      }}
+                                    />
+                                  </FormControl>
+                                  <FormLabel className="font-normal">
+                                    {user.username}
+                                  </FormLabel>
+                                </FormItem>
+                              );
+                            }}
+                          ></FormField>
+                        )
+                      )}
                       <FormMessage></FormMessage>
                     </FormItem>
                   )}
@@ -194,9 +206,9 @@ function TaskDialog({ message, members, project }: Props) {
               )}
 
               <DialogFooter className="flex gap-4">
-                <Button type="submit">Save</Button>
+                  <Button type="submit">立即新建</Button>
                 <DialogClose asChild>
-                  <Button type="button">Delete</Button>
+                  <Button type="button">退出</Button>
                 </DialogClose>
               </DialogFooter>
             </form>

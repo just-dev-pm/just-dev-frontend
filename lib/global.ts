@@ -3,3 +3,4 @@ export const testBaseUrl = "http://localhost:3000";
 export const hostUrl = "ws://localhost:1234";
 export const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 export const CLIENT_URL = process.env.NEXT_PUBLIC_CLIENT_URL;
+export const HOST_URL = process.env.NEXT_PUBLIC_HOST_URL;

@@ -2,36 +2,37 @@ import { useState, useEffect, useRef, SetStateAction } from "react";
 import { customAlphabet, nanoid } from "nanoid";
 import { YjsClient, Message, MessageAwareness } from "./chat-client";
 import { WebsocketProvider } from "y-websocket";
-import * as Y from 'yjs'
+import * as Y from "yjs";
 
 export default function ChatRoom(props: {
-    roomId: string;
-    user_name: string;
-    doc: Y.Doc
-    provider:WebsocketProvider
-  }){
-    return <ChatDataProvider {...props}></ChatDataProvider>
+  roomId: string;
+  user_name: string;
+  doc: Y.Doc;
+  provider: WebsocketProvider;
+}) {
+  return <ChatDataProvider {...props}></ChatDataProvider>;
 }
 
 function ChatDataProvider({
   roomId,
   user_name,
   provider,
-  doc
+  doc,
 }: {
   roomId: string;
   user_name: string;
-  doc: Y.Doc
-  provider:WebsocketProvider
+  doc: Y.Doc;
+  provider: WebsocketProvider;
 }) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [room, setRoom] = useState(roomId);
   const yjsClientRef = useRef<YjsClient | null>(null);
   const [awarness, setAwarness] = useState<MessageAwareness>(new Map());
-  const [yMessages,setYMessages] = useState(doc.getArray("Chat"))
+  const [yMessages, setYMessages] = useState<Y.Array<unknown> | null>();
 
   useEffect(() => {
+    const messages = doc.getArray("Chat");
     console.log("big bug!");
     //获取用户名
     const username = user_name || customAlphabet("asdasdas", 10)();
@@ -42,15 +43,17 @@ function ChatDataProvider({
     const awareness = provider.awareness;
     awareness.setLocalState({ user: { name: username, color: nanoid() } });
 
-    function onMessagesChange(
-      callback: (
-        event: Y.YArrayEvent<Message>,
-        transaction: Y.Transaction
-      ) => void
-    ) {
-      yMessages.observe(callback);
-    }
-  
+    // function onMessagesChange(
+    //   callback: (
+    //     event: Y.YArrayEvent<Message>,
+    //   ) => void
+    // ) {
+    //   messages.observe((event) => {
+    //     console.log("callback trigerred");
+    //     callback(event as Y.YArrayEvent<Message>);
+    //   });
+    // }
+
     function onAwarenessChange(callback: (state: MessageAwareness) => void) {
       awareness.on("change", (changed: any, origin: any) => {
         if (origin === "local") return; // 自己的操作不触发回调
@@ -58,9 +61,15 @@ function ChatDataProvider({
       });
     }
 
-    setMessages([]);
+    // setMessages([]);
 
-    onMessagesChange((event) => {
+    // onMessagesChange((event) => {
+    //   console.log(event.target.toArray());
+    //   setMessages(event.target.toArray());
+    // });
+
+    messages.observe((event) => {
+      console.log(event.target.toArray());
       setMessages(event.target.toArray());
     });
 
@@ -68,9 +77,8 @@ function ChatDataProvider({
       setAwarness(new Map([...state]));
     });
 
-    return () => {
-
-    };
+    setYMessages(messages);
+    return () => {};
   }, [room]);
 
   function addMessage(text: string) {

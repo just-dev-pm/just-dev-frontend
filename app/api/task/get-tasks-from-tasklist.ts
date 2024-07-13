@@ -3,7 +3,7 @@ import useSWR from "swr";
 
 /** @key [/api/task_lists/,{task_list_id},/tasks] */
 
-export default function useTasksTable({
+export default function useTasksFromTaskList({
   task_list_id,
 }: {
   task_list_id: string;

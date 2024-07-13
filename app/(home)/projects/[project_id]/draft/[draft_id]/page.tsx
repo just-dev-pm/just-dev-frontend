@@ -4,35 +4,33 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 // import { hosturl } from "@/lib/global";
 import ChatRoom from "@/app/(home)/components/chatRoom";
 import Doc from "@/app/(home)/components/doc";
-// import Whiteboard from "@/app/(home)/components/whiteboard";
+import Whiteboard from "@/app/(home)/components/whiteboard";
 import { useUserStore } from "@/store/userStore";
 import useDraft from "@/app/api/draft/get-draft";
 import { useUserInfo } from "@/app/api/useUserInfo";
 import { WebsocketProvider } from "y-websocket";
-import * as Y from 'yjs'
+import * as Y from "yjs";
 import { useEffect, useState } from "react";
 
 interface IProps {
   params: { draft_id: string };
 }
 export default function ConcreteDraftPage({ params }: IProps) {
-    const { draft_id } = params;
-  const hostUrl = "ws://localhost:3000/ws/drafts/"
-  const [doc,setDoc] = useState<Y.Doc | undefined>(undefined)
-  const [provider,setProvider] = useState<WebsocketProvider | undefined>(undefined)
-  const userId = useUserStore(stats => stats.userId)
+  const { draft_id } = params;
+  const hostUrl = "ws://localhost:3000/ws/drafts/";
+  const [doc, setDoc] = useState<Y.Doc | undefined>(undefined);
+  const [provider, setProvider] = useState<WebsocketProvider | undefined>(
+    undefined
+  );
+  const userId = useUserStore((stats) => stats.userId);
 
-  const {data: draft_data,error:draft_error} = useDraft({draft_id})
-  const {data: user_data,error:user_error} = useUserInfo({userId})
+  const { data: draft_data, error: draft_error } = useDraft({ draft_id });
+  const { data: user_data, error: user_error } = useUserInfo({ userId });
 
   useEffect(() => {
-    const doc = new Y.Doc();
-    const provider = new WebsocketProvider(
-      hostUrl,
-      draft_id,
-      doc
-    )
-    setDoc(doc);
+    const ydoc = new Y.Doc();
+    const provider = new WebsocketProvider(hostUrl, draft_id, ydoc);
+    setDoc(ydoc);
     setProvider(provider);
 
     return () => {
@@ -41,8 +39,7 @@ export default function ConcreteDraftPage({ params }: IProps) {
     };
   }, []);
 
-  return (
-    (doc&&provider) ?
+  return doc && provider ? (
     <Tabs defaultValue="chat">
       <TabsList>
         <TabsTrigger value="chat">聊天</TabsTrigger>
@@ -58,17 +55,17 @@ export default function ConcreteDraftPage({ params }: IProps) {
         ></ChatRoom>
       </TabsContent>
       <TabsContent value="doc">
-        {/* <Doc doc={doc} provider={provider}></Doc> */}
+        <Doc doc={doc} provider={provider}></Doc>
       </TabsContent>
       <TabsContent value="whiteboard">
-        {/* <Whiteboard
-          doc={doc}
-          provider={provider}
+        <Whiteboard
           roomId={draft_id}
           metaId={draft_id}
-        ></Whiteboard> */}
+          hostUrl={hostUrl}
+        ></Whiteboard>
       </TabsContent>
     </Tabs>
-    : <div>wrong!</div>
+  ) : (
+    <div>wrong!</div>
   );
 }

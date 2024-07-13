@@ -9,6 +9,9 @@ export const useProject = (projectId: string) => {
     ["/api/projects/", projectId],
     ([url, projectId]) =>
       fetch(`${BASE_URL}${url}${projectId}`, {
+        headers:{
+          "Content-Type":"application/json; charset=UTF-8"
+        },
         credentials: "include",
       })
         .then(handleResponse("获取项目信息"))

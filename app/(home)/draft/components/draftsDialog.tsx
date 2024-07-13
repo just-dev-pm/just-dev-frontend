@@ -56,10 +56,10 @@ export function DraftsDialog({ project, children }: Props) {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     if(isProject){
-        projectDraftCreateTrigger(values.name)
+        projectDraftCreateTrigger({name:values.name})
         mutate(["/api/projects/",project.project_id,"/drafts"])
     }else{
-        userDraftCreateTrigger(values.name)
+        userDraftCreateTrigger({name:values.name})
         mutate(["/api/users/",userId,"/drafts"])
     }
   }

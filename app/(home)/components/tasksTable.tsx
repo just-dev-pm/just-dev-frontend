@@ -42,137 +42,8 @@ import { number } from "zod";
 import useSWR from "swr";
 import { BASE_URL } from "@/lib/global";
 import { useUserInfo } from "@/app/api/useUserInfo";
-import useTasksTable from "@/app/api/task/get-taskstable";
+import useTasksFromTaskList from "@/app/api/task/get-tasks-from-tasklist";
 
-// const testdata: Task[] = [
-//   {
-//     id: "1",
-//     name: "吃饭",
-//     status: "success",
-//     deadline: "2024-07-09",
-//     collaborators: [
-//       "https://github.com/shadcn.png",
-//       "https://github.com/shadcn.png",
-//     ],
-//     description: "",
-//   },
-//   {
-//     id: "2",
-//     name: "喝水",
-//     status: "success",
-//     deadline: "2024-07-10",
-//     collaborators: [
-//       "https://github.com/shadcn.png",
-//       "https://github.com/shadcn.png",
-//     ],
-//     description: "",
-//   },
-//   {
-//     id: "3",
-//     name: "睡觉",
-//     status: "processing",
-//     deadline: "2024-07-11",
-//     collaborators: [
-//       "https://github.com/shadcn.png",
-//       "https://github.com/shadcn.png",
-//     ],
-//     description: "",
-//   },
-//   {
-//     id: "3",
-//     name: "开发",
-//     status: "success",
-//     deadline: "2024-07-12",
-//     collaborators: [
-//       "https://github.com/shadcn.png",
-//       "https://github.com/shadcn.png",
-//     ],
-//     description: "",
-//   },
-//   {
-//     id: "4",
-//     name: "打电动",
-//     status: "failed",
-//     deadline: "2024-07-12",
-//     collaborators: [
-//       "https://github.com/shadcn.png",
-//       "https://github.com/shadcn.png",
-//     ],
-//     description: "",
-//   },
-//   {
-//     id: "5",
-//     list_id: "2",
-//     name: "打电动",
-//     status: "failed",
-//     deadline: "2024-07-12",
-//     collaborators: [
-//       "https://github.com/shadcn.png",
-//       "https://github.com/shadcn.png",
-//     ],
-//     description: "",
-//   },
-//   {
-//     id: "4",
-//     list_id: "3",
-//     name: "打电动",
-//     status: "failed",
-//     deadline: "2024-07-12",
-//     collaborators: [
-//       "https://github.com/shadcn.png",
-//       "https://github.com/shadcn.png",
-//     ],
-//     description: "",
-//   },
-//   {
-//     id: "2",
-//     list_id: "3",
-//     name: "打电动",
-//     status: "failed",
-//     deadline: "2024-07-12",
-//     collaborators: [
-//       "https://github.com/shadcn.png",
-//       "https://github.com/shadcn.png",
-//     ],
-//     description: "",
-//   },
-//   {
-//     id: "3",
-//     list_id: "2",
-//     name: "打电动",
-//     status: "failed",
-//     deadline: "2024-07-12",
-//     collaborators: [
-//       "https://github.com/shadcn.png",
-//       "https://github.com/shadcn.png",
-//     ],
-//     description: "",
-//   },
-//   {
-//     id: "3",
-//     list_id: "1",
-//     name: "打电动",
-//     status: "failed",
-//     deadline: "2024-07-12",
-//     collaborators: [
-//       "https://github.com/shadcn.png",
-//       "https://github.com/shadcn.png",
-//     ],
-//     description: "",
-//   },
-//   {
-//     id: "2",
-//     list_id: "1",
-//     name: "打电动",
-//     status: "failed",
-//     deadline: "2024-07-12",
-//     collaborators: [
-//       "https://github.com/shadcn.png",
-//       "https://github.com/shadcn.png",
-//     ],
-//     description: "",
-//   },
-// ];
 
 export type Task = {
   id: string;
@@ -308,7 +179,11 @@ export function TasksTable({ task_list_id }: { task_list_id: string }) {
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
 
+<<<<<<< Updated upstream
   const { data, error } = useTasksTable({ task_list_id });
+=======
+  const {data,error} = useTasksFromTaskList({task_list_id})
+>>>>>>> Stashed changes
   const dialog_data: Task[] = data.tasks;
 
   dialog_data.forEach(task => {

@@ -4,15 +4,14 @@ import * as Y from 'yjs'
 import 'tldraw/tldraw.css'
 import { WebsocketProvider } from "y-websocket";
 
-function Whiteboard(props:{roomId:string,metaId:string,doc:Y.Doc,provider:WebsocketProvider}){
+function Whiteboard(props:{roomId:string,metaId:string,hostUrl:string}){
     return <TlDrawDataProvider {...props}></TlDrawDataProvider>
 }
 
 
-function TlDrawDataProvider({roomId,metaId,doc,provider}:{roomId:string,metaId:string,doc:Y.Doc,provider:WebsocketProvider}){
+function TlDrawDataProvider({roomId,metaId,hostUrl}:{roomId:string,metaId:string,hostUrl:string}){
     const store = useYjsStore({
-		doc:doc,
-		provider:provider,
+		hostUrl: hostUrl,
 		roomId: roomId,
         metaId: metaId
 	})

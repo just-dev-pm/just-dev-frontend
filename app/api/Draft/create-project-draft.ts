@@ -12,7 +12,7 @@ export function useProjectDraftCreate({
   const urlSuffix = `/drafts`;
   const { data, error, trigger } = useSWRMutation(
     project_id ? [urlPrefix, project_id, urlSuffix] : null,
-    ([urlPrefix, draft_id, urlSuffix],arg:{arg:string}) =>
+    ([urlPrefix, draft_id, urlSuffix],{arg}:{arg:{name:string}}) =>
       fetch(BASE_URL + urlPrefix + draft_id + urlSuffix, {
         method: "POST",
         headers: {

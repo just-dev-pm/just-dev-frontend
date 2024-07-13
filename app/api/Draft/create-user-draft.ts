@@ -10,13 +10,13 @@ export function useUserDraftCreate({ user_id }: { user_id: string }) {
   const urlSuffix = `/drafts`;
   const { data, error, trigger } = useSWRMutation(
     user_id ? [urlPrefix, user_id, urlSuffix] : null,
-    ([urlPrefix, draft_id, urlSuffix], { arg: name }: { arg: string }) =>
+    ([urlPrefix, draft_id, urlSuffix], { arg }: { arg:{name:string}}) =>
       fetch(BASE_URL + urlPrefix + draft_id + urlSuffix, {
         method: "POST",
         headers: {
           "Content-Type": "application/json; charset=UTF-8",
         },
-        body: JSON.stringify({ name }),
+        body: JSON.stringify(arg),
         credentials: "include",
       }).then((res) => {
         if (!res.ok) {

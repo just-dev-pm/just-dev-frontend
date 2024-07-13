@@ -20,14 +20,12 @@ import { WebsocketProvider } from "y-websocket";
 import * as Y from "yjs";
 
 export function useYjsStore({
-  doc,
-  provider,
   roomId = "example",
-  metaId = "",
+  hostUrl = "",
+  metaId = "ws://localhost:3000/ws/drafts",
   shapeUtils = [],
 }: Partial<{
-  doc: Y.Doc;
-  provider: WebsocketProvider;
+  hostUrl: string;
   roomId: string;
   metaId: string;
   version: number;
@@ -46,18 +44,18 @@ export function useYjsStore({
   });
 
   const { yDoc, yStore, meta, room } = useMemo(() => {
-    const yDoc = doc!;
+    const yDoc = new Y.Doc({gc: true});
     const yArr = yDoc.getArray<{ key: string; val: TLRecord }>(`tl_${roomId}`);
     const yStore = new YKeyValue(yArr);
-    const meta = yDoc.getMap<SerializedSchema>(metaId);
+    const meta = yDoc.getMap<SerializedSchema>('meta');
 
     return {
       yDoc,
       yStore,
       meta,
-      room: provider!,
+      room: new WebsocketProvider(hostUrl,roomId,yDoc),
     };
-  }, [doc, provider, roomId]);
+  }, [hostUrl, roomId]);
 
   useEffect(() => {
     setStoreWithStatus({ status: "loading" });

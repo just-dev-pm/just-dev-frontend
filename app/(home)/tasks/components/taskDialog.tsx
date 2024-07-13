@@ -4,6 +4,7 @@ import TasksList from "./tasksBoardList";
 import { BASE_URL } from "@/lib/global";
 import useSWR from "swr";
 import { Task } from "@/types/tasks_list/tasks";
+import useTasksFromTaskList from "@/app/api/task/get-tasks-from-tasklist";
 
 export function TasksBoardView({
   task_list_id,
@@ -14,21 +15,9 @@ export function TasksBoardView({
   list_name: string;
   project:{isProject:boolean,projectId:string}
 }) {
-  const urlPrefix = `/api/task_lists/`;
-  const urlSuffix = `/tasks`;
-  const { data, error } = useSWR(
-    task_list_id ? [urlPrefix, task_list_id, urlSuffix] : null,
-    ([urlPrefix, task_list_id, urlSuffix]) =>
-      fetch(BASE_URL + urlPrefix + task_list_id + urlSuffix, {
-        credentials: "include",
-      }).then((res) => {
-        if (!res.ok) {
-          throw new Error(`Error! Status:${res.status}`);
-        }
-        return res.json();
-      }),
-    { suspense: true, fallbackData: { tasks: [] } }
-  );
+
+  const {data,error} = useTasksFromTaskList({task_list_id});
+
   const dialog_tasks: Task[] = data.tasks;
   return (
     <div className="flex gap-6">

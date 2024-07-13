@@ -1,6 +1,6 @@
 'use client'
 
-import RequirementItemCard from "@/app/(home)/components/requirmentItemCard";
+import RequirementItemCard from "../components/requirmentItemCard";
 import useRequirement from "@/app/api/requirements/get-requirement";
 import Loading from "@/components/ui/loading";
 import { requirment_items_data } from "@/lib/Mockdata";
