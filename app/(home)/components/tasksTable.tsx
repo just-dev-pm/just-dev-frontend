@@ -179,11 +179,7 @@ export function TasksTable({ task_list_id }: { task_list_id: string }) {
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
 
-<<<<<<< Updated upstream
-  const { data, error } = useTasksTable({ task_list_id });
-=======
   const {data,error} = useTasksFromTaskList({task_list_id})
->>>>>>> Stashed changes
   const dialog_data: Task[] = data.tasks;
 
   dialog_data.forEach(task => {

@@ -34,8 +34,8 @@ export default function ConcreteDraftPage({ params }: IProps) {
     setProvider(provider);
 
     return () => {
-      console.log("bug!");
-      // provider.disconnect()
+      console.log("disconnect start");
+      provider.disconnect()
     };
   }, []);
 
