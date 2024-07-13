@@ -2,7 +2,7 @@
 
 import { DraftsDialog } from "@/app/(home)/draft/components/draftsDialog";
 import DraftsView from "@/app/(home)/draft/components/draftsView";
-import useProjectDrafts from "@/app/api/Draft/get-project-drafts";
+import useProjectDrafts from "@/app/api/draft/get-project-drafts";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { useUserStore } from "@/store/userStore";

@@ -1,14 +1,21 @@
 'use client'
 
 import RequirementItemCard from "@/app/(home)/components/requirmentItemCard";
+import useRequirement from "@/app/api/requirements/get-requirement";
+import Loading from "@/components/ui/loading";
 import { requirment_items_data } from "@/lib/Mockdata";
 interface IProps {
-  params:{requirement_id: string};
+  params:{
+    project_id:string
+    requirement_id: string};
 }
 export default function RequirementPage({ params }: IProps) {
-  const {requirement_id} = params
-  const mockData = requirment_items_data[parseInt(requirement_id)];
+  const {project_id,requirement_id} = params
+  const {data,error} = useRequirement({project_id,requirement_id});
+
+  if(!data) return <Loading />
+
   return <div>
-    <RequirementItemCard title={mockData.name} description={mockData.content}></RequirementItemCard>
+    <RequirementItemCard title={data.name} description={data.content}></RequirementItemCard>
   </div>;
 }

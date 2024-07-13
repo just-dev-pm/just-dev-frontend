@@ -1,6 +1,8 @@
 import { BASE_URL } from "@/lib/global";
 import useSWRMutation from "swr/mutation";
 
+/** @key [/api/invitation/accept] */
+
 export default function useAccepteInvitation({
   invitation_token,
 }: {

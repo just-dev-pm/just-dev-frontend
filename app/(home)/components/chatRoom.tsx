@@ -1,11 +1,14 @@
 import { useState, useEffect, useRef, SetStateAction } from "react";
-import { customAlphabet } from "nanoid";
+import { customAlphabet, nanoid } from "nanoid";
 import { YjsClient, Message, MessageAwareness } from "./chat-client";
+import { WebsocketProvider } from "y-websocket";
+import * as Y from 'yjs'
 
 export default function ChatRoom(props: {
     roomId: string;
     user_name: string;
-    hosturl:string;
+    doc: Y.Doc
+    provider:WebsocketProvider
   }){
     return <ChatDataProvider {...props}></ChatDataProvider>
 }
@@ -13,47 +16,78 @@ export default function ChatRoom(props: {
 function ChatDataProvider({
   roomId,
   user_name,
-  hosturl,
+  provider,
+  doc
 }: {
   roomId: string;
   user_name: string;
-  hosturl:string;
+  doc: Y.Doc
+  provider:WebsocketProvider
 }) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [room, setRoom] = useState(roomId);
   const yjsClientRef = useRef<YjsClient | null>(null);
   const [awarness, setAwarness] = useState<MessageAwareness>(new Map());
+  const [yMessages,setYMessages] = useState(doc.getArray("Chat"))
 
   useEffect(() => {
+    console.log("big bug!");
     //获取用户名
     const username = user_name || customAlphabet("asdasdas", 10)();
 
     //链接ws
-    const yjsClient = new YjsClient(room, username,hosturl);
+    // const yjsClient = new YjsClient(room, username,provider,doc);
+
+    const awareness = provider.awareness;
+    awareness.setLocalState({ user: { name: username, color: nanoid() } });
+
+    function onMessagesChange(
+      callback: (
+        event: Y.YArrayEvent<Message>,
+        transaction: Y.Transaction
+      ) => void
+    ) {
+      yMessages.observe(callback);
+    }
+  
+    function onAwarenessChange(callback: (state: MessageAwareness) => void) {
+      awareness.on("change", (changed: any, origin: any) => {
+        if (origin === "local") return; // 自己的操作不触发回调
+        callback(awareness.getStates() as MessageAwareness);
+      });
+    }
 
     setMessages([]);
-    yjsClientRef.current = yjsClient;
 
-    yjsClientRef.current.onMessagesChange((event) => {
+    onMessagesChange((event) => {
       setMessages(event.target.toArray());
     });
 
-    yjsClient.onAwarenessChange((state) => {
+    onAwarenessChange((state) => {
       setAwarness(new Map([...state]));
     });
 
     return () => {
-      yjsClient.destroy();
-      yjsClientRef.current = null;
+
     };
   }, [room]);
+
+  function addMessage(text: string) {
+    yMessages.unshift([
+      {
+        id: nanoid(),
+        auth: provider.awareness.getLocalState()!.user.name,
+        text,
+      },
+    ]);
+  }
 
   const handleSendMessage = () => {
     if (!newMessage) {
       return;
     }
-    yjsClientRef.current?.addMessage(newMessage);
+    addMessage(newMessage);
   };
 
   return (

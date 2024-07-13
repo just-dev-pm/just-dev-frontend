@@ -1,7 +1,7 @@
 "use client";
 
 import { TasksBoardView } from "../components/taskDialog";
-import { DataTableDemo } from "@/app/(home)/components/tasksTable";
+import { TasksTable } from "@/app/(home)/components/tasksTable";
 import useTaskList from "@/app/api/useTaskList";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -32,7 +32,7 @@ export default function TaskListPage({ params }: IProps) {
           ></TasksBoardView>
         </TabsContent>
         <TabsContent value="list">
-          <DataTableDemo task_list_id={task_list_id}></DataTableDemo>
+          <TasksTable task_list_id={task_list_id}></TasksTable>
         </TabsContent>
       </Tabs>
       <div className="flex justify-end">

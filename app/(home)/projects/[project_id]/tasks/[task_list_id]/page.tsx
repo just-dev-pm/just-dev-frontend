@@ -1,7 +1,7 @@
 "use client";
 
 import { TasksBoardView } from "@/app/(home)/tasks/components/taskDialog";
-import { DataTableDemo } from "@/app/(home)/components/tasksTable";
+import { TasksTable } from "@/app/(home)/components/tasksTable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import useTaskList from "@/app/api/useTaskList";
 
@@ -15,6 +15,7 @@ export default function TaskListPage({ params }: IProps) {
   const { project_id, task_list_id } = params;
   const { data, error } = useTaskList({ task_list_id });
   const list_name = data.name;
+
   return (
     <div>
       <Tabs defaultValue="board">
@@ -33,7 +34,7 @@ export default function TaskListPage({ params }: IProps) {
           ></TasksBoardView>
         </TabsContent>
         <TabsContent value="list">
-          <DataTableDemo task_list_id={task_list_id}></DataTableDemo>
+          <TasksTable task_list_id={task_list_id}></TasksTable>
         </TabsContent>
       </Tabs>
     </div>

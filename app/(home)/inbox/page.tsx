@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import {
   Card,
   CardContent,
@@ -10,6 +10,8 @@ import {
 } from "@/components/ui/card";
 import { Notification, Source } from "@/types/notification";
 import { Button } from "@/components/ui/button";
+import useNotifications from "@/app/api/notification/get-notifications";
+import { useUserStore } from "@/store/userStore";
 
 const notifications: Notification[] = [
   {
@@ -36,18 +38,30 @@ const notifications: Notification[] = [
 ];
 
 export default function InboxPage() {
+  const userId = useUserStore((stats) => stats.userId);
+  const { data, error } = useNotifications({ user_id: userId });
   const [readNotifications, setReadNotifications] = useState<string[]>([]);
 
   const markAsRead = (id: string) => {
     setReadNotifications([...readNotifications, id]);
   };
+  const notifications = data.notifications
+
+  if (data?.notifications.length === 0)
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <h3 className="flex items-center">
+          收件箱中暂无消息
+        </h3>
+      </div>
+    );
 
   return (
-    <NotificationView
-      notifications={notifications}
-      readNotifications={readNotifications}
-      markAsRead={markAsRead}
-    />
+      <NotificationView
+        notifications={notifications}
+        readNotifications={readNotifications}
+        markAsRead={markAsRead}
+      />
   );
 }
 
@@ -81,7 +95,7 @@ function NotificationView({
     <>
       <h1 className="text-2xl font-bold mb-4">所有通知</h1>
       <div>
-        {notifications.map(notification => (
+        {notifications.map((notification) => (
           <Card key={notification.id} className="m-2">
             <CardHeader>
               <div className="flex gap-2">

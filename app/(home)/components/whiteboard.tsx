@@ -1,16 +1,19 @@
 import { useYjsStore } from "./useYjsStore";
 import { TLComponents, Tldraw, TLStoreWithStatus } from "@tldraw/tldraw";
+import * as Y from 'yjs'
 import 'tldraw/tldraw.css'
+import { WebsocketProvider } from "y-websocket";
 
-function Whiteboard(props:{roomId:string,hostUrl:string,metaId:string}){
+function Whiteboard(props:{roomId:string,metaId:string,doc:Y.Doc,provider:WebsocketProvider}){
     return <TlDrawDataProvider {...props}></TlDrawDataProvider>
 }
 
 
-function TlDrawDataProvider({roomId,hostUrl,metaId}:{roomId:string,hostUrl:string,metaId:string}){
+function TlDrawDataProvider({roomId,metaId,doc,provider}:{roomId:string,metaId:string,doc:Y.Doc,provider:WebsocketProvider}){
     const store = useYjsStore({
+		doc:doc,
+		provider:provider,
 		roomId: roomId,
-		hostUrl: hostUrl,
         metaId: metaId
 	})
     return (

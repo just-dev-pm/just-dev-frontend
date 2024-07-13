@@ -1,7 +1,7 @@
 "use client";
 
-import { useProjectDraftCreate } from "@/app/api/Draft/create-project-draft";
-import { useUserDraftCreate } from "@/app/api/Draft/create-user-draft";
+import { useProjectDraftCreate } from "@/app/api/draft/create-project-draft";
+import { useUserDraftCreate } from "@/app/api/draft/create-user-draft";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -95,18 +95,6 @@ export function DraftsDialog({ project, children }: Props) {
             </DialogFooter>
           </form>
         </Form>
-        {/* <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="name" className="text-right">
-              Name
-            </Label>
-            <Input
-              id="name"
-              defaultValue="Pedro Duarte"
-              className="col-span-3"
-            />
-          </div>
-        </div> */}
       </DialogContent>
     </Dialog>
   );

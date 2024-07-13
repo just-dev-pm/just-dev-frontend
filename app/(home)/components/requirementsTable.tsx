@@ -37,6 +37,7 @@ import {
 } from "@/components/ui/table"
 import Link from "next/link"
 import { requirmentData,requirmentTablePayment } from "@/lib/Mockdata"
+import useProjectRequirements from "@/app/api/requirements/get-project-requirements"
 
 const data = requirmentData;
 
@@ -46,31 +47,16 @@ export const columns: ColumnDef<requirmentTablePayment>[] = [
     accessorKey: "name",
     header: "Name",
     cell: ({ row }) => {
-        const d = data[parseInt(row.id)];
-      return <Link href={`./requirements/${d.id}`} className="capitalize">{row.getValue("name")}</Link>
+      const id = row.original.id
+      return <Link href={`./requirements/${id}`} className="capitalize">{row.getValue("name")}</Link>
     },
   },
   {
-    accessorKey: "description",
-    header: "Title",
+    accessorKey: "content",
+    header: "Content",
     cell: ({ row }) => {
-      return <div className="capitalize">{row.getValue("description")}</div>
+      return <div className="capitalize">{row.getValue("content")}</div>
     },
-  },
-  {
-    accessorKey: "email",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Email
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
-    cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
   },
   {
     id: "actions",
@@ -103,7 +89,7 @@ export const columns: ColumnDef<requirmentTablePayment>[] = [
   },
 ]
 
-export function RequirementsTable() {
+export function RequirementsTable({project_id}:{project_id:string}) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -111,9 +97,12 @@ export function RequirementsTable() {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
+  const {data,error} = useProjectRequirements({project_id});
+  
+  const requirements = data.requirements;
 
   const table = useReactTable({
-    data,
+    data:requirements,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,

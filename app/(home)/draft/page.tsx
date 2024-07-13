@@ -1,13 +1,9 @@
 "use client";
 
 import { Label } from "@/components/ui/label";
-import { DraftsTable } from "./components/draftsTable";
-import { Button } from "@/components/ui/button";
 import { useUserStore } from "@/store/userStore";
-import useSWR from "swr";
-import { BASE_URL } from "@/lib/global";
 import DraftsView from "./components/draftsView";
-import useUserDrafts from "@/app/api/Draft/get-user-drafts";
+import useUserDrafts from "@/app/api/draft/get-user-drafts";
 import { DraftsDialog } from "./components/draftsDialog";
 
 export default function DraftPage() {

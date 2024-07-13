@@ -26,14 +26,12 @@ export class YjsClient {
   provider: WebsocketProvider;
   yMessages: Y.Array<Message>;
   awareness: Awareness;
-  hosturl: string;
 
-  constructor(roomId: string, username: string, hosturl: string) {
+  constructor(roomId: string, username: string, provider:WebsocketProvider,doc:Y.Doc) {
     this.roomId = roomId;
-    this.ydoc = new Y.Doc();
-    this.hosturl = hosturl;
-    this.provider = new WebsocketProvider(this.hosturl, this.roomId, this.ydoc);
-
+    this.ydoc = doc
+    this.provider = provider;
+    console.log(provider);
     // 设置本地用户的Awareness状态
     this.awareness = this.provider.awareness;
     this.awareness.setLocalState({ user: { name: username, color: nanoid() } });

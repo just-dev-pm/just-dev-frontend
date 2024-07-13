@@ -42,6 +42,7 @@ import { number } from "zod";
 import useSWR from "swr";
 import { BASE_URL } from "@/lib/global";
 import { useUserInfo } from "@/app/api/useUserInfo";
+import useTasksTable from "@/app/api/task/get-taskstable";
 
 // const testdata: Task[] = [
 //   {
@@ -298,7 +299,7 @@ export const columns: ColumnDef<Task>[] = [
   },
 ];
 
-export function DataTableDemo({ task_list_id }: { task_list_id: string }) {
+export function TasksTable({ task_list_id }: { task_list_id: string }) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -307,21 +308,7 @@ export function DataTableDemo({ task_list_id }: { task_list_id: string }) {
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
 
-  const urlPrefix = `/api/task_lists/`;
-  const urlSuffix = `/tasks`;
-  const { data, error } = useSWR(
-    task_list_id ? [urlPrefix, task_list_id, urlSuffix] : null,
-    ([urlPrefix, task_list_id, urlSuffix]) =>
-      fetch(BASE_URL + urlPrefix + task_list_id + urlSuffix, {
-        credentials: "include",
-      }).then((res) => {
-        if (!res.ok) {
-          throw new Error(`Error! Status:${res.status}`);
-        }
-        return res.json();
-      }),
-    { suspense: true, fallbackData: { tasks: [] } }
-  );
+  const {data,error} = useTasksTable({task_list_id})
   const dialog_data: Task[] = data.tasks;
 
   dialog_data.forEach((task) => {

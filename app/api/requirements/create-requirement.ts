@@ -2,21 +2,33 @@ import { useToast } from "@/components/ui/use-toast";
 import { BASE_URL } from "@/lib/global";
 import useSWRMutation from "swr/mutation";
 
-/** @key [/api/users,{user_id},/drafts] */
+type Prop = {
+  name: string;
+  content: string;
+};
 
-export function useUserDraftCreate({ user_id }: { user_id: string }) {
+/** @key /api/projects/{project_id}/requirements */
+
+export default function useRequirementCreate({
+  project_id,
+}: {
+  project_id: string;
+}) {
   const { toast } = useToast();
-  const urlPrefix = `/api/users/`;
-  const urlSuffix = `/drafts`;
+  const urlPrefix = `/api/projects/`;
+  const urlSuffix = `/requirements`;
   const { data, error, trigger } = useSWRMutation(
-    user_id ? [urlPrefix, user_id, urlSuffix] : null,
-    ([urlPrefix, draft_id, urlSuffix], { arg: name }: { arg: string }) =>
-      fetch(BASE_URL + urlPrefix + draft_id + urlSuffix, {
+    project_id ? [urlPrefix, project_id, urlSuffix] : null,
+    (
+      [urlPrefix, project_id, urlSuffix],
+      { arg: { name, content } }: { arg: Prop }
+    ) =>
+      fetch(BASE_URL + urlPrefix + project_id + urlSuffix, {
         method: "POST",
         headers: {
           "Content-Type": "application/json; charset=UTF-8",
         },
-        body: JSON.stringify({ name }),
+        body: JSON.stringify({ name, content }),
         credentials: "include",
       }).then((res) => {
         if (!res.ok) {
@@ -25,10 +37,10 @@ export function useUserDraftCreate({ user_id }: { user_id: string }) {
         return res.json();
       }),
     {
-      onError(error) {
+      onError() {
         toast({ description: "创建失败" });
       },
-      onSuccess(data) {
+      onSuccess() {
         toast({ description: "创建成功" });
       },
     }
