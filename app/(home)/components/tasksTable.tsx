@@ -193,14 +193,14 @@ export const columns: ColumnDef<Task>[] = [
           table.getIsAllPageRowsSelected() ||
           (table.getIsSomePageRowsSelected() && "indeterminate")
         }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Select all"
       />
     ),
     cell: ({ row }) => (
       <Checkbox
         checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        onCheckedChange={value => row.toggleSelected(!!value)}
         aria-label="Select row"
       />
     ),
@@ -233,11 +233,11 @@ export const columns: ColumnDef<Task>[] = [
     cell: ({ row }) => {
       const collaborators: string[] = row.original.assignees;
       if (collaborators)
-        return collaborators.map((c_user_id) => {
+        return collaborators.map(c_user_id => {
           const { data, error } = useUserInfo({ userId: c_user_id });
           const avatar = data.avatar;
           return (
-            <Avatar className="inline-block">
+            <Avatar className="inline-block" key={c_user_id}>
               <AvatarImage src={avatar}></AvatarImage>
               <AvatarFallback>CN</AvatarFallback>
             </Avatar>
@@ -308,10 +308,10 @@ export function TasksTable({ task_list_id }: { task_list_id: string }) {
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
 
-  const {data,error} = useTasksTable({task_list_id})
+  const { data, error } = useTasksTable({ task_list_id });
   const dialog_data: Task[] = data.tasks;
 
-  dialog_data.forEach((task) => {
+  dialog_data.forEach(task => {
     // 直接添加 list_id 属性到每个 Task 对象
     task.list_id = task_list_id;
   });
@@ -345,7 +345,7 @@ export function TasksTable({ task_list_id }: { task_list_id: string }) {
           value={
             (table.getColumn("deadline")?.getFilterValue() as string) ?? ""
           }
-          onChange={(event) =>
+          onChange={event =>
             table.getColumn("deadline")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
@@ -359,8 +359,8 @@ export function TasksTable({ task_list_id }: { task_list_id: string }) {
           <DropdownMenuContent align="end">
             {table
               .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
+              .filter(column => column.getCanHide())
+              .map(column => {
                 return (
                   <DropdownMenuCheckboxItem
                     key={column.id}
@@ -380,9 +380,9 @@ export function TasksTable({ task_list_id }: { task_list_id: string }) {
       <div className="rounded-md border">
         <Table>
           <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
+            {table.getHeaderGroups().map(headerGroup => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
+                {headerGroup.headers.map(header => {
                   return (
                     <TableHead key={header.id}>
                       {header.isPlaceholder
@@ -399,12 +399,12 @@ export function TasksTable({ task_list_id }: { task_list_id: string }) {
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
+              table.getRowModel().rows.map(row => (
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
                 >
-                  {row.getVisibleCells().map((cell) => (
+                  {row.getVisibleCells().map(cell => (
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,

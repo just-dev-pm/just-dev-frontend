@@ -1,6 +1,6 @@
 "use client";
 
-import { Calendar } from "../page";
+import Calendar from "../components/calendar";
 // import WithDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop'
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 import { events } from "@/lib/Mockdata";
@@ -38,7 +38,9 @@ export default function ConcreteAgendaPage({ params }: IProps) {
         onSelectEvent={handleEventClick}
       ></Calendar>
       <div className="flex justify-end mt-5">
-        <Button><Link href={`./`}>返回</Link></Button>
+        <Button>
+          <Link href={`./`}>返回</Link>
+        </Button>
       </div>
     </div>
   );

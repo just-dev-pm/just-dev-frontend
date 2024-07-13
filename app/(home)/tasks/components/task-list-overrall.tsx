@@ -16,7 +16,7 @@ export default function TaskListOverrall({
       </div>
       <div className="grid grid-cols-2 gap-4">
         {taskLists.map(taskList => (
-          <Link href={`./tasks/${taskList.id}`}>
+          <Link href={`./tasks/${taskList.id}`} key={taskList.id}>
             <div
               key={taskList.id}
               className="p-4 border border-gray-200 rounded"

@@ -1,3 +1,4 @@
+"use client";
 import {
   Card,
   CardContent,
@@ -13,12 +14,13 @@ import { Edit3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useUserInfo } from "@/app/api/useUserInfo";
+import UserNameRender from "@/app/invite/components/user-name-render";
 
 type Props = {
   title: string;
   description: string;
   ddl: string;
-  collaborators: string[];
+  collaborators: { id: string }[];
   isProject: boolean;
 };
 
@@ -30,11 +32,6 @@ export default function TaskItemCard({
   isProject,
 }: Props) {
   const [isAbleToEdit, setAbleTOEdit] = useState(false);
-  let names: string[] = [];
-  collaborators.map((c_user_id) => {
-    const { data } = useUserInfo({ userId: c_user_id });
-    names.push(data.username);
-  });
 
   return (
     title &&
@@ -71,11 +68,16 @@ export default function TaskItemCard({
               {isProject && (
                 <>
                   <Label>协作者</Label>
-                  <NoStyleInput
+                  {/* <NoStyleInput
                     className="w-full"
                     disabled={!isAbleToEdit}
                     placeholder={names.join(",")}
-                  ></NoStyleInput>
+                  ></NoStyleInput> */}
+                  {collaborators.map(({ id }) => (
+                    <span key={id}>
+                      <UserNameRender id={id} />
+                    </span>
+                  ))}
                 </>
               )}
             </div>
