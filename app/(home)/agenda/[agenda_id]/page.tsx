@@ -35,7 +35,9 @@ export default function ConcreteAgendaPage({ params }: IProps) {
       <Calendar
         events={events}
         views={["month", "week", "day"]}
-        onSelectEvent={handleEventClick}
+        onSelectEvent={event => {
+          handleEventClick(event as any);
+        }}
       ></Calendar>
       <div className="flex justify-end mt-5">
         <Button>

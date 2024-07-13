@@ -6,7 +6,7 @@ import useSWR from "swr";
 export default function useNotifications({ user_id }: { user_id: string }) {
   const urlPrefix = `/api/users/`;
   const urlSuffix = `/notifications`;
-  const { data, error } = useSWR(
+  const { data, error, isLoading } = useSWR(
     user_id ? [urlPrefix, user_id, urlSuffix] : null,
     ([urlPrefix, user_id, urlSuffix]) =>
       fetch(BASE_URL + urlPrefix + user_id + urlSuffix, {
@@ -15,16 +15,17 @@ export default function useNotifications({ user_id }: { user_id: string }) {
           "Content-Type": "application/json; charset=UTF-8",
         },
         credentials: "include",
-      }).then((res) => {
+      }).then(res => {
         if (!res.ok) {
           throw new Error(`Error! Status:${res.status}`);
         }
         return res.json();
       }),
-    { suspense: true }
+    { suspense: true, fallbackData: { notifications: [] } }
   );
   return {
     data,
     error,
+    isLoading,
   };
 }

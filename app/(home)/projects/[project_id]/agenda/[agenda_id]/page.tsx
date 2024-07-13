@@ -1,6 +1,6 @@
 "use client";
 
-import { Calendar } from "../page";
+import Calendar from "@/app/(home)/agenda/components/calendar";
 // import WithDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop'
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 import { events } from "@/lib/Mockdata";
@@ -32,7 +32,9 @@ export default function ConcreteAgendaPage({ params }: IProps) {
       <Calendar
         events={events}
         views={["month", "week", "day"]}
-        onSelectEvent={handleEventClick}
+        onSelectEvent={event => {
+          handleEventClick(event as any);
+        }}
       ></Calendar>
     </div>
   );
