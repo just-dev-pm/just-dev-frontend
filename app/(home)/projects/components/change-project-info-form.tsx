@@ -32,24 +32,18 @@ import {
 import { DeleteButton } from "../../profile/components/delete-button";
 import { preventDefault } from "tldraw";
 import { StatusGroup } from "../../profile/components/status-group-form";
+import { EditIcon, LucideProps } from "lucide-react";
 
 // 编辑资料表单组件
-const CreateProjectForm: React.FC<
-  {
+const ChangeProjectInfoForm: React.FC<
+  Omit<LucideProps, "onSubmit"> & {
+    oldData: CreateProjectFormSchema;
     onSubmit: (newData: CreateProjectFormSchema) => Promise<void>;
-  } & Omit<ButtonProps, "onSubmit">
-> = ({ onSubmit, ...props }) => {
+  }
+> = ({ oldData, onSubmit, ...props }) => {
   const formMethods = useForm<CreateProjectFormSchema>({
     resolver: zodResolver(createProjectFormSchema),
-    defaultValues: {
-      name: "",
-      description: "",
-      avatar: "",
-      status_pool: {
-        complete: {},
-        incomplete: [],
-      },
-    },
+    defaultValues: oldData,
   });
 
   // 添加未完成状态
@@ -72,9 +66,7 @@ const CreateProjectForm: React.FC<
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" className="ml-auto" {...props}>
-          新建项目
-        </Button>
+        <EditIcon {...props} />
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] max-h-[75%] overflow-auto">
         <DialogHeader>
@@ -221,23 +213,18 @@ const CreateProjectForm: React.FC<
               >
                 添加未完成态
               </Button>
-              <Button
-                type="submit"
-                asChild
-                onClick={async () => {
-                  await formMethods.trigger();
-                }}
-              >
-                <DialogClose
-                  onClick={e => {
-                    if (!formMethods.formState.isValid) {
-                      e.preventDefault();
-                    }
+              <div>
+                <Button
+                  type="submit"
+                  asChild
+                  onClick={async e => {
+                    if (!formMethods.formState.isValid) e.preventDefault();
+                    await formMethods.trigger();
                   }}
                 >
-                  保存更改
-                </DialogClose>
-              </Button>
+                  <DialogClose>保存更改</DialogClose>
+                </Button>
+              </div>
             </DialogFooter>
           </form>
         </Form>
@@ -246,4 +233,4 @@ const CreateProjectForm: React.FC<
   );
 };
 
-export default CreateProjectForm;
+export default ChangeProjectInfoForm;

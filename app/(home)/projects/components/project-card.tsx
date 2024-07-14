@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Incomplete, Project } from "@/types/project";
 import { CompleteStatusView, InCompleteStatusView } from "./status-view";
 import Link from "next/link";
+import ChangeProjectInfoController from "./change-project-info-controller";
+import UserId from "../../profile/components/user-id";
 
 /**
  * @params onEnterProject 进入项目: 更改 menuTab
@@ -38,18 +40,32 @@ export default function ProjectCard({
               />
               <AvatarFallback>CN</AvatarFallback>
             </Avatar>
-            <CardTitle>{data.name}</CardTitle>
+            <CardTitle className="max-w-24">
+              <div className="truncate leading-snug" title={data.name}>
+                {data.name}
+              </div>
+            </CardTitle>
           </div>
-          <Button asChild>
-            <Link
-              href={`/projects/${data.id}/dashboard`}
-              onClick={() => onEnterProject()}
-            >
-              进入项目
-            </Link>
-          </Button>
+          <div className="flex items-center gap-4 ">
+            {position === "管理员" && (
+              <ChangeProjectInfoController
+                project_id={data.id}
+                className="hover:cursor-pointer"
+              />
+            )}
+            <Button asChild>
+              <Link
+                href={`/projects/${data.id}/dashboard`}
+                onClick={() => onEnterProject()}
+              >
+                进入项目
+              </Link>
+            </Button>
+          </div>
         </div>
-        <CardDescription>{position}</CardDescription>
+        <CardDescription>
+          {position} | 项目ID: <UserId id={data.id} />
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <p>{data.description}</p>

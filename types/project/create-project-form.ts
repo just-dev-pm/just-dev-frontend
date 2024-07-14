@@ -9,14 +9,16 @@ export const createProjectFormSchema = z.object({
   status_pool: z
     .object({
       complete: z.object({
-        name: z.string({ message: "状态名不能为空" }),
-        description: z.string().optional(),
+        name: z.string({ message: "状态名不能为空" }).min(1, "状态名不能为空"),
+        description: z.string({ message: "状态描述不能为空" }),
       }),
       incomplete: z.array(
         z.object({
           id: z.string(),
           status: z.object({
-            name: z.string({ message: "状态名不能为空" }),
+            name: z
+              .string({ message: "状态名不能为空" })
+              .min(1, "状态名不能为空"),
             description: z.string(),
           }),
         })
