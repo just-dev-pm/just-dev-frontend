@@ -26,6 +26,7 @@ import { User } from "@/types/user";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { DeleteButton } from "./delete-button";
 import { DialogClose } from "@radix-ui/react-dialog";
+import { StatusGroup } from "./status-group-form";
 
 // 用户数据模型
 export type UserData = Omit<User, "id">;
@@ -233,26 +234,9 @@ const EditProfileForm: React.FC<{
                         index={index}
                         id={item.id}
                         control={formMethods.control}
-                        status={item.status}
                         handleDeleteIncompleteStatus={
                           handleDeleteIncompleteStatus
                         }
-                        onChangeName={e => {
-                          const newItems = [...field.value];
-                          newItems[index].status.name = e.target.value;
-                          formMethods.setValue(
-                            "status_pool.incomplete",
-                            newItems
-                          );
-                        }}
-                        onChangeDescription={e => {
-                          const newItems = [...field.value];
-                          newItems[index].status.description = e.target.value;
-                          formMethods.setValue(
-                            "status_pool.incomplete",
-                            newItems
-                          );
-                        }}
                       />
                     )
                   )}
@@ -291,67 +275,5 @@ const EditProfileForm: React.FC<{
     </Dialog>
   );
 };
-
-// 未完成状态组件
-const StatusGroup: React.FC<{
-  index: number;
-  id: string;
-  status: { name: string; description: string };
-  control: any;
-  onChangeName: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onChangeDescription: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
-  handleDeleteIncompleteStatus: (id: string) => void;
-}> = ({
-  index,
-  id,
-  status,
-  control,
-  onChangeName,
-  onChangeDescription,
-  handleDeleteIncompleteStatus,
-}) => (
-  <div>
-    <FormField
-      control={control}
-      name={`status_pool.incomplete.${index}.status.name`}
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel htmlFor={`incomplete-${index}`} className="text-right">
-            未完成状态 {index + 1}
-            <DeleteButton onClick={() => handleDeleteIncompleteStatus(id)} />
-          </FormLabel>
-          <Input
-            id={`incomplete-${index}`}
-            placeholder={`状态名`}
-            className="col-span-3"
-            {...field}
-          />
-          <FormMessage />
-        </FormItem>
-      )}
-    />
-    <FormField
-      control={control}
-      name={`status_pool.incomplete.${index}.status.description`}
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel
-            htmlFor={`incomplete-description-${index}`}
-            className="text-right"
-          >
-            描述
-          </FormLabel>
-          <Textarea
-            id={`incomplete-description-${index}`}
-            placeholder={`描述`}
-            className="col-span-3"
-            {...field}
-          />
-          <FormMessage />
-        </FormItem>
-      )}
-    />
-  </div>
-);
 
 export default EditProfileForm;
