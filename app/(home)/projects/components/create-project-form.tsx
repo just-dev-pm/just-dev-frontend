@@ -224,19 +224,12 @@ const CreateProjectForm: React.FC<
               <Button
                 type="submit"
                 asChild
-                onClick={async () => {
+                onClick={async e => {
+                  if (!formMethods.formState.isValid) e.preventDefault();
                   await formMethods.trigger();
                 }}
               >
-                <DialogClose
-                  onClick={e => {
-                    if (!formMethods.formState.isValid) {
-                      e.preventDefault();
-                    }
-                  }}
-                >
-                  保存更改
-                </DialogClose>
+                <DialogClose>保存更改</DialogClose>
               </Button>
             </DialogFooter>
           </form>

@@ -11,6 +11,7 @@ interface ICompleteStatusView {
   status: StatusItem;
 }
 export function CompleteStatusView({ status }: ICompleteStatusView) {
+  if (!status?.name) return <></>;
   return (
     <>
       <HoverCard>

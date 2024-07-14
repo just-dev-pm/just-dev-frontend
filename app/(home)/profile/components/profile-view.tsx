@@ -34,7 +34,7 @@ export const ProfileView = ({ userData }: { userData: User }) => {
         </div>
       </CardHeader>
       <CardContent>邮箱: {userData?.email || "未设置"}</CardContent>
-      {userData.status_pool && userData.status_pool.complete.name && (
+      {userData.status_pool && (
         <CardContent>
           <div className="flex gap-2">
             <span className="truncate">状态池</span>
