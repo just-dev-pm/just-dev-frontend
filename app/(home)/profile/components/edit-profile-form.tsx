@@ -17,7 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { useForm } from "react-hook-form";
+import { Control, useForm } from "react-hook-form";
 import { z, ZodType } from "zod";
 import { nanoid } from "nanoid";
 import { useUserStore } from "@/store/userStore";
@@ -33,11 +33,11 @@ export type UserData = Omit<User, "id">;
 const formSchema = z.object({
   avatar: z.union([z.literal(""), z.string().url("请输入正确的URL")]),
   username: z.string().min(1, "用户名不能为空"),
-  email: z.string().email(),
+  email: z.string().email().or(z.literal("")),
   status_pool: z
     .object({
       complete: z.object({
-        name: z.string().min(1, "状态名不能为空"),
+        name: z.string(),
         description: z.string(),
       }),
       incomplete: z.array(
@@ -61,12 +61,22 @@ const EditProfileForm: React.FC<{
 
   const formMethods = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: oldData,
+    defaultValues: {
+      avatar: "",
+      username: "",
+      email: "",
+      ...oldData,
+    },
   });
 
   // 表单重置
   useEffect(() => {
-    formMethods.reset(oldData);
+    formMethods.reset({
+      avatar: "",
+      username: "",
+      email: "",
+      ...oldData,
+    });
   }, [oldData]);
 
   // 添加未完成状态
@@ -133,6 +143,7 @@ const EditProfileForm: React.FC<{
                     id="username"
                     placeholder="用户名"
                     className="col-span-3"
+                    disabled
                     {...field}
                   />
                   <FormMessage />
@@ -221,6 +232,7 @@ const EditProfileForm: React.FC<{
                         key={index}
                         index={index}
                         id={item.id}
+                        control={formMethods.control}
                         status={item.status}
                         handleDeleteIncompleteStatus={
                           handleDeleteIncompleteStatus
@@ -285,6 +297,7 @@ const StatusGroup: React.FC<{
   index: number;
   id: string;
   status: { name: string; description: string };
+  control: any;
   onChangeName: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onChangeDescription: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   handleDeleteIncompleteStatus: (id: string) => void;
@@ -292,37 +305,52 @@ const StatusGroup: React.FC<{
   index,
   id,
   status,
+  control,
   onChangeName,
   onChangeDescription,
   handleDeleteIncompleteStatus,
 }) => (
   <div>
-    <FormLabel htmlFor={`incomplete-${index}`} className="text-right">
-      未完成状态 {index + 1}
-      <DeleteButton onClick={() => handleDeleteIncompleteStatus(id)} />
-    </FormLabel>
-    <Input
-      id={`incomplete-${index}`}
-      placeholder={`状态名`}
-      className="col-span-3"
-      value={status.name}
-      onChange={onChangeName}
+    <FormField
+      control={control}
+      name={`status_pool.incomplete.${index}.status.name`}
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel htmlFor={`incomplete-${index}`} className="text-right">
+            未完成状态 {index + 1}
+            <DeleteButton onClick={() => handleDeleteIncompleteStatus(id)} />
+          </FormLabel>
+          <Input
+            id={`incomplete-${index}`}
+            placeholder={`状态名`}
+            className="col-span-3"
+            {...field}
+          />
+          <FormMessage />
+        </FormItem>
+      )}
     />
-    <FormMessage />
-    <FormLabel
-      htmlFor={`incomplete-description-${index}`}
-      className="text-right"
-    >
-      描述
-    </FormLabel>
-    <Textarea
-      id={`incomplete-description-${index}`}
-      placeholder={`描述`}
-      className="col-span-3"
-      value={status.description}
-      onChange={onChangeDescription}
+    <FormField
+      control={control}
+      name={`status_pool.incomplete.${index}.status.description`}
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel
+            htmlFor={`incomplete-description-${index}`}
+            className="text-right"
+          >
+            描述
+          </FormLabel>
+          <Textarea
+            id={`incomplete-description-${index}`}
+            placeholder={`描述`}
+            className="col-span-3"
+            {...field}
+          />
+          <FormMessage />
+        </FormItem>
+      )}
     />
-    <FormMessage />
   </div>
 );
 

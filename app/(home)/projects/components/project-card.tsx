@@ -64,8 +64,6 @@ export default function ProjectCard({
               <InCompleteStatusView c={task} key={task.id} />
             ))}
           </div>
-
-          <ul></ul>
         </CardContent>
       )}
     </Card>

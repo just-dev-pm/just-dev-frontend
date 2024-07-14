@@ -18,7 +18,7 @@ export const useProfileChange = () => {
           "Content-type": "application/json; charset=UTF-8",
         },
         credentials: "include",
-      }).then(res => res.json()),
+      }).then(res => res),
     {
       onSuccess: (data, key, config) => {
         toast({
