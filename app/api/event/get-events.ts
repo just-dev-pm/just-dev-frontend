@@ -6,7 +6,6 @@ import { handleResponse } from "@/lib/handle-response";
 import useSWR from "swr";
 
 export default function useEvent({ agenda_id }: { agenda_id: string }) {
-  const { toast } = useToast();
   const urlPrefix = `/api/agendas/`;
   const urlSuffix = `/events`;
   const { data, error } = useSWR(

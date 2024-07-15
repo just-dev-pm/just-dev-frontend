@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import Loading from "@/components/ui/loading";
 import useEvent from "@/app/api/event/get-events";
 import moment from "moment";
+import EventDialog from "../components/eventDialog";
 
 interface IProps {
   params: { agenda_id: string };
@@ -56,8 +57,8 @@ export default function ConcreteAgendaPage({ params }: IProps) {
   
 
   events.map((event:event_res) => {
-    const startDate = moment(event.start_time,"YYYY-MM-DD HH:mm:ss").toDate();
-    const endDate = moment(event.end_time,"YYYY-MM-DD HH:mm:ss").toDate();
+    const startDate = moment(event.start_time,"YYYY-MM-DDThh:mm:ss[.mmm]TZD").toDate();
+    const endDate = moment(event.end_time,"YYYY-MM-DDThh:mm:ss[.mmm]TZD").toDate();
     let event_new = {
       id:event.id,
       title:event.name,
@@ -82,14 +83,22 @@ export default function ConcreteAgendaPage({ params }: IProps) {
   }
 
   return (
-    <div style={{ height: "90vh" }}>
-      <Label>{agenda_name}</Label>
+    <div style={{ height: "80vh" }}>
+      <div className="flex justify-between">
+        <Label>{agenda_name}</Label>
+        <EventDialog project={{
+          isProject: false,
+          project_id: ""
+        }} className="">新增事件</EventDialog>
+      </div>
+
       <Calendar
         events={events_new}
         views={["month", "week", "day"]}
         onSelectEvent={event => {
           handleEventClick(event as any);
         }}
+        className="mt-4"
       ></Calendar>
       <div className="flex justify-end mt-5">
         <Button>

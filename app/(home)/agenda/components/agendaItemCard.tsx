@@ -1,3 +1,5 @@
+//TODO : 删除的路由回退应该只发生在删除成功的情况下
+
 import {
   Card,
   CardContent,
@@ -7,13 +9,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { NoStyleInput } from "./noStyleInput";
+import { NoStyleInput } from "../../components/noStyleInput";
 import { useState } from "react";
 import { Edit3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useUserInfo } from "@/app/api/useUserInfo";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useRouter } from "next/navigation";
 
 type Props = {
   title: string;
@@ -21,6 +24,7 @@ type Props = {
   start_time: string;
   end_time: string;
   participants: { id: string }[];
+  handleDelete: () => void;
 };
 
 export default function AgendaItemCard({
@@ -29,7 +33,9 @@ export default function AgendaItemCard({
   start_time,
   end_time,
   participants,
+  handleDelete,
 }: Props) {
+  const router = useRouter();
   let participant_infos: { id: string; name: string; avatar: string }[] = [];
   participants.map((participant) => {
     const { data, error } = useUserInfo({ userId: participant.id });
@@ -80,6 +86,17 @@ export default function AgendaItemCard({
         </div>
       </CardContent>
       <CardFooter className="flex gap-6 justify-end">
+        <Button
+          onClick={() => {
+            handleDelete();
+
+            // TODO : 只在DELETE成功时才back
+            
+            router.back()
+          }}
+        >
+          删除
+        </Button>
         <Button>
           <Link href={`./`}>返回</Link>
         </Button>

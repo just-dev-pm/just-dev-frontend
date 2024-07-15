@@ -4,7 +4,7 @@ import useSWR from "swr";
 
 /** @key [/api/projects/,{project_id},/agendas] */
 export default function useProjectAgenda({project_id}:{project_id:string}){
-    const urlPrefix = `/api/users/`;
+    const urlPrefix = `/api/projects/`;
     const urlSuffix = `/agendas`;
     const { data, error } = useSWR(
         project_id ? [urlPrefix, project_id, urlSuffix] : null,

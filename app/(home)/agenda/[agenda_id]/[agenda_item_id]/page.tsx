@@ -1,6 +1,7 @@
 "use client";
 
-import AgendaItemCard from "@/app/(home)/components/agendaItemCard";
+import useEventDelete from "@/app/api/event/delete-event";
+import AgendaItemCard from "../../components/agendaItemCard";
 import useEvent from "@/app/api/event/get-events";
 import Loading from "@/components/ui/loading";
 import { agenda_items_data } from "@/lib/Mockdata";
@@ -24,7 +25,7 @@ interface IProps {
 export default function AgendaItemPage({ params }: IProps) {
   const { agenda_id, agenda_item_id } = params;
   const { data, error } = useEvent({ agenda_id });
-
+  const { trigger } = useEventDelete({ agenda_id, event_id: agenda_item_id });
   if (data.events.length === 0) {
     return <Loading />;
   }
@@ -41,6 +42,7 @@ export default function AgendaItemPage({ params }: IProps) {
         start_time={cardData!.start_time}
         end_time={cardData!.end_time}
         participants={cardData!.participants}
+        handleDelete={trigger}
       ></AgendaItemCard>
     </div>
   );
