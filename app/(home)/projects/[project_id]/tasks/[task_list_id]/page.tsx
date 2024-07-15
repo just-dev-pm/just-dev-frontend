@@ -1,7 +1,7 @@
 "use client";
 
 import { TasksBoardView } from "@/app/(home)/tasks/components/taskDialog";
-import { TasksTable } from "@/app/(home)/components/tasksTable";
+import { TasksTable } from "@/app/(home)/tasks/components/tasksTable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import useTaskList from "@/app/api/useTaskList";
 

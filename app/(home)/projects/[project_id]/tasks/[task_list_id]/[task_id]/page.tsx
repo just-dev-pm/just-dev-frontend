@@ -1,6 +1,6 @@
 "use client";
 
-import TaskItemCard from "@/app/(home)/components/taskItemCard";
+import TaskItemCard from "@/app/(home)/tasks/components/taskItemCard";
 import { BASE_URL } from "@/lib/global";
 import { task_items_data } from "@/lib/Mockdata";
 import useSWR from "swr";

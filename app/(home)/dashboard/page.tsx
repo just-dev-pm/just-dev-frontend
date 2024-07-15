@@ -1,7 +1,7 @@
 "use client"
 
 import { ChartCard } from "../components/chartCard";
-import { TasksTable } from "../components/tasksTable";
+import { TasksTable } from "../tasks/components/tasksTable";
 
 
 export default function DashboardPage() {

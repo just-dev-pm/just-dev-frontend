@@ -95,20 +95,14 @@ export function DraftsDialog({ project, children }: Props) {
             <DialogFooter className="mt-4">
               <Button
                 asChild
-                type="submit"
-                onClick={async () => {
-                  await form.trigger();
+                onClick={async (event) => {
+                  if (!form.formState.isValid) {
+                    event.preventDefault();
+                    await form.trigger();
+                  }
                 }}
               >
-                <DialogClose
-                  onClick={(event) => {
-                    if (!form.formState.isValid) {
-                      event.preventDefault();
-                    }
-                  }}
-                >
-                  保存
-                </DialogClose>
+                <DialogClose>保存</DialogClose>
               </Button>
             </DialogFooter>
           </form>

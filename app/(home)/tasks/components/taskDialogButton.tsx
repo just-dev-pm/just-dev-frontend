@@ -30,7 +30,7 @@ import {
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import AddTaskButton from "../../components/taskAddButton";
+import AddTaskButton from "./taskAddButton";
 import { Plus } from "lucide-react";
 import useSWR from "swr";
 import { BASE_URL } from "@/lib/global";

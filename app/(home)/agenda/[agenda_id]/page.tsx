@@ -7,9 +7,27 @@ import { events } from "@/lib/Mockdata";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import useAgenda from "@/app/api/agenda/get-agenda";
+import { Label } from "@/components/ui/label";
+import Loading from "@/components/ui/loading";
+import useEvent from "@/app/api/event/get-events";
+import moment from "moment";
 
 interface IProps {
   params: { agenda_id: string };
+}
+
+type event_res = {
+  description: string;
+  end_time: string;
+  id: string;
+  name: string;
+  participants: Participant[];
+  start_time: string;
+}
+
+type Participant = {
+  id: string;
 }
 
 type event = {
@@ -17,6 +35,11 @@ type event = {
   start: Date;
   end: Date;
   id: string;
+  data : {
+    agenda_id : string;
+    description : string;
+    participants : Participant[]
+  }
 };
 
 export default function ConcreteAgendaPage({ params }: IProps) {
@@ -24,16 +47,45 @@ export default function ConcreteAgendaPage({ params }: IProps) {
   //const DnDCalendar = WithDragAndDrop(BasicCalendar);
 
   const router = useRouter();
+  const {data: agenda_data,error: agenda_error} = useAgenda({agenda_id});
+  const agenda_name = agenda_data.name;
+  
+  const {data: event_data,error: event_error} = useEvent({agenda_id});
+  const events = event_data.events;
+  let events_new:event[] = [];
+  
+
+  events.map((event:event_res) => {
+    const startDate = moment(event.start_time,"YYYY-MM-DD HH:mm:ss").toDate();
+    const endDate = moment(event.end_time,"YYYY-MM-DD HH:mm:ss").toDate();
+    let event_new = {
+      id:event.id,
+      title:event.name,
+      start:startDate,
+      end:endDate,
+      data:{
+        agenda_id: agenda_id,
+        description: event.description,
+        participants: event.participants
+      }
+    }
+    events_new.push(event_new);
+  })
 
   const handleEventClick = (event: event) => {
     router.push(`./${agenda_id}/${event.id}`);
-    console.log(event.title);
   };
+
+  if(!agenda_data) return <Loading />
+  if(event_data.events.length === 0){
+    return <Loading />
+  }
 
   return (
     <div style={{ height: "90vh" }}>
+      <Label>{agenda_name}</Label>
       <Calendar
-        events={events}
+        events={events_new}
         views={["month", "week", "day"]}
         onSelectEvent={event => {
           handleEventClick(event as any);
