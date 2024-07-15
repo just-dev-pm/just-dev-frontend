@@ -13,28 +13,30 @@ export function TasksBoardView({
 }: {
   task_list_id: string;
   list_name: string;
-  project:{isProject:boolean,projectId:string}
+  project: { isProject: boolean; projectId: string };
 }) {
-
-  const {data,error} = useTasksFromTaskList({task_list_id});
+  const { data, error } = useTasksFromTaskList({ task_list_id });
 
   const dialog_tasks: Task[] = data.tasks;
+
+  const complete_tasks = dialog_tasks.filter((task)=> task.status.category === "complete")
+  const incomplete_tasks = dialog_tasks.filter((task)=> task.status.category === "incomplete")
   return (
     <div className="flex gap-6">
-      {dialog_tasks.map((task) => (
-        <TasksList
-          key={task.id}
-          todoListName={list_name}
-          tasks={dialog_tasks}
-          dialogMessage={task.name}
-          dialogMembers={task.assignees}
-          project={project}
-        ></TasksList>
-      ))}
-      <Button className="w-80">
-        <Plus></Plus>
-        {"Add Column"}
-      </Button>
+      <TasksList
+        todoListName={"incomplete"}
+        tasks={incomplete_tasks}
+        project={project}
+        dialogMessage={""}
+        dialogMembers={[]}
+      ></TasksList>
+      <TasksList
+        todoListName={"complete"}
+        tasks={complete_tasks}
+        project={project}
+        dialogMessage={""}
+        dialogMembers={[]}
+      ></TasksList>
     </div>
   );
 }

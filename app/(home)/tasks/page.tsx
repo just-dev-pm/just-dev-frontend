@@ -27,7 +27,10 @@ const TaskListsPage: React.FC = () => {
     <div>{error}</div>
   ) : (
     <div>
-      <TaskListOverrall taskLists={data.task_lists} />
+      <TaskListOverrall taskLists={data.task_lists} project={{
+          isProject: false,
+          project_id: ""
+        }} />
     </div>
   );
 };

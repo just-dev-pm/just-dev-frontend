@@ -1,7 +1,7 @@
-"use client";
-
 import { useProjectDraftCreate } from "@/app/api/draft/create-project-draft";
 import { useUserDraftCreate } from "@/app/api/draft/create-user-draft";
+import useProjectTasklistCreate from "@/app/api/tasklist/create-project-tasklist";
+import useUserTasklistCreate from "@/app/api/tasklist/create-user-tasklist";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -22,9 +22,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useUserStore } from "@/store/userStore";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React from "react";
 import { useForm } from "react-hook-form";
 import { mutate } from "swr";
 import { z } from "zod";
@@ -41,13 +41,13 @@ const formSchema = z.object({
   name: z.string().min(1, "名称不能为空"),
 });
 
-export function DraftsDialog({ project, children }: Props) {
+export function TasklistDialog({ project, children }: Props) {
   const isProject = project.isProject;
   const userId = useUserStore((stats) => stats.userId);
-  const { trigger: userDraftCreateTrigger } = useUserDraftCreate({
+  const { trigger: userDraftCreateTrigger } = useUserTasklistCreate({
     user_id: userId,
   });
-  const { trigger: projectDraftCreateTrigger } = useProjectDraftCreate({
+  const { trigger: projectDraftCreateTrigger } = useProjectTasklistCreate({
     project_id: project.project_id,
   });
   const form = useForm<z.infer<typeof formSchema>>({
@@ -60,22 +60,21 @@ export function DraftsDialog({ project, children }: Props) {
   function onSubmit(values: z.infer<typeof formSchema>) {
     if (isProject) {
       projectDraftCreateTrigger({ name: values.name });
-      mutate(["/api/projects/", project.project_id, "/drafts"]);
+      mutate(["/api/projects/", project.project_id, "/task_lists"]);
     } else {
       userDraftCreateTrigger({ name: values.name });
-      mutate(["/api/users/", userId, "/drafts"]);
+      mutate(["/api/users/", userId, "/task_lists"]);
     }
   }
-
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button>{children}</Button>
+        <Button className="ml-auto">{children}</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>新增草稿</DialogTitle>
-          <DialogDescription>创建一个新草稿</DialogDescription>
+          <DialogTitle>新建任务列表</DialogTitle>
+          <DialogDescription>创建一个任务列表</DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -94,8 +93,8 @@ export function DraftsDialog({ project, children }: Props) {
             />
             <DialogFooter className="mt-4">
               <Button
-                asChild
                 type="submit"
+                asChild
                 onClick={async (event) => {
                   if (!form.formState.isValid) {
                     event.preventDefault();

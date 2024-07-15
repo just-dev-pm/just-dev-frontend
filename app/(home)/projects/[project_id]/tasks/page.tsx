@@ -45,7 +45,10 @@ const TaskListsPage = ({ params }: { params: { project_id: string } }) => {
   return error ? (
     <div>{error}</div>
   ) : (
-    <TaskListOverrall taskLists={data.task_lists} />
+    <TaskListOverrall taskLists={data.task_lists} project={{
+        isProject: true,
+        project_id: project_id
+      }} />
   );
 };
 

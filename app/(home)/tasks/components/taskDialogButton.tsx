@@ -46,6 +46,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "@/components/ui/use-toast";
 import useUsersInProject from "@/app/api/project/get-users-in-project";
+import usePrs from "@/app/api/get-prs";
 
 type Props = {
   message: string;
@@ -54,9 +55,14 @@ type Props = {
 };
 
 const formSchema = z.object({
-  name: z.string(),
-  description: z.string(),
-  member: z.array(z.string()).nonempty("Please select at least one person"),
+  name: z.string().min(1, "任务名不能为空"),
+  description: z.string().min(1, "任务描述不能为空"),
+  member: z.array(z.string()),
+  deadline: z
+    .string()
+    .min(1, "截止时间不能为空")
+    .date("请按格式输入2000-01-01"),
+  pr: z.string(),
 });
 
 type Form = z.infer<typeof formSchema>;
@@ -81,11 +87,17 @@ function TaskDialog({ message, members, project }: Props) {
       name: "",
       description: "",
       member: [],
+      deadline: "",
+      pr: "",
     },
   });
   const project_id = project.projectId;
-  const { data, error } = useUsersInProject({ project_id });
-  const users = data.users;
+  const { data: users_data, error: users_error } = useUsersInProject({
+    project_id,
+  });
+  const users = users_data.users;
+  const { data: prs_data, error: prs_error } = usePrs({ project_id });
+  const prs = prs_data.prs;
 
   return (
     <>
@@ -106,7 +118,6 @@ function TaskDialog({ message, members, project }: Props) {
                 <DialogTitle>新增任务</DialogTitle>
                 <DialogDescription>新增一个任务</DialogDescription>
               </DialogHeader>
-
               <FormField
                 control={form.control}
                 name="name"
@@ -124,7 +135,6 @@ function TaskDialog({ message, members, project }: Props) {
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
                 name="description"
@@ -142,7 +152,6 @@ function TaskDialog({ message, members, project }: Props) {
                   </FormItem>
                 )}
               />
-
               {project.isProject ? (
                 <FormField
                   control={form.control}
@@ -204,9 +213,48 @@ function TaskDialog({ message, members, project }: Props) {
               ) : (
                 <></>
               )}
-
+              <FormField
+                control={form.control}
+                name="deadline"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>截止日期</FormLabel>
+                    <FormControl>
+                      <Input
+                        id="deadline"
+                        placeholder="请输入截止日期"
+                        {...field}
+                      ></Input>
+                    </FormControl>
+                    <FormMessage></FormMessage>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="pr"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>选择绑定的pr</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="选择你绑定的pr" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {prs.map((pr:any)=><SelectItem value={pr.title}>{pr.title}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage></FormMessage>
+                  </FormItem>
+                )}
+              />
               <DialogFooter className="flex gap-4">
-                  <Button type="submit">立即新建</Button>
+                <Button type="submit">立即新建</Button>
                 <DialogClose asChild>
                   <Button type="button">退出</Button>
                 </DialogClose>

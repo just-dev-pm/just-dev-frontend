@@ -39,12 +39,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { number } from "zod";
-import useSWR, { mutate } from "swr";
+import useSWR from "swr";
 import { BASE_URL } from "@/lib/global";
 import { useUserInfo } from "@/app/api/useUserInfo";
 import useTasksFromTaskList from "@/app/api/task/get-tasks-from-tasklist";
-import useTaskDelete from "@/app/api/task/delete-task";
-import TasksDropdown from "./tasksTableDropdown";
+import useAssignedTasks from "@/app/api/task/get-assigned-tasks";
+import { useUserStore } from "@/store/userStore";
+
 
 export type Task = {
   id: string;
@@ -56,13 +57,122 @@ export type Task = {
   assignees: string[];
 };
 
-export function TasksTable({
-  data,
-  task_list_id,
-}: {
-  data: Task[];
-  task_list_id: string;
-}) {
+export const columns: ColumnDef<Task>[] = [
+  {
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={value => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
+    accessorKey: "name",
+    header: "Name",
+    cell: ({ row }) => {
+      const list_id = row.original.list_id;
+      const id = row.original.id;
+      return (
+        <Link href={`./${list_id}/${id}`} className="capitalize">
+          {row.getValue("name")}
+        </Link>
+      );
+    },
+  },
+  {
+    accessorKey: "description",
+    header: "Description",
+    cell: ({ row }) => (
+      <div className="capitalize">{row.getValue("description")}</div>
+    ),
+  },
+  {
+    accessorKey: "assignees",
+    header: "Assignees",
+    cell: ({ row }) => {
+      const collaborators: string[] = row.original.assignees;
+      if (collaborators)
+        return collaborators.map(c_user_id => {
+          const { data, error } = useUserInfo({ userId: c_user_id });
+          const avatar = data.avatar;
+          return (
+            <Avatar className="inline-block" key={c_user_id}>
+              <AvatarImage src={avatar}></AvatarImage>
+              <AvatarFallback>CN</AvatarFallback>
+            </Avatar>
+          );
+        });
+    },
+  },
+  {
+    accessorKey: "status",
+    header: "Status",
+    cell: ({ row }) => {
+      const status: any = row.getValue("status");
+      const status_item = status.category;
+      return <Badge className="capitalize">{status_item}</Badge>;
+    },
+  },
+  {
+    accessorKey: "deadline",
+    header: ({ column }) => {
+      return (
+        <Button
+          className=""
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Deadline
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => (
+      <div className="lowercase">{row.getValue("deadline")}</div>
+    ),
+  },
+  {
+    id: "actions",
+    enableHiding: false,
+    cell: ({ row }) => {
+      const payment = row.original;
+
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuItem>Copy payment ID</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>View customer</DropdownMenuItem>
+            <DropdownMenuItem>View payment details</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    },
+  },
+];
+
+export function AssignedTasksTable({data}: { data: Task[] }) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -71,134 +181,10 @@ export function TasksTable({
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
 
-  const { trigger } = useTaskDelete({ task_list_id });
 
-  function handleDelete(task_id: string) {
-    const newData = {
-      data: data.filter(({ id }: { id: string }) => id !== task_id),
-    };
-    mutate(
-      ["/api/task_lists/", task_list_id, "/tasks"],
-      async () => {
-        await trigger(task_id);
-        return newData;
-      },
-      {
-        optimisticData: newData,
-      }
-    );
-  }
-
-  data.forEach((task) => {
-    // 直接添加 list_id 属性到每个 Task 对象
-    task.list_id = task_list_id;
-  });
-
-  const columns: ColumnDef<Task>[] = [
-    {
-      id: "select",
-      header: ({ table }) => (
-        <Checkbox
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && "indeterminate")
-          }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
-        />
-      ),
-      cell: ({ row }) => (
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label="Select row"
-        />
-      ),
-      enableSorting: false,
-      enableHiding: false,
-    },
-    {
-      accessorKey: "name",
-      header: "Name",
-      cell: ({ row }) => {
-        const list_id = row.original.list_id;
-        const id = row.original.id;
-        return (
-          <Link href={`./${list_id}/${id}`} className="capitalize">
-            {row.getValue("name")}
-          </Link>
-        );
-      },
-    },
-    {
-      accessorKey: "description",
-      header: "Description",
-      cell: ({ row }) => (
-        <div className="capitalize">{row.getValue("description")}</div>
-      ),
-    },
-    {
-      accessorKey: "assignees",
-      header: "Assignees",
-      cell: ({ row }) => {
-        const collaborators: string[] = row.original.assignees;
-        if (collaborators)
-          return collaborators.map((c_user_id) => {
-            const { data, error } = useUserInfo({ userId: c_user_id });
-            const avatar = data.avatar;
-            return (
-              <Avatar className="inline-block" key={c_user_id}>
-                <AvatarImage src={avatar}></AvatarImage>
-                <AvatarFallback>CN</AvatarFallback>
-              </Avatar>
-            );
-          });
-      },
-    },
-    {
-      accessorKey: "status",
-      header: "Status",
-      cell: ({ row }) => {
-        const status: any = row.getValue("status");
-        const status_item = status.category;
-        return <Badge className="capitalize">{status_item}</Badge>;
-      },
-    },
-    {
-      accessorKey: "deadline",
-      header: ({ column }) => {
-        return (
-          <Button
-            className=""
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Deadline
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        );
-      },
-      cell: ({ row }) => (
-        <div className="lowercase">{row.getValue("deadline")}</div>
-      ),
-    },
-    {
-      id: "actions",
-      enableHiding: false,
-      cell: ({ row }) => {
-        const list_id = row.original.list_id;
-        const id = row.original.id;
-
-        return (
-          <TasksDropdown
-            task_list_id = {list_id}
-            task_id={id}
-            handleDelete={handleDelete}
-          ></TasksDropdown>
-        );
-      },
-    },
-  ];
+//   const {data,error} = useTasksFromTaskList({task_list_id})
+//   const {data,error} = useAssignedTasks({user_id})
+//   const dialog_data: Task[] = data.tasks;
 
   const table = useReactTable({
     data,
@@ -227,7 +213,7 @@ export function TasksTable({
           value={
             (table.getColumn("deadline")?.getFilterValue() as string) ?? ""
           }
-          onChange={(event) =>
+          onChange={event =>
             table.getColumn("deadline")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
@@ -241,8 +227,8 @@ export function TasksTable({
           <DropdownMenuContent align="end">
             {table
               .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
+              .filter(column => column.getCanHide())
+              .map(column => {
                 return (
                   <DropdownMenuCheckboxItem
                     key={column.id}
@@ -262,9 +248,9 @@ export function TasksTable({
       <div className="rounded-md border">
         <Table>
           <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
+            {table.getHeaderGroups().map(headerGroup => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
+                {headerGroup.headers.map(header => {
                   return (
                     <TableHead key={header.id}>
                       {header.isPlaceholder
@@ -281,12 +267,12 @@ export function TasksTable({
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
+              table.getRowModel().rows.map(row => (
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
                 >
-                  {row.getVisibleCells().map((cell) => (
+                  {row.getVisibleCells().map(cell => (
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,

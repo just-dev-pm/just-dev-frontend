@@ -25,9 +25,13 @@ export interface Task {
      */
     name: string;
     /**
+     * GitHub PR
+     */
+    pr?: Pr;
+    /**
      * 状态
      */
-    status?: Status;
+    status: Status;
     [property: string]: any;
 }
 
@@ -40,59 +44,28 @@ export interface Assignee {
 }
 
 /**
+ * GitHub PR
+ */
+export interface Pr {
+    owner: string;
+    pull_number: number;
+    repo: string;
+    [property: string]: any;
+}
+
+/**
  * 状态
  */
 export interface Status {
-    pool: StatusPool;
-    /**
-     * 状态
-     */
-    status_item: StatusItem;
-    [property: string]: any;
-}
-
-/**
- * 状态池
- */
-export interface StatusPool {
-    complete: CompleteObject;
-    incomplete: Incomplete[];
-    [property: string]: any;
-}
-
-/**
- * 状态项
- */
-export interface CompleteObject {
-    /**
-     * 简介
-     */
-    description: string;
-    /**
-     * 名称
-     */
-    name: string;
-    [property: string]: any;
-}
-
-export interface Incomplete {
-    /**
-     * 状态池中状态的 ID 编号
-     */
-    id: string;
-    status: CompleteObject;
-    [property: string]: any;
-}
-
-/**
- * 状态
- */
-export interface StatusItem {
     /**
      * 分组
      */
     category: Category;
+    /**
+     * ID 编号
+     */
     id?: string;
+    [property: string]: any;
 }
 
 export enum Category {
