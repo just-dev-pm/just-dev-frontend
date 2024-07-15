@@ -5,11 +5,12 @@ import { useUserStore } from "@/store/userStore";
 import DraftsView from "./components/draftsView";
 import useUserDrafts from "@/app/api/draft/get-user-drafts";
 import { DraftsDialog } from "./components/draftsDialog";
+import Loading from "@/components/ui/loading";
 
 export default function DraftPage() {
-  const userId = useUserStore((stats) => stats.userId);
+  const userId = useUserStore(stats => stats.userId);
   const { data, error } = useUserDrafts({ user_id: userId });
-  const drafts = data.drafts;
+  if ((data?.drafts as any[]).length < 1) return <Loading />;
   return error ? (
     <div>{error}</div>
   ) : (
@@ -25,7 +26,9 @@ export default function DraftPage() {
           新增草稿
         </DraftsDialog>
       </div>
-      <DraftsView drafts={drafts}></DraftsView>
+      <div className="grid grid-cols-3 gap-4 relative mt-4">
+        <DraftsView drafts={data.drafts}></DraftsView>
+      </div>
     </div>
   );
 }

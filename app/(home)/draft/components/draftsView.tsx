@@ -11,9 +11,9 @@ export default function DraftsView({ drafts }: { drafts: Draft[] }) {
     <>
       {drafts.map(draft => {
         return (
-          <Link href={`./draft/${draft.id}`} key={draft.id}>
+          <div key={draft.id} className="relative">
             <DraftsCard draft={draft}></DraftsCard>
-          </Link>
+          </div>
         );
       })}
     </>
