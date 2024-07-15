@@ -14,8 +14,8 @@ export default function HoverName(props: IProps) {
       onMouseLeave={() => setHovering(false)}
     >
       <div className="relative z-10 w-40 truncate">{props.name}</div>
-      {hovering && (
-        <div className="absolute top-0 bg-white dark:bg-black shadow-lg min-w-[33vw] z-[400]">
+      {hovering && props.name.length > 6 && (
+        <div className="absolute top-0 bg-white dark:bg-black shadow-lg min-w-[22vw] z-[400]">
           {props.name}
         </div>
       )}

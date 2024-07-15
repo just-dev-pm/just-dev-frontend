@@ -94,3 +94,16 @@
     font-size: 1rem;
   }
 }
+
+:root {
+  --rs-primary-50: #ffedf5;
+  --rs-primary-100: #fac0d7;
+  --rs-primary-200: #f595ba;
+  --rs-primary-300: #f26d9e;
+  --rs-primary-400: #ed4580;
+  --rs-primary-500: #e91e63;
+  --rs-primary-600: #de1655;
+  --rs-primary-700: #c90e46;
+  --rs-primary-800: #ab0735;
+  --rs-primary-900: #820124;
+}

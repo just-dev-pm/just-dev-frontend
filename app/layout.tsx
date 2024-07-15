@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import { cn } from "@/lib/utils";
+import "rsuite/dist/rsuite-no-reset.min.css";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
+import { CustomProvider } from "rsuite";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -22,7 +24,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={cn(poppins.className)}>
-        {children}
+        <CustomProvider>{children}</CustomProvider>
         <Toaster />
       </body>
     </html>
