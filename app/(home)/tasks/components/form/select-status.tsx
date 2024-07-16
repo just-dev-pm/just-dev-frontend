@@ -56,7 +56,11 @@ export function PreventOverflowContainer({ children, height = "72vh" }) {
   }, [container, content]);
 
   return (
-    <div style={{ ...containerStyle, height }} className="p-8" ref={container}>
+    <div
+      style={{ ...containerStyle, height }}
+      className="p-8 px-12"
+      ref={container}
+    >
       <div style={contentStyle} ref={content}>
         {children(() => container.current)}
       </div>

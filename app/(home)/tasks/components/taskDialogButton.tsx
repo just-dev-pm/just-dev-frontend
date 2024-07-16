@@ -54,6 +54,7 @@ import {
   SelectStatus,
   UserRender,
 } from "./form/select-status";
+import { DatetimeReder } from "./form/datetime-picker";
 
 type Props = {
   message: string;
@@ -65,10 +66,7 @@ const formSchema = z.object({
   name: z.string().min(1, "任务名不能为空"),
   description: z.string().min(1, "任务描述不能为空"),
   member: z.array(z.string()),
-  deadline: z
-    .string()
-    .min(1, "截止时间不能为空")
-    .date("请按格式输入2000-01-01"),
+  deadline: z.date({ required_error: "截止时间不能为空" }),
   pr: z.string(),
   status: statusSchema,
 });
@@ -95,7 +93,7 @@ function TaskDialog({ message, members, project }: Props) {
       name: "",
       description: "",
       member: [],
-      deadline: "",
+      deadline: new Date(),
       pr: "",
     },
   });
@@ -246,19 +244,9 @@ function TaskDialog({ message, members, project }: Props) {
                   <FormField
                     control={form.control}
                     name="deadline"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>截止日期</FormLabel>
-                        <FormControl>
-                          <Input
-                            id="deadline"
-                            placeholder="请输入截止日期"
-                            {...field}
-                          ></Input>
-                        </FormControl>
-                        <FormMessage></FormMessage>
-                      </FormItem>
-                    )}
+                    render={({ field }) =>
+                      DatetimeReder({ field, getContainer })
+                    }
                   />
                   <FormField
                     control={form.control}
