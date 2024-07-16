@@ -2,16 +2,16 @@
 
 import Calendar from "../components/calendar";
 // import WithDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop'
-import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
-import { events } from "@/lib/Mockdata";
-import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import useAgenda from "@/app/api/agenda/get-agenda";
+import useEvent from "@/app/api/event/get-events";
+import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import Loading from "@/components/ui/loading";
-import useEvent from "@/app/api/event/get-events";
 import moment from "moment";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
+import { AddEventContextProvider } from "../components/add-event/context";
 import EventDialog from "../components/eventDialog";
 
 interface IProps {
@@ -25,22 +25,22 @@ type event_res = {
   name: string;
   participants: Participant[];
   start_time: string;
-}
+};
 
 type Participant = {
   id: string;
-}
+};
 
 type event = {
   title: string;
   start: Date;
   end: Date;
   id: string;
-  data : {
-    agenda_id : string;
-    description : string;
-    participants : Participant[]
-  }
+  data: {
+    agenda_id: string;
+    description: string;
+    participants: Participant[];
+  };
 };
 
 export default function ConcreteAgendaPage({ params }: IProps) {
@@ -48,45 +48,65 @@ export default function ConcreteAgendaPage({ params }: IProps) {
   //const DnDCalendar = WithDragAndDrop(BasicCalendar);
 
   const router = useRouter();
-  const {data: agenda_data,error: agenda_error,isLoading:agenda_loading} = useAgenda({agenda_id});
+  const {
+    data: agenda_data,
+    error: agenda_error,
+    isLoading: agenda_loading,
+  } = useAgenda({ agenda_id });
   const agenda_name = agenda_data.name;
-  
-  const {data: event_data,error: event_error, isLoading:event_loading} = useEvent({agenda_id});
-  const events = event_data.events;
-  let events_new:event[] = [];
-  
 
-  events.map((event:event_res) => {
-    const startDate = moment(event.start_time,"YYYY-MM-DDThh:mm:ss[.mmm]TZD").toDate();
-    const endDate = moment(event.end_time,"YYYY-MM-DDThh:mm:ss[.mmm]TZD").toDate();
+  const {
+    data: event_data,
+    error: event_error,
+    isLoading: event_loading,
+  } = useEvent({ agenda_id });
+  const events = event_data.events;
+  let events_new: event[] = [];
+
+  events.map((event: event_res) => {
+    const startDate = moment(
+      event.start_time,
+      "YYYY-MM-DDThh:mm:ss[.mmm]TZD"
+    ).toDate();
+    const endDate = moment(
+      event.end_time,
+      "YYYY-MM-DDThh:mm:ss[.mmm]TZD"
+    ).toDate();
     let event_new = {
-      id:event.id,
-      title:event.name,
-      start:startDate,
-      end:endDate,
-      data:{
+      id: event.id,
+      title: event.name,
+      start: startDate,
+      end: endDate,
+      data: {
         agenda_id: agenda_id,
         description: event.description,
-        participants: event.participants
-      }
-    }
+        participants: event.participants,
+      },
+    };
     events_new.push(event_new);
-  })
+  });
 
   const handleEventClick = (event: event) => {
     router.push(`./${agenda_id}/${event.id}`);
   };
 
-  if(!agenda_data || agenda_loading || event_loading) return <Loading />
+  if (!agenda_data || agenda_loading || event_loading) return <Loading />;
 
   return (
     <div style={{ height: "80vh" }}>
       <div className="flex justify-between">
         <Label>{agenda_name}</Label>
-        <EventDialog project={{
-          isProject: false,
-          project_id: ""
-        }} className="">新增事件</EventDialog>
+        <AddEventContextProvider>
+          <EventDialog
+            project={{
+              isProject: false,
+              project_id: "",
+            }}
+            className=""
+          >
+            新增事件
+          </EventDialog>
+        </AddEventContextProvider>
       </div>
 
       <Calendar
