@@ -47,6 +47,13 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "@/components/ui/use-toast";
 import useUsersInProject from "@/app/api/project/get-users-in-project";
 import usePrs from "@/app/api/get-prs";
+import { statusSchema } from "./form/create-task-context";
+import {
+  PreventOverflowContainer,
+  ProjectRender,
+  SelectStatus,
+  UserRender,
+} from "./form/select-status";
 
 type Props = {
   message: string;
@@ -63,6 +70,7 @@ const formSchema = z.object({
     .min(1, "截止时间不能为空")
     .date("请按格式输入2000-01-01"),
   pr: z.string(),
+  status: statusSchema,
 });
 
 type Form = z.infer<typeof formSchema>;
@@ -108,162 +116,189 @@ function TaskDialog({ message, members, project }: Props) {
           </Button>
         </DialogTrigger>
 
-        <DialogContent>
-          <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(onSubmit)}
-              className="flex flex-col gap-4"
-            >
-              <DialogHeader>
-                <DialogTitle>新增任务</DialogTitle>
-                <DialogDescription>新增一个任务</DialogDescription>
-              </DialogHeader>
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>任务名</FormLabel>
-                    <FormControl>
-                      <Input
-                        id="name"
-                        placeholder="请输入任务名"
-                        {...field}
-                      ></Input>
-                    </FormControl>
-                    <FormMessage></FormMessage>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>任务描述</FormLabel>
-                    <FormControl>
-                      <Input
-                        id="description"
-                        placeholder="请输入任务描述"
-                        {...field}
-                      ></Input>
-                    </FormControl>
-                    <FormMessage></FormMessage>
-                  </FormItem>
-                )}
-              />
-              {project.isProject ? (
-                <FormField
-                  control={form.control}
-                  name="member"
-                  render={({}) => (
-                    <FormItem className="w-full">
-                      <FormLabel>指派给</FormLabel>
-                      {users.map(
-                        (user: {
-                          id: string;
-                          username: string;
-                          avatar: string;
-                        }) => (
-                          <FormField
-                            key={user.username}
-                            control={form.control}
-                            name="member"
-                            render={({ field }) => {
-                              return (
-                                <FormItem
-                                  key={user.username}
-                                  className="flex flex-row items-start space-x-3 space-y-0"
-                                >
-                                  <FormControl>
-                                    <Checkbox
-                                      checked={field.value?.includes(
-                                        user.username
-                                      )}
-                                      onCheckedChange={checked => {
-                                        const newValue = checked
-                                          ? field.onChange([
-                                              ...field.value,
-                                              user.username,
-                                            ])
-                                          : field.onChange(
-                                              field.value?.filter(
-                                                value => value !== user.username
-                                              )
-                                            );
-                                        console.log(field.value);
-                                        return newValue;
-                                      }}
-                                    />
-                                  </FormControl>
-                                  <FormLabel className="font-normal">
-                                    {user.username}
-                                  </FormLabel>
-                                </FormItem>
-                              );
-                            }}
-                          ></FormField>
-                        )
+        <DialogContent className="p-0">
+          <PreventOverflowContainer>
+            {getContainer => (
+              <Form {...form}>
+                <form
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="flex flex-col gap-4"
+                >
+                  <DialogHeader>
+                    <DialogTitle>新增任务</DialogTitle>
+                    <DialogDescription>新增一个任务</DialogDescription>
+                  </DialogHeader>
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>任务名</FormLabel>
+                        <FormControl>
+                          <Input
+                            id="name"
+                            placeholder="请输入任务名"
+                            {...field}
+                          ></Input>
+                        </FormControl>
+                        <FormMessage></FormMessage>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="description"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>任务描述</FormLabel>
+                        <FormControl>
+                          <Input
+                            id="description"
+                            placeholder="请输入任务描述"
+                            {...field}
+                          ></Input>
+                        </FormControl>
+                        <FormMessage></FormMessage>
+                      </FormItem>
+                    )}
+                  />
+                  {project.isProject ? (
+                    <FormField
+                      control={form.control}
+                      name="member"
+                      render={({}) => (
+                        <FormItem className="w-full">
+                          <FormLabel>指派给</FormLabel>
+                          {users.map(
+                            (user: {
+                              id: string;
+                              username: string;
+                              avatar: string;
+                            }) => (
+                              <FormField
+                                key={user.username}
+                                control={form.control}
+                                name="member"
+                                render={({ field }) => {
+                                  return (
+                                    <FormItem
+                                      key={user.username}
+                                      className="flex flex-row items-start space-x-3 space-y-0"
+                                    >
+                                      <FormControl>
+                                        <Checkbox
+                                          checked={field.value?.includes(
+                                            user.username
+                                          )}
+                                          onCheckedChange={checked => {
+                                            const newValue = checked
+                                              ? field.onChange([
+                                                  ...field.value,
+                                                  user.username,
+                                                ])
+                                              : field.onChange(
+                                                  field.value?.filter(
+                                                    value =>
+                                                      value !== user.username
+                                                  )
+                                                );
+                                            console.log(field.value);
+                                            return newValue;
+                                          }}
+                                        />
+                                      </FormControl>
+                                      <FormLabel className="font-normal">
+                                        {user.username}
+                                      </FormLabel>
+                                    </FormItem>
+                                  );
+                                }}
+                              ></FormField>
+                            )
+                          )}
+                          <FormMessage></FormMessage>
+                        </FormItem>
                       )}
-                      <FormMessage></FormMessage>
-                    </FormItem>
+                    />
+                  ) : (
+                    <></>
                   )}
-                />
-              ) : (
-                <></>
-              )}
-              <FormField
-                control={form.control}
-                name="deadline"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>截止日期</FormLabel>
-                    <FormControl>
-                      <Input
-                        id="deadline"
-                        placeholder="请输入截止日期"
-                        {...field}
-                      ></Input>
-                    </FormControl>
-                    <FormMessage></FormMessage>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="pr"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>选择绑定的pr</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="选择你绑定的pr" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {prs.map((pr: any, index: number) => (
-                          <div key={index}>
-                            <SelectItem value={pr.title}>{pr.title}</SelectItem>
-                          </div>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage></FormMessage>
-                  </FormItem>
-                )}
-              />
-              <DialogFooter className="flex gap-4">
-                <Button type="submit">立即新建</Button>
-                <DialogClose asChild>
-                  <Button type="button">退出</Button>
-                </DialogClose>
-              </DialogFooter>
-            </form>
-          </Form>
+                  <FormField
+                    control={form.control}
+                    name="status"
+                    render={({ field }) =>
+                      project.isProject ? (
+                        <ProjectRender
+                          field={field}
+                          id={project.projectId}
+                          getContainer={getContainer}
+                          form={form}
+                        />
+                      ) : (
+                        <UserRender
+                          field={field}
+                          getContainer={getContainer}
+                          form={form}
+                        />
+                      )
+                    }
+                  />
+                  <FormField
+                    control={form.control}
+                    name="deadline"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>截止日期</FormLabel>
+                        <FormControl>
+                          <Input
+                            id="deadline"
+                            placeholder="请输入截止日期"
+                            {...field}
+                          ></Input>
+                        </FormControl>
+                        <FormMessage></FormMessage>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="pr"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>选择绑定的pr</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="选择你绑定的pr" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {prs.map((pr: any, index: number) => (
+                              <div key={index}>
+                                <SelectItem value={pr.title}>
+                                  {pr.title}
+                                </SelectItem>
+                              </div>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage></FormMessage>
+                      </FormItem>
+                    )}
+                  />
+                  <DialogFooter className="flex gap-4">
+                    <Button type="submit">立即新建</Button>
+                    <DialogClose asChild>
+                      <Button type="button">退出</Button>
+                    </DialogClose>
+                  </DialogFooter>
+                </form>
+              </Form>
+            )}
+          </PreventOverflowContainer>
         </DialogContent>
       </Dialog>
     </>

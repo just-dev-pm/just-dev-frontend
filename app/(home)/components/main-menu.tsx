@@ -22,10 +22,16 @@ import { useProject } from "@/app/api/project/get-project";
 import { useUserInfo } from "@/app/api/useUserInfo";
 import { AvatarImage } from "@radix-ui/react-avatar";
 import { ClearUserInfo } from "@/lib/clear-user-info";
+import { useProfile } from "@/app/api/user/get-profile";
 
 export default function MainMenu() {
   const userId = useUserStore(state => state.userId);
   const { data: user_data, error: user_error } = useUserInfo({ userId });
+  const { profile, mutate } = useProfile();
+
+  useEffect(() => {
+    mutate();
+  }, []);
 
   const url = `/api/auth/logout`;
   const fetcher = (url: string) => {

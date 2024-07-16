@@ -15,8 +15,19 @@ export const useProject = (projectId: string) => {
         credentials: "include",
       })
         .then(handleResponse("获取项目信息"))
-        .then((res) => res.json()),
-    { fallbackData: { id: "", description: "", name: "" } }
+        .then(res => res.json()),
+    {
+      fallbackData: {
+        id: "",
+        description: "",
+        name: "",
+        github: 0,
+        status_pool: {
+          complete: {},
+          incomplete: [],
+        },
+      },
+    }
   );
 
   return { data, mutate, error, isLoading };
