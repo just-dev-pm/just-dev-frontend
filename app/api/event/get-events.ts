@@ -20,7 +20,7 @@ export default function useEvent({ agenda_id }: { agenda_id: string }) {
       })
         .then(handleResponse("获取事件"))
         .then((res) => res.json()),
-    { fallbackData: { events: [] } }
+    { fallbackData: { events: [] },focusThrottleInterval: 5000}
   );
   return {
     data,

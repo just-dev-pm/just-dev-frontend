@@ -34,7 +34,7 @@ export default function TaskListPage({ params }: IProps) {
           ></TasksBoardView>
         </TabsContent>
         <TabsContent value="list">
-          <TasksTable task_list_id={task_list_id}></TasksTable>
+          <TasksTable task_list_id={task_list_id} data={[]}></TasksTable>
         </TabsContent>
       </Tabs>
     </div>

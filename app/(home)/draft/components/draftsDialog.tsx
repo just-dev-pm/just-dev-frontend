@@ -35,13 +35,14 @@ type Props = {
     project_id: string;
   };
   children: React.ReactNode;
+  variant: "link" | "default" | "destructive" | "outline" | "secondary" | "ghost" | null | undefined
 };
 
 const formSchema = z.object({
   name: z.string().min(1, "名称不能为空"),
 });
 
-export function DraftsDialog({ project, children }: Props) {
+export function DraftsDialog({ project, children ,variant }: Props) {
   const isProject = project.isProject;
   const userId = useUserStore((stats) => stats.userId);
   const { trigger: userDraftCreateTrigger } = useUserDraftCreate({
@@ -70,7 +71,7 @@ export function DraftsDialog({ project, children }: Props) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button>{children}</Button>
+        <Button variant={variant}>{children}</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>

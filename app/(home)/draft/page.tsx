@@ -8,9 +8,25 @@ import { DraftsDialog } from "./components/draftsDialog";
 import Loading from "@/components/ui/loading";
 
 export default function DraftPage() {
-  const userId = useUserStore(stats => stats.userId);
-  const { data, error } = useUserDrafts({ user_id: userId });
-  if ((data?.drafts as any[]).length < 1) return <Loading />;
+  const userId = useUserStore((stats) => stats.userId);
+  const { data, error, isLoading } = useUserDrafts({ user_id: userId });
+  if (isLoading) return <Loading />;
+  if ((data?.drafts as any[]).length < 1)
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <h3 className="flex items-center">
+          你还没有草稿, 点击{" "}
+          <DraftsDialog
+            project={{
+              isProject: false,
+              project_id: "",
+            }} variant="default"         >
+            新增草稿
+          </DraftsDialog>
+          新建一个草稿吧
+        </h3>
+      </div>
+    );
   return error ? (
     <div>{error}</div>
   ) : (
@@ -22,6 +38,7 @@ export default function DraftPage() {
             isProject: false,
             project_id: "",
           }}
+          variant="default"
         >
           新增草稿
         </DraftsDialog>

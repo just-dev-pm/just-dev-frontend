@@ -7,7 +7,7 @@ export default function DashboardPage() {
   return (
     <div>
       <ChartCard></ChartCard>
-      <TasksTable></TasksTable>
+      <TasksTable data={[]} task_list_id={""}></TasksTable>
     </div>
   );
 }

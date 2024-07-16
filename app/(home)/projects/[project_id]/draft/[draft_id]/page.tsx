@@ -16,30 +16,24 @@ interface IProps {
   params: { draft_id: string };
 }
 export default function ConcreteDraftPage({ params }: IProps) {
+  const userId = useUserStore((stats) => stats.userId);
   const { draft_id } = params;
   const hostUrl = "ws://localhost:3000/ws/drafts/";
-  const [doc, setDoc] = useState<Y.Doc | undefined>(undefined);
-  const [provider, setProvider] = useState<WebsocketProvider | undefined>(
-    undefined
+  const [doc, setDoc] = useState<Y.Doc>(new Y.Doc());
+  const [provider, setProvider] = useState<WebsocketProvider>(
+    new WebsocketProvider(hostUrl, draft_id, doc)
   );
-  const userId = useUserStore((stats) => stats.userId);
 
   const { data: draft_data, error: draft_error } = useDraft({ draft_id });
   const { data: user_data, error: user_error } = useUserInfo({ userId });
 
   useEffect(() => {
-    const ydoc = new Y.Doc();
-    const provider = new WebsocketProvider(hostUrl, draft_id, ydoc);
-    setDoc(ydoc);
-    setProvider(provider);
-
     return () => {
-      console.log("disconnect start");
-      provider.disconnect()
+      provider?.disconnect();
     };
   }, []);
 
-  return doc && provider ? (
+  return (
     <Tabs defaultValue="chat">
       <TabsList>
         <TabsTrigger value="chat">聊天</TabsTrigger>
@@ -65,7 +59,5 @@ export default function ConcreteDraftPage({ params }: IProps) {
         ></Whiteboard>
       </TabsContent>
     </Tabs>
-  ) : (
-    <div>wrong!</div>
-  );
+  )
 }

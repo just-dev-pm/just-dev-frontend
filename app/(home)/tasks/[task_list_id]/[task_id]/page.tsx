@@ -17,7 +17,11 @@ interface IProps {
 }
 export default function ConcreteTaskPage({ params }: IProps) {
   const { project_id, task_list_id, task_id } = params;
-  const { data, error } = useTasksFromTaskList({ task_list_id });
+  const { data, error,isLoading } = useTasksFromTaskList({ task_list_id });
+
+  if(isLoading){
+    return <Loading />
+  }
 
   if (data.tasks.length === 0) {
     return <Loading />;

@@ -75,7 +75,7 @@ function NotificationView({ notifications, markAsRead }: INotificationView) {
                   >
                     {notification.title}
                   </CardTitle>
-                  <CardDescription className="text-xs text-gray-500">
+                  <CardDescription className="text-xs text-gray-500 mt-2">
                     <From notification={notification} /> | 通知ID:{" "}
                     {notification.id}
                   </CardDescription>

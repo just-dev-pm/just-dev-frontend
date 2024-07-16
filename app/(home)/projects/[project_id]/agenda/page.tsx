@@ -13,6 +13,19 @@ type agenda = {
   events: {event_id:string}[]
 }
 
+type event_res = {
+  description: string;
+  end_time: string;
+  id: string;
+  name: string;
+  participants: Participant[];
+  start_time: string;
+};
+
+type Participant = {
+  id: string;
+};
+
 type IProps = {
   params:{project_id:string}
 }

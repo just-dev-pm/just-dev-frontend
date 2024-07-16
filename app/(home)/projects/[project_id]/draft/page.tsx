@@ -5,6 +5,7 @@ import DraftsView from "@/app/(home)/draft/components/draftsView";
 import useProjectDrafts from "@/app/api/draft/get-project-drafts";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import Loading from "@/components/ui/loading";
 import { useUserStore } from "@/store/userStore";
 
 type IProps = {
@@ -14,8 +15,25 @@ type IProps = {
 export default function DraftPage({ params }: IProps) {
   const { project_id } = params;
   // console.log(project_id);
-  const { data, error } = useProjectDrafts({ project_id });
+  const { data, error,isLoading } = useProjectDrafts({ project_id });
   const drafts = data.drafts;
+  if (isLoading) return <Loading />;
+  if ((data?.drafts as any[]).length < 1)
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <h3 className="flex items-center">
+          你还没有草稿, 点击{" "}
+          <DraftsDialog
+            project={{
+              isProject: false,
+              project_id: "",
+            }} variant="default"         >
+            新增草稿
+          </DraftsDialog>
+          新建一个草稿吧
+        </h3>
+      </div>
+    );
   return (
     <div>
       <div className="flex justify-between">
@@ -25,6 +43,7 @@ export default function DraftPage({ params }: IProps) {
             isProject: true,
             project_id,
           }}
+          variant="default"
         >
           新增草稿
         </DraftsDialog>
