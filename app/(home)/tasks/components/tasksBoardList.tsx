@@ -8,16 +8,18 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { NoStyleInput } from "../../components/noStyleInput";
 import { X } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { NoStyleInput } from "../../components/noStyleInput";
+import { ChangeStatusContextProvider } from "./change-status/context";
+import { StatusContextProvider } from "./change-status/get-status";
+import { Task } from "./change-status/task";
+import TaskItem from "./change-status/task-item";
 import TaskDialog from "./taskDialogButton";
-import { Switch } from "@/components/ui/switch";
-import { usePathname, useRouter } from "next/navigation";
-import Link from "next/link";
 
 type Props = {
   todoListName: string;
-  tasks: { id: string; name: string }[];
+  tasks: Task[];
   dialogMessage: string;
   dialogMembers: { id: string }[];
   project: { isProject: boolean; projectId: string };
@@ -37,7 +39,7 @@ function TasksList({
   };
   return (
     isShow && (
-      <Card className="w-[350px]">
+      <Card>
         <CardHeader>
           <CardTitle className="flex justify-between items-center">
             <div className="flex items-center">
@@ -54,16 +56,12 @@ function TasksList({
           </CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col gap-2">
-          {tasks.map((task) => (
-            <div className="flex items-center justify-between" key={task.id}>
-              <Switch></Switch>
-              <Button
-                className="text-black bg-gray-50 w-full hover:bg-gray-50"
-                asChild
-              >
-                <Link href={`${path}/${task.id}`}>{task.name}</Link>
-              </Button>
-            </div>
+          {tasks.map((task, index) => (
+            <ChangeStatusContextProvider initialData={task}>
+              <StatusContextProvider projectId={project.projectId}>
+                <TaskItem task={task} index={index + 1} />
+              </StatusContextProvider>
+            </ChangeStatusContextProvider>
           ))}
         </CardContent>
         <CardFooter>

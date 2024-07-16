@@ -16,13 +16,13 @@ export function TasksBoardView({
   const dialog_tasks: Task[] = data.tasks;
 
   const complete_tasks = dialog_tasks.filter(
-    task => task.status.status_item.category === "complete"
+    task => task.status.category === "complete"
   );
   const incomplete_tasks = dialog_tasks.filter(
-    task => task.status.status_item.category === "incomplete"
+    task => task.status.category === "incomplete"
   );
   return (
-    <div className="flex gap-6">
+    <div className="grid grid-cols-2 gap-6">
       <TasksList
         todoListName={"incomplete"}
         tasks={incomplete_tasks}
