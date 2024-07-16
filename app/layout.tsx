@@ -5,6 +5,7 @@ import "rsuite/dist/rsuite-no-reset.min.css";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { CustomProvider } from "rsuite";
+import zhCN from "rsuite/locales/zh_CN";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -24,7 +25,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={cn(poppins.className)}>
-        <CustomProvider>{children}</CustomProvider>
+        <CustomProvider locale={zhCN}>{children}</CustomProvider>
         <Toaster />
       </body>
     </html>
