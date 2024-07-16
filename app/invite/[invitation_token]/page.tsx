@@ -6,12 +6,14 @@ import { useInvitation } from "@/app/api/project/get-invitation";
 import { useUserStore } from "@/store/userStore";
 import { AlertDestructive } from "@/components/ui/alert-destructive";
 import { MyError } from "@/lib/handle-response";
+import { useRouter } from "next/navigation";
 
 interface IProps {
   params: { invitation_token: string };
 }
 
 export default function InvitePage({ params }: IProps) {
+  const router = useRouter();
   const { invitation_token } = params;
   const { trigger } = useAccepteInvitation({ invitation_token });
   const {
@@ -47,6 +49,7 @@ export default function InvitePage({ params }: IProps) {
       }}
       onJoin={() => {
         trigger();
+        router.push("/dashboard")
       }}
     />
   );
