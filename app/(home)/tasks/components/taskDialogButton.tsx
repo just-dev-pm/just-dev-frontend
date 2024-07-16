@@ -55,6 +55,7 @@ import {
   UserRender,
 } from "./form/select-status";
 import { DatetimeReder } from "./form/datetime-picker";
+import Loading from "@/components/ui/loading";
 
 type Props = {
   message: string;
@@ -98,13 +99,23 @@ function TaskDialog({ message, members, project }: Props) {
     },
   });
   const project_id = project.projectId;
-  const { data: users_data, error: users_error } = useUsersInProject({
+  const {
+    data: users_data,
+    error: users_error,
+    isLoading: users_loading,
+  } = useUsersInProject({
     project_id,
   });
   const users = users_data.users;
-  const { data: prs_data, error: prs_error } = usePrs({ project_id });
+  const {
+    data: prs_data,
+    error: prs_error,
+    isLoading: prs_loading,
+  } = usePrs({ project_id });
   const prs = prs_data.prs;
 
+  if (users_loading || prs_loading) return <Loading />;
+  console.log(prs);
   return (
     <>
       <Dialog>
@@ -116,7 +127,7 @@ function TaskDialog({ message, members, project }: Props) {
 
         <DialogContent className="p-0">
           <PreventOverflowContainer>
-            {getContainer => (
+            {(getContainer) => (
               <Form {...form}>
                 <form
                   onSubmit={form.handleSubmit(onSubmit)}
@@ -188,7 +199,7 @@ function TaskDialog({ message, members, project }: Props) {
                                           checked={field.value?.includes(
                                             user.username
                                           )}
-                                          onCheckedChange={checked => {
+                                          onCheckedChange={(checked) => {
                                             const newValue = checked
                                               ? field.onChange([
                                                   ...field.value,
@@ -196,7 +207,7 @@ function TaskDialog({ message, members, project }: Props) {
                                                 ])
                                               : field.onChange(
                                                   field.value?.filter(
-                                                    value =>
+                                                    (value) =>
                                                       value !== user.username
                                                   )
                                                 );
@@ -248,35 +259,37 @@ function TaskDialog({ message, members, project }: Props) {
                       DatetimeReder({ field, getContainer })
                     }
                   />
-                  <FormField
-                    control={form.control}
-                    name="pr"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>选择绑定的pr</FormLabel>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="选择你绑定的pr" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {prs.map((pr: any, index: number) => (
-                              <div key={index}>
-                                <SelectItem value={pr.title}>
-                                  {pr.title}
-                                </SelectItem>
-                              </div>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage></FormMessage>
-                      </FormItem>
-                    )}
-                  />
+                  {project.isProject && (
+                    <FormField
+                      control={form.control}
+                      name="pr"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>选择绑定的pr</FormLabel>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="选择你绑定的pr" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {prs.map((pr: any, index: number) => (
+                                <div key={index}>
+                                  <SelectItem value={pr.title}>
+                                    {pr.title}
+                                  </SelectItem>
+                                </div>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage></FormMessage>
+                        </FormItem>
+                      )}
+                    />
+                  )}
                   <DialogFooter className="flex gap-4">
                     <Button type="submit">立即新建</Button>
                     <DialogClose asChild>

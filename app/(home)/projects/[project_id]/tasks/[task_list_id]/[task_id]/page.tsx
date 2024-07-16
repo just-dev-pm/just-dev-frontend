@@ -1,6 +1,8 @@
 "use client";
 
 import TaskItemCard from "@/app/(home)/tasks/components/taskItemCard";
+import useTasksFromTaskList from "@/app/api/task/get-tasks-from-tasklist";
+import Loading from "@/components/ui/loading";
 import { BASE_URL } from "@/lib/global";
 import { task_items_data } from "@/lib/Mockdata";
 import useSWR from "swr";
@@ -13,27 +15,12 @@ interface IProps {
 }
 export default function ConcreteTaskPage({ params }: IProps) {
   const { task_list_id, task_id } = params;
-  const urlPrefix = `/api/task_lists/`;
-  const urlSuffix = `/tasks`;
-  const { data, error } = useSWR(
-    task_list_id ? [urlPrefix, task_list_id, urlSuffix] : null,
-    ([urlPrefix, task_list_id, urlSuffix]) =>
-      fetch(BASE_URL + urlPrefix + task_list_id + urlSuffix, {
-        credentials: "include",
-      }).then((res) => {
-        if (!res.ok) {
-          throw new Error(`Error! Status:${res.status}`);
-        }
-        return res.json();
-      }),
-    { suspense: true, fallbackData: { tasks: [] } }
-  );
-  if (data.tasks.length === 0) {
-    return <div>loading...</div>;
+  const { data, error, isLoading } = useTasksFromTaskList({ task_list_id });
+  if (isLoading) {
+    return <Loading />
   }
-  // const cardData = data;
+  
   console.log(data);
-  // const cardData = data.find((task: { id: string; })=> task.id === task_id)
   const cardData = data.tasks.find(
     (task: { id: string }) => task.id === task_id
   );

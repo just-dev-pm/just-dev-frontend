@@ -38,7 +38,7 @@ import { SelectPicker } from "rsuite";
         }
     }
 */
-export function PreventOverflowContainer({ children, height = "72vh" }) {
+export function PreventOverflowContainer({ children, maxHeight = "72vh" }) {
   const container = React.useRef();
   const content = React.useRef();
 
@@ -57,7 +57,7 @@ export function PreventOverflowContainer({ children, height = "72vh" }) {
 
   return (
     <div
-      style={{ ...containerStyle, height }}
+      style={{ ...containerStyle, maxHeight }}
       className="p-8 px-12"
       ref={container}
     >
