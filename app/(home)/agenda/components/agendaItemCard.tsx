@@ -17,6 +17,7 @@ import Link from "next/link";
 import { useUserInfo } from "@/app/api/useUserInfo";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useRouter } from "next/navigation";
+import ParticipantAvatar from "./user-avatar";
 
 type Props = {
   title: string;
@@ -36,15 +37,6 @@ export default function AgendaItemCard({
   handleDelete,
 }: Props) {
   const router = useRouter();
-  let participant_infos: { id: string; name: string; avatar: string }[] = [];
-  participants.map((participant) => {
-    const { data, error } = useUserInfo({ userId: participant.id });
-    participant_infos.push({
-      id: data.id,
-      name: data.username,
-      avatar: data.avatar,
-    });
-  });
 
   return (
     <Card>
@@ -76,12 +68,11 @@ export default function AgendaItemCard({
           </div>
           <div className="flex flex-col gap-4">
             <Label className="font-bold text-xl ">参与者</Label>
-            {participant_infos.map((participant_info) => (
-              <Avatar key={participant_info.id}>
-                <AvatarImage src={participant_info.avatar}></AvatarImage>
-                <AvatarFallback>{participant_info.name}</AvatarFallback>
-              </Avatar>
-            ))}
+            <div className="flex gap-2">
+              {participants.map(participant => (
+                <ParticipantAvatar participantId={participant.id} />
+              ))}
+            </div>
           </div>
         </div>
       </CardContent>
@@ -91,8 +82,8 @@ export default function AgendaItemCard({
             handleDelete();
 
             // TODO : 只在DELETE成功时才back
-            
-            router.back()
+
+            router.back();
           }}
         >
           删除
