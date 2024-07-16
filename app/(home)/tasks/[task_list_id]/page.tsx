@@ -55,7 +55,7 @@ export default function TaskListPage({ params }: IProps) {
         </div>
         <TabsContent value="board">
           <TasksBoardView
-            project={{ isProject: false, projectId: "-1" }}
+            project={{ isProject: false, projectId: "" }}
             task_list_id={task_list_id}
             list_name={""}
           ></TasksBoardView>
