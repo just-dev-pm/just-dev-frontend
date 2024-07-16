@@ -2,8 +2,9 @@
 
 import { TasksBoardView } from "@/app/(home)/tasks/components/taskDialog";
 import { TasksTable } from "@/app/(home)/tasks/components/tasksTable";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import useTaskList from "@/app/api/useTaskList";
+import Loading from "@/components/ui/loading";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface IProps {
   params: {
@@ -13,8 +14,10 @@ interface IProps {
 }
 export default function TaskListPage({ params }: IProps) {
   const { project_id, task_list_id } = params;
-  const { data, error } = useTaskList({ task_list_id });
+  const { data, error, isLoading } = useTaskList({ task_list_id });
   const list_name = data.name;
+
+  if (isLoading) return <Loading />;
 
   return (
     <div>
@@ -34,7 +37,7 @@ export default function TaskListPage({ params }: IProps) {
           ></TasksBoardView>
         </TabsContent>
         <TabsContent value="list">
-          <TasksTable task_list_id={task_list_id} data={[]}></TasksTable>
+          <TasksTable task_list_id={task_list_id} data={data}></TasksTable>
         </TabsContent>
       </Tabs>
     </div>

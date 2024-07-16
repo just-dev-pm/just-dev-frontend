@@ -7,12 +7,12 @@ export default function useTaskList({
   task_list_id: string;
 }) {
   const url = `/api/task_lists/`;
-  const { data, error } = useSWR(
+  const { data, error, isLoading } = useSWR(
     task_list_id ? [url, task_list_id] : null,
     ([url, task_list_id]) =>
       fetch(BASE_URL + url + task_list_id, {
         credentials: "include",
-      }).then((res) => {
+      }).then(res => {
         if (!res.ok) {
           throw new Error(`Error! Status:${res.status}`);
         }
@@ -23,5 +23,6 @@ export default function useTaskList({
   return {
     data,
     error,
+    isLoading,
   };
 }

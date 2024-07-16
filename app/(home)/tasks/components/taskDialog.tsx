@@ -1,10 +1,6 @@
-import { Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import TasksList from "./tasksBoardList";
-import { BASE_URL } from "@/lib/global";
-import useSWR from "swr";
-import { Task } from "@/types/tasks_list/tasks";
 import useTasksFromTaskList from "@/app/api/task/get-tasks-from-tasklist";
+import { Task } from "@/types/tasks_list/tasks";
+import TasksList from "./tasksBoardList";
 
 export function TasksBoardView({
   task_list_id,
@@ -19,8 +15,12 @@ export function TasksBoardView({
 
   const dialog_tasks: Task[] = data.tasks;
 
-  const complete_tasks = dialog_tasks.filter((task)=> task.status.category === "complete")
-  const incomplete_tasks = dialog_tasks.filter((task)=> task.status.category === "incomplete")
+  const complete_tasks = dialog_tasks.filter(
+    task => task.status.status_item.category === "complete"
+  );
+  const incomplete_tasks = dialog_tasks.filter(
+    task => task.status.status_item.category === "incomplete"
+  );
   return (
     <div className="flex gap-6">
       <TasksList
