@@ -148,9 +148,12 @@ function ChatRenderer({
           value={newMessage}
           onInput={e => setNewMessage((e.target as HTMLInputElement).value)}
           onKeyDown={e => {
-            if (e.key === "Enter") {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault(); // 阻止默认的 Enter 提交行为
               handleSendMessage();
               setNewMessage("");
+            } else if (e.key === "Enter" && e.shiftKey) {
+              setNewMessage(state => state + "\n");
             }
           }}
         />
