@@ -45,6 +45,7 @@ import { useUserInfo } from "@/app/api/useUserInfo";
 import useTasksFromTaskList from "@/app/api/task/get-tasks-from-tasklist";
 import useTaskDelete from "@/app/api/task/delete-task";
 import TasksDropdown from "./tasksTableDropdown";
+import TasksTableAvatar from "./tasksTableAvatar";
 
 export type Task = {
   id: string;
@@ -143,16 +144,7 @@ export function TasksTable({
       cell: ({ row }) => {
         const collaborators: string[] = row.original.assignees;
         if (collaborators)
-          return collaborators.map((c_user_id) => {
-            const { data, error } = useUserInfo({ userId: c_user_id });
-            const avatar = data.avatar;
-            return (
-              <Avatar className="inline-block" key={c_user_id}>
-                <AvatarImage src={avatar}></AvatarImage>
-                <AvatarFallback>CN</AvatarFallback>
-              </Avatar>
-            );
-          });
+          return collaborators.map((c_user_id) => <TasksTableAvatar c_user_id={c_user_id} />);
       },
     },
     {

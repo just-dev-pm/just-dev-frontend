@@ -81,6 +81,7 @@ export default function TaskItemCard({
                 </>
               )}
             </div>
+            
           </div>
         </CardContent>
         <CardFooter className="flex gap-6 justify-end">
