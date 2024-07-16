@@ -1,13 +1,23 @@
 "use client";
 
-import { ChartCard } from "@/app/(home)/components/chartCard";
-import { TasksTable } from "@/app/(home)/tasks/components/tasksTable";
+import NewDraft from "@/components/project-dashboard/NewDraft";
+import NewRequirement from "@/components/project-dashboard/NewRequirement";
 
-export default function DashboardPage() {
-  return (
-    <div>
-      <ChartCard></ChartCard>
-      <TasksTable data={[]} task_list_id={""}></TasksTable>
-    </div>
-  );
+export default function DashboardPage({
+    params: { project_id },
+}: {
+    params: { project_id: string };
+}) {
+    return (
+        <div className="space-y-4">
+            <div></div>
+            <div className="flex items-start">
+                <div></div>
+                <div>
+                    <NewDraft projectId={project_id} />
+                    <NewRequirement />
+                </div>
+            </div>
+        </div>
+    );
 }

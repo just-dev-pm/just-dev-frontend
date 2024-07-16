@@ -12,13 +12,15 @@ type Prop = {
 
 export default function useRequirementCreate({
   project_id,
+  onSuccess
 }: {
   project_id: string;
+  onSuccess?: (data: any) => void
 }) {
   const { toast } = useToast();
   const urlPrefix = `/api/projects/`;
   const urlSuffix = `/requirements`;
-  const { data, error, trigger } = useSWRMutation(
+  const { data, error, trigger, isMutating } = useSWRMutation(
     project_id ? [urlPrefix, project_id, urlSuffix] : null,
     (
       [urlPrefix, project_id, urlSuffix],
@@ -38,8 +40,9 @@ export default function useRequirementCreate({
       onError() {
         toast({ description: "创建失败" });
       },
-      onSuccess() {
+      onSuccess: (data) => {
         toast({ description: "创建成功" });
+        if (onSuccess) onSuccess(data);
       },
     }
   );
@@ -47,5 +50,6 @@ export default function useRequirementCreate({
     data,
     error,
     trigger,
+    isMutating
   };
 }
