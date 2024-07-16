@@ -47,13 +47,15 @@ export function ChangeDraftForm({ draft_id, oldData }: Props) {
   const { trigger } = useDraftChange({
     draft_id: draft_id,
   });
+  const { mutate } = useDraft({ draft_id });
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: oldData,
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    trigger(values);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    await trigger(values);
+    await mutate();
   }
 
   return (

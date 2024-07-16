@@ -5,12 +5,12 @@ import useSWR from "swr";
 
 export default function useDraft({ draft_id }: { draft_id: string }) {
   const urlPrefix = `/api/drafts/`;
-  const { data, error, isLoading } = useSWR(
+  const { data, error, isLoading, mutate } = useSWR(
     draft_id ? [urlPrefix, draft_id] : null,
     ([urlPrefix, project_id]) =>
       fetch(BASE_URL + urlPrefix + project_id, {
         credentials: "include",
-      }).then((res) => {
+      }).then(res => {
         if (!res.ok) {
           throw new Error(`Error! Status:${res.status}`);
         }
@@ -22,5 +22,6 @@ export default function useDraft({ draft_id }: { draft_id: string }) {
     data,
     error,
     isLoading,
+    mutate,
   };
 }
