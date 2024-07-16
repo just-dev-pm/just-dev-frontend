@@ -90,7 +90,7 @@ export function TasksTable({
     );
   }
 
-  data.forEach((task) => {
+  data.forEach(task => {
     // 直接添加 list_id 属性到每个 Task 对象
     task.list_id = task_list_id;
   });
@@ -104,14 +104,14 @@ export function TasksTable({
             table.getIsAllPageRowsSelected() ||
             (table.getIsSomePageRowsSelected() && "indeterminate")
           }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
           aria-label="Select all"
         />
       ),
       cell: ({ row }) => (
         <Checkbox
           checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          onCheckedChange={value => row.toggleSelected(!!value)}
           aria-label="Select row"
         />
       ),
@@ -144,7 +144,11 @@ export function TasksTable({
       cell: ({ row }) => {
         const collaborators: string[] = row.original.assignees;
         if (collaborators)
-          return collaborators.map((c_user_id) => <TasksTableAvatar c_user_id={c_user_id} />);
+          return collaborators.map(c_user_id => (
+            <div key={c_user_id}>
+              <TasksTableAvatar c_user_id={c_user_id} />
+            </div>
+          ));
       },
     },
     {
@@ -183,7 +187,7 @@ export function TasksTable({
 
         return (
           <TasksDropdown
-            task_list_id = {list_id}
+            task_list_id={list_id}
             task_id={id}
             handleDelete={handleDelete}
           ></TasksDropdown>
@@ -219,7 +223,7 @@ export function TasksTable({
           value={
             (table.getColumn("deadline")?.getFilterValue() as string) ?? ""
           }
-          onChange={(event) =>
+          onChange={event =>
             table.getColumn("deadline")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
@@ -233,8 +237,8 @@ export function TasksTable({
           <DropdownMenuContent align="end">
             {table
               .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
+              .filter(column => column.getCanHide())
+              .map(column => {
                 return (
                   <DropdownMenuCheckboxItem
                     key={column.id}
@@ -254,9 +258,9 @@ export function TasksTable({
       <div className="rounded-md border">
         <Table>
           <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
+            {table.getHeaderGroups().map(headerGroup => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
+                {headerGroup.headers.map(header => {
                   return (
                     <TableHead key={header.id}>
                       {header.isPlaceholder
@@ -273,12 +277,12 @@ export function TasksTable({
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
+              table.getRowModel().rows.map(row => (
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
                 >
-                  {row.getVisibleCells().map((cell) => (
+                  {row.getVisibleCells().map(cell => (
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,

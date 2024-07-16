@@ -70,7 +70,9 @@ export default function AgendaItemCard({
             <Label className="font-bold text-xl ">参与者</Label>
             <div className="flex gap-2">
               {participants.map(participant => (
-                <ParticipantAvatar participantId={participant.id} />
+                <div key={participant.id}>
+                  <ParticipantAvatar participantId={participant.id} />
+                </div>
               ))}
             </div>
           </div>
