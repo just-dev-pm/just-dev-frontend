@@ -180,7 +180,7 @@ function TaskDialog({ message, members, project }: Props) {
                                       checked={field.value?.includes(
                                         user.username
                                       )}
-                                      onCheckedChange={(checked) => {
+                                      onCheckedChange={checked => {
                                         const newValue = checked
                                           ? field.onChange([
                                               ...field.value,
@@ -188,8 +188,7 @@ function TaskDialog({ message, members, project }: Props) {
                                             ])
                                           : field.onChange(
                                               field.value?.filter(
-                                                (value) =>
-                                                  value !== user.username
+                                                value => value !== user.username
                                               )
                                             );
                                         console.log(field.value);
@@ -246,7 +245,11 @@ function TaskDialog({ message, members, project }: Props) {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {prs.map((pr:any)=><SelectItem value={pr.title}>{pr.title}</SelectItem>)}
+                        {prs.map((pr: any, index: number) => (
+                          <div key={index}>
+                            <SelectItem value={pr.title}>{pr.title}</SelectItem>
+                          </div>
+                        ))}
                       </SelectContent>
                     </Select>
                     <FormMessage></FormMessage>
