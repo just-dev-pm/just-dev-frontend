@@ -19,7 +19,7 @@ export default function useTasklistDelete() {
         credentials: "include",
       })
         .then(handleResponse("删除任务列表"))
-        .then((res) => res.json()),
+        .then((res) => res),
     {
       onError() {
         toast({ description: "删除失败" });

@@ -36,7 +36,7 @@ type Participant = {
 
 export default function AgendaPage() {
   const userId = useUserStore((stats) => stats.userId);
-  const { data, error } = useUserAgenda({
+  const { data, error,isLoading } = useUserAgenda({
     user_id: userId,
   });
   const [idsAndNames, setIdsAndNames] = useState<
@@ -97,6 +97,7 @@ export default function AgendaPage() {
   // },[events_newMemo])
 
   useEffect(() => {
+    if(!data || isLoading) return ;
     if (data) {
       agendas.map((agenda: agenda) => {
         setIdsAndNames((stats) => [

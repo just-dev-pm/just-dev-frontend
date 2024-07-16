@@ -10,7 +10,7 @@ export default function useProjectRequirements({
 }) {
   const urlPrefix = `/api/projects/`;
   const urlSuffix = `/requirements`;
-  const { data, error,mutate } = useSWR(
+  const { data, error, mutate, isLoading } = useSWR(
     project_id ? [urlPrefix, project_id, urlSuffix] : null,
     ([urlPrefix, project_id, urlSuffix]) =>
       fetch(BASE_URL + urlPrefix + project_id + urlSuffix, {
@@ -30,6 +30,7 @@ export default function useProjectRequirements({
   return {
     data,
     error,
-    mutate
+    mutate,
+    isLoading,
   };
 }

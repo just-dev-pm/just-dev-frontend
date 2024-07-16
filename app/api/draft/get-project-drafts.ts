@@ -10,7 +10,7 @@ export default function useProjectDrafts({
 }) {
   const urlPrefix = `/api/projects/`;
   const urlSuffix = `/drafts`;
-  const { data, error } = useSWR(
+  const { data, error, isLoading } = useSWR(
     project_id ? [urlPrefix, project_id, urlSuffix] : null,
     ([urlPrefix, project_id, urlSuffix]) =>
       fetch(BASE_URL + urlPrefix + project_id + urlSuffix, {
@@ -26,5 +26,6 @@ export default function useProjectDrafts({
   return {
     data,
     error,
+    isLoading,
   };
 }

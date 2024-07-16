@@ -8,7 +8,7 @@ import useSWR from "swr";
 export default function useEvent({ agenda_id }: { agenda_id: string }) {
   const urlPrefix = `/api/agendas/`;
   const urlSuffix = `/events`;
-  const { data, error } = useSWR(
+  const { data, error, isLoading } = useSWR(
     agenda_id ? [urlPrefix, agenda_id, urlSuffix] : null,
     ([urlPrefix, agenda_id, urlSuffix]) =>
       fetch(BASE_URL + urlPrefix + agenda_id + urlSuffix, {
@@ -25,5 +25,6 @@ export default function useEvent({ agenda_id }: { agenda_id: string }) {
   return {
     data,
     error,
+    isLoading,
   };
 }

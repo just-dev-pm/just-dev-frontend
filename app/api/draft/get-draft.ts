@@ -5,7 +5,7 @@ import useSWR from "swr";
 
 export default function useDraft({ draft_id }: { draft_id: string }) {
   const urlPrefix = `/api/drafts/`;
-  const { data, error } = useSWR(
+  const { data, error, isLoading } = useSWR(
     draft_id ? [urlPrefix, draft_id] : null,
     ([urlPrefix, project_id]) =>
       fetch(BASE_URL + urlPrefix + project_id, {
@@ -21,5 +21,6 @@ export default function useDraft({ draft_id }: { draft_id: string }) {
   return {
     data,
     error,
+    isLoading,
   };
 }

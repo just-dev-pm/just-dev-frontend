@@ -10,13 +10,13 @@ export default function useTasksFromTaskList({
 }) {
   const urlPrefix = `/api/task_lists/`;
   const urlSuffix = `/tasks`;
-  const { data, error } = useSWR(
+  const { data, error, isLoading } = useSWR(
     task_list_id ? [urlPrefix, task_list_id, urlSuffix] : null,
     ([urlPrefix, task_list_id, urlSuffix]) =>
       fetch(BASE_URL + urlPrefix + task_list_id + urlSuffix, {
-        method:"GET",
-        headers:{
-          "Content-Type":"application/json; charset=UTF-8"
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json; charset=UTF-8",
         },
         credentials: "include",
       }).then((res) => {
@@ -30,5 +30,6 @@ export default function useTasksFromTaskList({
   return {
     data,
     error,
+    isLoading,
   };
 }

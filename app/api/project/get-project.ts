@@ -5,19 +5,19 @@ import { useEffect } from "react";
 import useSWRImmutable from "swr/immutable";
 
 export const useProject = (projectId: string) => {
-  const { data, mutate, error } = useSWRImmutable(
+  const { data, mutate, error, isLoading } = useSWRImmutable(
     ["/api/projects/", projectId],
     ([url, projectId]) =>
       fetch(`${BASE_URL}${url}${projectId}`, {
-        headers:{
-          "Content-Type":"application/json; charset=UTF-8"
+        headers: {
+          "Content-Type": "application/json; charset=UTF-8",
         },
         credentials: "include",
       })
         .then(handleResponse("获取项目信息"))
-        .then(res => res.json()),
+        .then((res) => res.json()),
     { fallbackData: { id: "", description: "", name: "" } }
   );
 
-  return { data, mutate, error };
+  return { data, mutate, error, isLoading };
 };

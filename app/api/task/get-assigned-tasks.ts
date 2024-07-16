@@ -7,7 +7,7 @@ import useSWR from "swr";
 export default function useAssignedTasks({ user_id }: { user_id: string }) {
   const urlPrefix = `/api/users/`;
   const urlSuffix = `/tasks`;
-  const { data, error } = useSWR(
+  const { data, error, isLoading } = useSWR(
     user_id ? [urlPrefix, user_id, urlSuffix] : null,
     ([urlPrefix, user_id, urlSuffix]) =>
       fetch(BASE_URL + urlPrefix + user_id + urlSuffix, {
@@ -23,12 +23,13 @@ export default function useAssignedTasks({ user_id }: { user_id: string }) {
         return res.json();
       }),
     {
-      suspense : true,
+      suspense: true,
       fallbackData: { tasks: [] },
     }
   );
   return {
     data,
     error,
+    isLoading,
   };
 }

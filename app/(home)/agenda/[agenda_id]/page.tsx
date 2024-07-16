@@ -48,10 +48,10 @@ export default function ConcreteAgendaPage({ params }: IProps) {
   //const DnDCalendar = WithDragAndDrop(BasicCalendar);
 
   const router = useRouter();
-  const {data: agenda_data,error: agenda_error} = useAgenda({agenda_id});
+  const {data: agenda_data,error: agenda_error,isLoading:agenda_loading} = useAgenda({agenda_id});
   const agenda_name = agenda_data.name;
   
-  const {data: event_data,error: event_error} = useEvent({agenda_id});
+  const {data: event_data,error: event_error, isLoading:event_loading} = useEvent({agenda_id});
   const events = event_data.events;
   let events_new:event[] = [];
   
@@ -77,10 +77,7 @@ export default function ConcreteAgendaPage({ params }: IProps) {
     router.push(`./${agenda_id}/${event.id}`);
   };
 
-  if(!agenda_data) return <Loading />
-  if(event_data.events.length === 0){
-    return <Loading />
-  }
+  if(!agenda_data || agenda_loading || event_loading) return <Loading />
 
   return (
     <div style={{ height: "80vh" }}>

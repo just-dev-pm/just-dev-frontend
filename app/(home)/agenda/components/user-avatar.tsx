@@ -1,6 +1,7 @@
 import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useUserInfo } from "@/app/api/useUserInfo";
+import Loading from "@/components/ui/loading";
 
 interface ParticipantAvatarProps {
   participantId: string; // 参与者ID
@@ -9,7 +10,7 @@ interface ParticipantAvatarProps {
 const ParticipantAvatar: React.FC<ParticipantAvatarProps> = ({
   participantId,
 }) => {
-  const { data: participantInfo, error } = useUserInfo({
+  const { data: participantInfo, error,isLoading } = useUserInfo({
     userId: participantId,
   });
 
@@ -17,8 +18,8 @@ const ParticipantAvatar: React.FC<ParticipantAvatarProps> = ({
     return <div>Error: {error.message}</div>;
   }
 
-  if (!participantInfo) {
-    return <div>Loading...</div>;
+  if (!participantInfo || isLoading) {
+    return <Loading />
   }
 
   return (

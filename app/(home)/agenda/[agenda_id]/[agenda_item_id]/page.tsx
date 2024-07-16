@@ -24,9 +24,9 @@ interface IProps {
 }
 export default function AgendaItemPage({ params }: IProps) {
   const { agenda_id, agenda_item_id } = params;
-  const { data, error } = useEvent({ agenda_id });
+  const { data, error,isLoading } = useEvent({ agenda_id });
   const { trigger } = useEventDelete({ agenda_id, event_id: agenda_item_id });
-  if (data.events.length === 0) {
+  if (isLoading) {
     return <Loading />;
   }
   const events: event_res[] = data.events;

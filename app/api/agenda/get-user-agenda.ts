@@ -17,7 +17,7 @@ export default function useUserAgenda({
 }) {
   const urlPrefix = `/api/users/`;
   const urlSuffix = `/agendas`;
-  const { data, error } = useSWR(
+  const { data, error, mutate, isLoading } = useSWR(
     user_id ? [urlPrefix, user_id, urlSuffix] : null,
     ([urlPrefix, user_id, urlSuffix]) =>
       fetch(BASE_URL + urlPrefix + user_id + urlSuffix, {
@@ -36,5 +36,5 @@ export default function useUserAgenda({
       revalidateOnReconnect: revalidateOnReconnect,
     }
   );
-  return { data, error };
+  return { data, error, mutate, isLoading };
 }

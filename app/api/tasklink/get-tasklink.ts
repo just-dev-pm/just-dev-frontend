@@ -6,7 +6,7 @@ import useSWR from "swr";
 
 export default function useTaskLink({ task_id }: { task_id: string }) {
   const urlPrefix = `/api/links/tasks/`;
-  const { data, error } = useSWR(
+  const { data, error, isLoading } = useSWR(
     task_id ? [urlPrefix, task_id] : null,
     ([urlPrefix, task_id]) =>
       fetch(BASE_URL + urlPrefix + task_id, {
@@ -26,5 +26,6 @@ export default function useTaskLink({ task_id }: { task_id: string }) {
   return {
     data,
     error,
+    isLoading,
   };
 }

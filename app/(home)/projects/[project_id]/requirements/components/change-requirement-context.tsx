@@ -1,4 +1,5 @@
 "use client";
+import useRequirementDelete from "@/app/api/requirements/delete-requirement";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, {
   PropsWithChildren,
@@ -7,6 +8,7 @@ import React, {
   useState,
 } from "react";
 import { useForm } from "react-hook-form";
+import { TriggerWithArgs } from "swr/mutation";
 import { z } from "zod";
 
 // 创建一个上下文对象
@@ -25,8 +27,11 @@ type FormSchema = z.infer<typeof formSchema>;
 
 // 上下文提供程序组件
 export const ChangeRequirementContextProvider: React.FC<
-  PropsWithChildren & { initialRequirment: FormSchema }
-> = ({ children, initialRequirment }) => {
+  PropsWithChildren & { initialRequirment: FormSchema } & { handleSubmit:TriggerWithArgs<any, any, [string, string, string, string] | null, {
+    name: string;
+    content: string;
+}> }
+> = ({ children, initialRequirment , handleSubmit }) => {
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: initialRequirment,
@@ -38,6 +43,7 @@ export const ChangeRequirementContextProvider: React.FC<
 
   function onSubmit(data: FormSchema) {
     console.log(data);
+    handleSubmit(data)
   }
 
   return (

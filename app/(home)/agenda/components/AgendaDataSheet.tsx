@@ -18,6 +18,7 @@ import useAgendaDelete from "@/app/api/agenda/delete-agenda";
 import { mutate } from "swr";
 import { useUserStore } from "@/store/userStore";
 import useUserAgenda from "@/app/api/agenda/get-user-agenda";
+import useProjectAgenda from "@/app/api/agenda/get-project-agenda";
 
 type calendars = {
   id: string;
@@ -33,22 +34,24 @@ export default function AgendaDataSheeet({
 }) {
   const useId = useUserStore((stats) => stats.userId);
   // const {mutate} = useUserAgenda({user_id:useId})
+  const { mutate: user_mutate } = useUserAgenda({ user_id: useId });
+  const { mutate: project_mutate } = useProjectAgenda({
+    project_id: project.project_id,
+  });
   const { trigger } = useAgendaDelete();
   function onDelete(agenda_id: string) {
     const newData = {
       calendars: calendars.filter(({ id }: { id: string }) => id !== agenda_id),
     };
     project.isProject
-      ? mutate(
-          ["/api/projects/", project.project_id, "/agendas"],
+      ? project_mutate(
           async () => {
             await trigger(agenda_id);
             return newData;
           },
           { optimisticData: newData }
         )
-      : mutate(
-          ["/api/users/", useId, "/agendas"],
+      : user_mutate(
           async () => {
             await trigger(agenda_id);
             return newData;
@@ -67,23 +70,24 @@ export default function AgendaDataSheeet({
         </SheetHeader>
         <SheetDescription>选择你专注的日程</SheetDescription>
         <div className="flex flex-col gap-6 mt-5">
-          {calendars.map((calendar, index) => (
-            <div className="flex justify-between items-center" key={index}>
-              <Label>
-                <Link href={`./agenda/${calendar.id}`}>{calendar.name}</Link>
-              </Label>
-              <div className="flex items-center gap-2">
-                <Switch></Switch>
-                <Button
-                  variant="ghost"
-                  className="px-2"
-                  onClick={() => onDelete(calendar.id)}
-                >
-                  <Trash2 size={20} />
-                </Button>
+          {calendars &&
+            calendars.map((calendar, index) => (
+              <div className="flex justify-between items-center" key={index}>
+                <Label>
+                  <Link href={`./agenda/${calendar.id}`}>{calendar.name}</Link>
+                </Label>
+                <div className="flex items-center gap-2">
+                  <Switch></Switch>
+                  <Button
+                    variant="ghost"
+                    className="px-2"
+                    onClick={() => onDelete(calendar.id)}
+                  >
+                    <Trash2 size={20} />
+                  </Button>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
         </div>
         <AgendaSheetDialog className="mt-5 w-full" project={project}>
           <Plus></Plus>新增日程
