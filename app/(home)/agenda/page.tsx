@@ -1,7 +1,3 @@
-// TODO : 正确使用useEffect控制数据获取过程，保证数据状态只会存在一份
-// 问题： 107行代码的加入会导致重新聚焦到这个页面时，曾经的数据清空，如果没有107行代码，则重新聚焦到页面时会导致重复的数据被加入到状态中
-// TODO : 为idsAndNams设定checked值，并且根据AgendaDataSheeet中的选择让其状态发生改变，最终实现只获取选中的agenda的值
-
 "use client";
 
 import { Label } from "@/components/ui/label";
@@ -14,165 +10,155 @@ import { useEffect, useMemo, useState } from "react";
 import { BASE_URL } from "@/lib/global";
 import { handleResponse } from "@/lib/handle-response";
 import moment from "moment";
+import useAgenda from "@/app/api/agenda/get-agenda";
+import * as z from "zod";
+import useSWR from "swr";
+import { isDeepStrictEqual } from "util";
 
-type agenda = {
-  id: string;
-  name: string;
-  events: { event_id: string }[];
+export const ParticipantSchema = z.object({
+    id: z.string(),
+});
+export type Participant = z.infer<typeof ParticipantSchema>;
+
+export const EventSchema = z.object({
+    description: z.string(),
+    end_time: z.coerce.date(),
+    id: z.string(),
+    name: z.string(),
+    participants: z.array(ParticipantSchema),
+    start_time: z.coerce.date(),
+});
+export type Event = z.infer<typeof EventSchema>;
+
+export const GetAgendaEventsResponseSchema = z.object({
+    events: z.array(EventSchema),
+});
+export type GetAgendaEventsResponse = z.infer<
+    typeof GetAgendaEventsResponseSchema
+>;
+
+type RenderedEvent = {
+    title: string;
+    start: Date;
+    end: Date;
+    id: string;
+    data: {
+        agenda_id: string;
+        description: string;
+        participants: { id: string }[];
+    };
 };
 
-type event_res = {
-  description: string;
-  end_time: string;
-  id: string;
-  name: string;
-  participants: Participant[];
-  start_time: string;
-};
+function agendaEventsToRenderedEvents(
+    agendaEvents: {
+        agendaId: string;
+        events: {
+            id: string;
+            description: string;
+            end_time: Date;
+            name: string;
+            participants: {
+                id: string;
+            }[];
+            start_time: Date;
+        }[];
+    }[]
+): RenderedEvent[] {
+    const events: RenderedEvent[] = [];
+    agendaEvents.forEach((agenda) => {
+        agenda.events.forEach((event) => {
+            events.push({
+                title: event.name,
+                start: event.start_time,
+                end: event.end_time,
+                id: event.id,
+                data: {
+                    agenda_id: agenda.agendaId,
+                    description: event.description,
+                    participants: event.participants,
+                },
+            });
+        });
+    });
+    return events;
+}
 
-type Participant = {
-  id: string;
-};
+export const EventIdSchema = z.object({
+    id: z.string(),
+});
+export type EventId = z.infer<typeof EventIdSchema>;
+
+export const AgendaSchema = z.object({
+    events: z.array(EventIdSchema),
+    id: z.string(),
+    name: z.string(),
+});
+export type Agenda = z.infer<typeof AgendaSchema>;
+
+export const GetUserAgendasResponseSchema = z.object({
+    agendas: z.array(AgendaSchema),
+});
+export type GetUserAgendasResponse = z.infer<
+    typeof GetUserAgendasResponseSchema
+>;
+
+function useAgendaEventSWR(agenda_ids: string[]) {
+    const { data, error, isLoading } = useSWR(
+        agenda_ids ? agenda_ids.join("-") : null,
+        async () => {
+            const promises = agenda_ids
+                .map((id) => ({
+                    url: `/api/agendas/${id}/events`,
+                    agendaId: id,
+                }))
+                .map(async ({ url, agendaId }) => {
+                    const events = await fetch(`${BASE_URL}${url}`)
+                        .then(handleResponse())
+                        .then((data) => {
+                            return data.json();
+                        })
+                        .then((data) => {
+                            const typed =
+                                GetAgendaEventsResponseSchema.parse(data);
+                            return typed;
+                        });
+                    return { agendaId, events: events.events };
+                });
+            return Promise.all(promises);
+        }
+    );
+
+    return {
+        data,
+        isLoading,
+        error,
+    };
+}
 
 export default function AgendaPage() {
-  const userId = useUserStore((stats) => stats.userId);
-  const { data, error,isLoading } = useUserAgenda({
-    user_id: userId,
-  });
-  const [idsAndNames, setIdsAndNames] = useState<
-    { id: string; name: string }[]
-  >([]);
-  const [events_new, setEvents_new] = useState<any[]>([]);
+    const user_id = useUserStore.getState().userId;
+    const { data: userAgendas } = useUserAgenda({ user_id });
+    const typedUserAgendas = userAgendas as GetUserAgendasResponse;
+    const {
+        data: agendasEvents,
+        error: agendasEventsError,
+        isLoading: agendasEventsIsLoading,
+    } = useAgendaEventSWR(
+        typedUserAgendas
+            ? typedUserAgendas.agendas.map((agenda) => agenda.id)
+            : []
+    );
 
-  const agendas = data.agendas;
+    if (agendasEventsIsLoading) return <>loading</>;
 
-  const urlPrefix = `/api/agendas/`;
-  const urlSuffix = `/events`;
-  const fetcher = (agenda_id: string) =>
-    fetch(BASE_URL + urlPrefix + agenda_id + urlSuffix, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json; charset=UTF-8",
-      },
-      credentials: "include",
-    })
-      .then(handleResponse("获取事件"))
-      .then((res) => res.json());
+    if (agendasEventsError) return <>Error</>;
 
-
-  // const events_newMemo = useMemo(()=>{
-  //   if(!agendas || agendas.length === 0 || idsAndNames.length !== agendas.length){
-  //     return [];
-  //   }
-  //   const fetchPromises = idsAndNames.map(({id})=>
-  //     fetcher(id).then((res)=> res.events));
-  //   return Promise.all(fetchPromises).then((eventsArrays) => {
-  //     const allEvents = eventsArrays.flat();
-  //     return allEvents.map((event)=>({
-  //       id: event.id,
-  //       title: event.name,
-  //       start: moment(
-  //         event.start_time,
-  //         "YYYY-MM-DDThh:mm:ss[.mmm]TZD"
-  //       ).toDate(),
-  //       end: moment(
-  //         event.end_time,
-  //         "YYYY-MM-DDThh:mm:ss[.mmm]TZD"
-  //       ).toDate(),
-  //       data: {
-  //         // agenda_id: id,
-  //         description: event.description,
-  //         participants: event.participants,
-  //       },
-  //     }))
-  //   })
-  // },[agendas,idsAndNames])
-
-  // useEffect(()=>{
-  //   if(events_newMemo){
-  //     events_newMemo.then((fetchedEvents)=>{
-  //       setEvents_new(fetchedEvents);
-  //     })
-  //   }
-  // },[events_newMemo])
-
-  useEffect(() => {
-    if(!data || isLoading) return ;
-    if (data) {
-      agendas.map((agenda: agenda) => {
-        setIdsAndNames((stats) => [
-          ...stats,
-          { id: agenda.id, name: agenda.name },
-        ]);
-      });
-      setEvents_new([])
-      return;
+    if (agendasEvents) {
+        return (
+            <Calendar
+                events={agendaEventsToRenderedEvents(agendasEvents)}
+                views={["month", "week", "day"]}
+            />
+        );
     }
-  }, [data]);
-
-  useEffect(() => {
-    if (agendas.length !== 0) {
-      if (idsAndNames.length === agendas.length) {
-        idsAndNames.map(async ({ id }) => {
-          let data = await fetcher(id);
-          let events = data.events;
-          if (events) {
-            events.map((event: event_res) => {
-              const startDate = moment(
-                event.start_time,
-                "YYYY-MM-DDThh:mm:ss[.mmm]TZD"
-              ).toDate();
-              const endDate = moment(
-                event.end_time,
-                "YYYY-MM-DDThh:mm:ss[.mmm]TZD"
-              ).toDate();
-              let event_new = {
-                id: event.id,
-                title: event.name,
-                start: startDate,
-                end: endDate,
-                data: {
-                  agenda_id: id,
-                  description: event.description,
-                  participants: event.participants,
-                },
-              };
-              setEvents_new((state) => [...state, event_new]);
-            });
-          }
-        });
-      }
-    }
-  }, [agendas, idsAndNames]);
-
-  if (!events_new) return <Loading />;
-
-  // const components = {
-  //   event: (props) => {
-  //     const agenda_id_unique = props?.event?.data?.agenda_id;
-  //     return <div className="bg-[#E21D48]">{props.title}</div>;
-  //   },
-  // };
-
-  return (
-    <div>
-      <div style={{ height: "88vh" }} className="flex flex-col gap-4">
-        <div className="flex justify-between">
-          <Label className="text-xl font-bold">日程总览</Label>
-          <AgendaDataSheeet
-            calendars={idsAndNames}
-            project={{
-              isProject: false,
-              project_id: "",
-            }}
-          ></AgendaDataSheeet>
-        </div>
-        <Calendar
-          events={events_new}
-          views={["month", "week", "day"]}
-          // components={components}
-        />
-      </div>
-    </div>
-  );
 }
