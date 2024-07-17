@@ -21,7 +21,7 @@ const getColumns: (
         status_column = [
             {
                 accessorKey: "status",
-                header: "状态",
+                header: "当前状态",
                 cell: ({ row }) => {
                     const status = row.original.status;
 
@@ -44,7 +44,7 @@ const getColumns: (
     return [
         {
             accessorKey: "name",
-            header: "任务",
+            header: "尚未完成的任务",
         },
         {
             accessorKey: "deadline",
