@@ -1,11 +1,8 @@
 "use client";
 import { BASE_URL } from "@/lib/global";
-import { useUserStore } from "@/store/userStore";
-import { Project, Projects } from "@/types/projects";
-import { useEffect } from "react";
-import useSWRImmutable from "swr/immutable";
-import { mutate } from "swr";
 import { handleResponse } from "@/lib/handle-response";
+import { useUserStore } from "@/store/userStore";
+import useSWRImmutable from "swr/immutable";
 
 export const useMyProjects = () => {
   const userId = useUserStore.getState().userId;
@@ -20,8 +17,8 @@ export const useMyProjects = () => {
         credentials: "include",
       })
         .then(handleResponse("获取用户关联的项目列表"))
-        .then(res => res.json()),
-    { fallbackData: { projects: [] } }
+        .then((res) => res.json()),
+    { suspense: false },
   );
 
   return { data, mutateMyProjects, isLoading };

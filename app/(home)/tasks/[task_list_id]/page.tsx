@@ -1,16 +1,14 @@
 "use client";
 
-import { TasksBoardView } from "../components/taskDialog";
-import { TasksTable } from "../components/tasksTable";
+import useTasksFromTaskList from "@/app/api/task/get-tasks-from-tasklist";
 import useTaskList from "@/app/api/useTaskList";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BASE_URL } from "@/lib/global";
-import Link from "next/link";
-import useSWR from "swr";
-import TaskDialog from "../components/taskDialogButton";
-import useTasksFromTaskList from "@/app/api/task/get-tasks-from-tasklist";
 import Loading from "@/components/ui/loading";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import Link from "next/link";
+import { TasksBoardView } from "../components/taskDialog";
+import TaskDialog from "../components/taskDialogButton";
+import { TasksTable } from "../components/tasksTable";
 
 interface IProps {
   params: { task_list_id: string };

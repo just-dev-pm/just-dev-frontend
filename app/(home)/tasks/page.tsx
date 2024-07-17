@@ -1,37 +1,22 @@
 "use client";
 
-import TaskListOverrall from "@/app/(home)/tasks/components/task-list-overrall";
-import { BASE_URL } from "@/lib/global";
-import { useUserStore } from "@/store/userStore";
-import useSWR from "swr";
-
+import { TaskListControl } from "./components/list/control";
+import { UserTasksProvider } from "./components/list/user/context";
+import { TasklistDialog } from "./components/tasklistDialog";
 
 const TaskListsPage: React.FC = () => {
-  const userId = useUserStore(stats => stats.userId);
-  const urlPrefix = `/api/users/`;
-  const urlSuffix = `/task_lists`;
-  const { data, error } = useSWR(
-    userId ? [urlPrefix, userId, urlSuffix] : null,
-    ([urlPrefix, userId, urlSuffix]) =>
-      fetch(BASE_URL + urlPrefix + userId + urlSuffix, {
-        credentials: "include",
-      }).then(res => {
-        if (!res.ok) {
-          throw new Error(`Error! Status:${res.status}`);
-        }
-        return res.json();
-      }),
-    { suspense: true, fallbackData: { task_lists: [] } }
-  );
-  return error ? (
-    <div>{error}</div>
-  ) : (
-    <div>
-      <TaskListOverrall taskLists={data.task_lists} project={{
-          isProject: false,
-          project_id: ""
-        }} />
-    </div>
+  return (
+    <UserTasksProvider>
+      <div className="flex flex-col gap-4">
+        <div className="flex pr-2">
+          <h4>任务列表</h4>
+          <TasklistDialog project={{ isProject: false, project_id: "-1" }}>
+            新建列表
+          </TasklistDialog>
+        </div>
+        <TaskListControl />
+      </div>
+    </UserTasksProvider>
   );
 };
 

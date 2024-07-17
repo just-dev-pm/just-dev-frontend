@@ -1,5 +1,3 @@
-import { useProjectDraftCreate } from "@/app/api/draft/create-project-draft";
-import { useUserDraftCreate } from "@/app/api/draft/create-user-draft";
 import useProjectTasklistCreate from "@/app/api/tasklist/create-project-tasklist";
 import useUserTasklistCreate from "@/app/api/tasklist/create-user-tasklist";
 import { Button } from "@/components/ui/button";
@@ -22,7 +20,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { useUserStore } from "@/store/userStore";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -83,9 +80,13 @@ export function TasklistDialog({ project, children }: Props) {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel htmlFor="name">草稿名</FormLabel>
+                  <FormLabel htmlFor="name">任务列表名</FormLabel>
                   <FormControl>
-                    <Input id="name" placeholder="请输入草稿名" {...field} />
+                    <Input
+                      id="name"
+                      placeholder="请输入任务列表名"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
