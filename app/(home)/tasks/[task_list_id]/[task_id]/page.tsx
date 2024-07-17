@@ -22,8 +22,8 @@ interface IProps {
 export default function ConcreteTaskPage({ params }: IProps) {
   const { project_id, task_list_id, task_id } = params;
   const { data, error, isLoading } = useTasksFromTaskList({ task_list_id });
-  const { trigger } = useTaskChange({ task_list_id });
-  const { trigger: newRelation } = useSWRNewRelation();
+  const { trigger: taskChangeTrigger } = useTaskChange({ task_list_id });
+  const { trigger: relationAddTrigger } = useSWRNewRelation();
 
   const cardData = data.tasks.find(
     (task: { id: string }) => task.id === task_id,
@@ -42,7 +42,7 @@ export default function ConcreteTaskPage({ params }: IProps) {
 
   if (!taskLink || loadingTaskLink) return <Loading />;
   function handleTaskChange(res: any) {
-    trigger({ res, task_id });
+    taskChangeTrigger({ res, task_id });
     mutate(["/api/task_lists/", task_list_id, "/tasks"]);
   }
   // const cardData = data;
@@ -51,9 +51,10 @@ export default function ConcreteTaskPage({ params }: IProps) {
 
   console.log("cardDate:", cardData);
 
-  function handleSubmit(data: any) {
+  async function handleSubmit(data: any) {
     console.log(data);
-    newRelation(data);
+    await relationAddTrigger(data);
+    mutate(["/api/links/tasks/",task_id])
   }
   return (
     <div className="p-8 flex flex-col gap-4">

@@ -28,8 +28,8 @@ const View: React.FC<TaskRelationViewProps> = ({ taskLinks, taskId }) => {
               </div>
               <Divider vertical />
               <div className="grow">ID: {link.from.id}</div>
-              <ChangeRelationControl linkId={link.id} />
-              <DeleteRelationTrigger linkId={link.id} />
+              <ChangeRelationControl linkId={link.id} taskId={taskId}/>
+              <DeleteRelationTrigger linkId={link.id} taskId={taskId}/>
             </div>
           ))}
         </div>
@@ -46,8 +46,8 @@ const View: React.FC<TaskRelationViewProps> = ({ taskLinks, taskId }) => {
               <Divider vertical />
               <div className="grow">ID: {link.to.id}</div>
 
-              <ChangeRelationControl linkId={link.id} />
-              <DeleteRelationTrigger linkId={link.id} />
+              <ChangeRelationControl linkId={link.id} taskId={taskId} />
+              <DeleteRelationTrigger linkId={link.id} taskId={taskId}/>
             </div>
           ))}
         </div>
