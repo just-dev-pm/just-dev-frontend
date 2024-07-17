@@ -17,10 +17,7 @@ export default function DashboardPage({
                 <div>
                     <NewDraft projectId={project_id} />
                     <NewRequirement projectId={project_id} />
-<<<<<<< Updated upstream
-=======
                     <IncompletedTaskTable project_id={project_id} />
->>>>>>> Stashed changes
                 </div>
             </div>
         </div>
