@@ -109,7 +109,13 @@ function useAgendaEventSWR(agenda_ids: string[]) {
           agendaId: id,
         }))
         .map(async ({ url, agendaId }) => {
-          const events = await fetch(`${BASE_URL}${url}`)
+          const events = await fetch(`${BASE_URL}${url}`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json; charset=UTF-8"
+            },
+            credentials: "include"
+          })
             .then(handleResponse())
             .then((data) => {
               return data.json();
@@ -120,6 +126,7 @@ function useAgendaEventSWR(agenda_ids: string[]) {
             });
           return { agendaId, events: events.events };
         });
+      console.log(promises);
       return Promise.all(promises);
     }
   );
@@ -149,7 +156,21 @@ export default function AgendaPage() {
   } = useAgendaEventSWR(
     typedUserAgendas ? typedUserAgendas.agendas.map((agenda) => agenda.id) : []
   );
-
+  let filteredAgendasEvents: {
+    agendaId: string; events: {
+      id: string;
+      description: string;
+      end_time: Date;
+      name: string;
+      participants: {
+        id: string;
+      }[];
+      start_time: Date;
+    }[];
+  }[] = [];
+  const handleEventClick = (event: RenderedEvent) => {
+    router.push(`./agenda/${event.data.agenda_id}/${event.id}`);
+  };
   useMemo(() => {
     if (typedUserAgendas && typedUserAgendas.agendas) {
       typedUserAgendas.agendas.forEach((agenda) => {
@@ -167,39 +188,37 @@ export default function AgendaPage() {
   if (agendasEventsError) return <>Error</>;
 
   if (agendasEvents) {
-    const filteredAgendasEvents = agendasEvents!.filter((event) =>
+    filteredAgendasEvents = agendasEvents!.filter((event) =>
       switchState.some(
         (state) => state.id === event.agendaId && state.checked === true
       )
     );
-    const handleEventClick = (event: RenderedEvent) => {
-      router.push(`./agenda/${event.data.agenda_id}/${event.id}`);
-    };
-    // console.log("state",switchState);
-    return (
-      <div className="h-[90vh]">
-        <div className="flex justify-between">
-          <h2>个人总日程</h2>
-          <AgendaDataSheeet
-            calendars={calendars}
-            switchState={switchState}
-            setSwitchState={setSwitchState}
-            setCalendars={setCalendars}
-            project={{
-              isProject: false,
-              project_id: "",
-            }}
-          ></AgendaDataSheeet>
-        </div>
-        <Calendar
-          className="mt-4"
-          events={agendaEventsToRenderedEvents(filteredAgendasEvents)}
-          views={["month", "week", "day"]}
-          onSelectEvent={(event) => {
-            handleEventClick(event as any);
-          }}
-        />
-      </div>
-    );
+
+    console.log(filteredAgendasEvents);
   }
+  return (
+    <div className="h-[90vh]">
+      <div className="flex justify-between">
+        <h2>个人总日程</h2>
+        <AgendaDataSheeet
+          calendars={calendars}
+          switchState={switchState}
+          setSwitchState={setSwitchState}
+          setCalendars={setCalendars}
+          project={{
+            isProject: false,
+            project_id: "",
+          }}
+        ></AgendaDataSheeet>
+      </div>
+      <Calendar
+        className="mt-4"
+        events={agendaEventsToRenderedEvents(filteredAgendasEvents)}
+        views={["month", "week", "day"]}
+        onSelectEvent={(event) => {
+          handleEventClick(event as any);
+        }}
+      />
+    </div>
+  );
 }

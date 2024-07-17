@@ -108,7 +108,13 @@ function useAgendaEventSWR(agenda_ids: string[]) {
           agendaId: id,
         }))
         .map(async ({ url, agendaId }) => {
-          const events = await fetch(`${BASE_URL}${url}`)
+          const events = await fetch(`${BASE_URL}${url}`,{
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json; charset=UTF-8"
+            },
+            credentials: "include"
+          })
             .then(handleResponse())
             .then((data) => {
               return data.json();
@@ -154,7 +160,18 @@ export default function AgendaPage({ params }: Props) {
       ? typedProjectAgendas.agendas.map((agenda) => agenda.id)
       : []
   );
-
+  let filteredAgendasEvents: {
+    agendaId: string; events: {
+      id: string;
+      description: string;
+      end_time: Date;
+      name: string;
+      participants: {
+        id: string;
+      }[];
+      start_time: Date;
+    }[];
+  }[] = [];
   useMemo(() => {
     if (typedProjectAgendas && typedProjectAgendas.agendas) {
       typedProjectAgendas.agendas.forEach((agenda) => {
@@ -177,6 +194,7 @@ export default function AgendaPage({ params }: Props) {
         (state) => state.id === event.agendaId && state.checked === true
       )
     );
+  }
     const handleEventClick = (event: RenderedEvent) => {
       router.push(`./agenda/${event.data.agenda_id}/${event.id}`);
     };
@@ -206,5 +224,4 @@ export default function AgendaPage({ params }: Props) {
         />
       </div>
     );
-  }
 }
