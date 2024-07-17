@@ -80,8 +80,7 @@ function TasksList({
           <TaskDialog
             project={project}
             message={dialogMessage}
-            members={dialogMembers}
-          ></TaskDialog>
+            members={dialogMembers} task_list_id={task_list_id}          ></TaskDialog>
         </CardFooter>
       </Card>
     )

@@ -26,13 +26,14 @@ export type Task = {
   assignees: string[];
 };
 
-
 export default function TaskListPage({ params }: IProps) {
   const { task_list_id } = params;
-  const { data:tasklist_data, error:tasklist_error } = useTaskList({ task_list_id });
-  const {data,error} = useTasksFromTaskList({task_list_id})
+  const { data: tasklist_data, error: tasklist_error } = useTaskList({
+    task_list_id,
+  });
+  const { data, error } = useTasksFromTaskList({ task_list_id });
   const dialog_data: Task[] = data.tasks;
-  if(!dialog_data) return <Loading />
+  if (!dialog_data) return <Loading />;
 
   return error ? (
     <div>{error}</div>
@@ -51,6 +52,7 @@ export default function TaskListPage({ params }: IProps) {
               isProject: false,
               projectId: "",
             }}
+            task_list_id={task_list_id}
           ></TaskDialog>
         </div>
         <TabsContent value="board">
@@ -61,7 +63,10 @@ export default function TaskListPage({ params }: IProps) {
           ></TasksBoardView>
         </TabsContent>
         <TabsContent value="list">
-          <TasksTable task_list_id={task_list_id} data={dialog_data}></TasksTable>
+          <TasksTable
+            task_list_id={task_list_id}
+            data={dialog_data}
+          ></TasksTable>
         </TabsContent>
       </Tabs>
       <div className="flex justify-end">

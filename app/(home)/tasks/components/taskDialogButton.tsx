@@ -43,17 +43,20 @@ import {
   ProjectRender,
   UserRender,
 } from "./form/select-status";
+import useTaskCreate from "@/app/api/task/create-task";
+import { mutate } from "swr";
 
 type Props = {
   message: string;
   members: { id: string }[];
   project: { isProject: boolean; projectId: string };
+  task_list_id: string;
 };
 
 const formSchema = z.object({
   name: z.string().min(1, "任务名不能为空"),
   description: z.string().min(1, "任务描述不能为空"),
-  member: z.array(z.string()),
+  assignees: z.array(z.object({ id: z.string() })),
   deadline: z.date({ required_error: "截止时间不能为空" }),
   pr: z.string(),
   status: statusSchema,
@@ -62,25 +65,14 @@ const formSchema = z.object({
 type Form = z.infer<typeof formSchema>;
 
 //data fetching
-const onSubmit = (data: Form) => {
-  console.log(data);
-  toast({
-    title: "You submitted the following values:",
-    description: (
-      <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-        <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-      </pre>
-    ),
-  });
-};
 
-function TaskDialog({ message, members, project }: Props) {
+function TaskDialog({ message, members, project, task_list_id }: Props) {
   const form = useForm<Form>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
       description: "",
-      member: [],
+      assignees: [],
       deadline: new Date(),
       pr: "",
     },
@@ -99,10 +91,17 @@ function TaskDialog({ message, members, project }: Props) {
     isLoading: prs_loading,
   } = usePrs({ project_id });
   const prs = prs_data.prs;
+  const { trigger } = useTaskCreate({ task_list_id });
 
   if (!users_data || users_loading || prs_loading) return <Loading />;
   const users = users_data.users;
-  console.log(prs);
+
+  const onSubmit = async (data: Form) => {
+    await trigger(data);
+    mutate(["/api/task_lists/",task_list_id,"/tasks"])
+    console.log(data);
+  };
+
   return (
     <>
       <Dialog>
@@ -114,7 +113,7 @@ function TaskDialog({ message, members, project }: Props) {
 
         <DialogContent className="p-0">
           <PreventOverflowContainer>
-            {getContainer => (
+            {(getContainer) => (
               <Form {...form}>
                 <form
                   onSubmit={form.handleSubmit(onSubmit)}
@@ -161,7 +160,7 @@ function TaskDialog({ message, members, project }: Props) {
                   {project.isProject ? (
                     <FormField
                       control={form.control}
-                      name="member"
+                      name="assignees"
                       render={({}) => (
                         <FormItem className="w-full">
                           <FormLabel>指派给</FormLabel>
@@ -174,7 +173,7 @@ function TaskDialog({ message, members, project }: Props) {
                               <FormField
                                 key={user.username}
                                 control={form.control}
-                                name="member"
+                                name="assignees"
                                 render={({ field }) => {
                                   return (
                                     <FormItem
@@ -183,22 +182,22 @@ function TaskDialog({ message, members, project }: Props) {
                                     >
                                       <FormControl>
                                         <Checkbox
-                                          checked={field.value?.includes(
-                                            user.username
+                                          checked={field.value?.some(
+                                            (value) => value.id === user.id,
                                           )}
-                                          onCheckedChange={checked => {
+                                          onCheckedChange={(checked) => {
                                             const newValue = checked
                                               ? field.onChange([
-                                                  ...field.value,
-                                                  user.username,
+                                                  ...(field.value ?? []),
+                                                  { id: user.id },
                                                 ])
                                               : field.onChange(
                                                   field.value?.filter(
-                                                    value =>
-                                                      value !== user.username
-                                                  )
+                                                    (value) =>
+                                                      value.id !== user.id,
+                                                  ),
                                                 );
-                                            console.log(field.value);
+                                            console.log(newValue);
                                             return newValue;
                                           }}
                                         />
@@ -210,7 +209,7 @@ function TaskDialog({ message, members, project }: Props) {
                                   );
                                 }}
                               ></FormField>
-                            )
+                            ),
                           )}
                           <FormMessage></FormMessage>
                         </FormItem>
@@ -265,8 +264,8 @@ function TaskDialog({ message, members, project }: Props) {
                             <SelectContent>
                               {prs.map((pr: any, index: number) => (
                                 <div key={index}>
-                                  <SelectItem value={pr.title}>
-                                    {pr.title}
+                                  <SelectItem value={pr.repo}>
+                                    {pr.repo}
                                   </SelectItem>
                                 </div>
                               ))}
