@@ -19,6 +19,7 @@ type FormSchema = AddEventFormSchema;
 const Context = createContext<any>(null);
 interface ContextProps extends PropsWithChildren {
   initialData?: FormSchema;
+  handleEventAdd: (event: any) => void;
 }
 // 自定义钩子，用于快速访问上下文数据
 const useCustomContext = () => useContext(Context);
@@ -29,13 +30,19 @@ const useCustomContext = () => useContext(Context);
  * @param initialData
  * @returns React.FC<>
  */
-const ContextProvider: React.FC<ContextProps> = ({ children, initialData }) => {
+const ContextProvider: React.FC<ContextProps> = ({
+  children,
+  initialData,
+  handleEventAdd,
+}) => {
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: initialData,
   });
 
   function onSubmit(data: FormSchema) {
+    console.log(handleEventAdd);
+    handleEventAdd({...data,participants:[]})
     console.log(JSON.stringify(data));
     /*
 	{"name":"sfsf","description":"sdfsdf","start_time":"2024-07-16T10:27:57.856Z","end_time":"2024-07-16T10:27:39.795Z"}
