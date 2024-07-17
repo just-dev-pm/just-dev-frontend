@@ -54,7 +54,7 @@ export type Task = {
   description: string;
   status: "complete" | "incomplete";
   deadline: string;
-  assignees: string[];
+  assignees: {id:string}[];
 };
 
 export const columns: ColumnDef<Task>[] = [
@@ -104,14 +104,15 @@ export const columns: ColumnDef<Task>[] = [
     accessorKey: "assignees",
     header: "Assignees",
     cell: ({ row }) => {
-      const collaborators: string[] = row.original.assignees;
+      const collaborators: {id:string}[] = row.original.assignees;
       if (collaborators)
         return collaborators.map(c_user_id => {
-          const { data, error } = useUserInfo({ userId: c_user_id });
+          console.log(c_user_id);
+          const { data, error } = useUserInfo({ userId: c_user_id.id });
           const avatar = data.avatar;
           return (
-            <Avatar className="inline-block" key={c_user_id}>
-              <AvatarImage src={avatar}></AvatarImage>
+            <Avatar className="inline-block" key={c_user_id.id}>
+              <AvatarImage src={avatar ?? undefined}></AvatarImage>
               <AvatarFallback>CN</AvatarFallback>
             </Avatar>
           );

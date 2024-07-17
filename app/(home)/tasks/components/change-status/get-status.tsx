@@ -40,7 +40,7 @@ const ContextProvider: React.FC<ContextProps> = ({ projectId, children }) => {
     data: user_data,
     error: user_error,
     isLoading: user_loading,
-  } = useUserInfo({ userId });
+  } = useUserInfo({userId});
   useEffect(() => {
     if (projectId && !data?.name) {
       mutate();

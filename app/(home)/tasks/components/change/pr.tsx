@@ -86,6 +86,7 @@ const PrView = () => {
 
   const { form, onSubmit } = context;
   const pr = form.getValues().pr;
+  if(!pr) return <></>
   return (
     <div>
       <FormLabel>Github PR</FormLabel>
