@@ -21,12 +21,16 @@ import {
 import useSWR from "swr";
 import { useProjectInfo } from "@/app/api/project/get-projectInfo";
 import useProjectTasks from "@/app/api/task/get-project-tasks";
+import useUsersInProject from "@/app/api/project/get-users-in-project";
 
-export default function ContributionDistribution({project_id}:{project_id:string}) {
-    const { data: project_users } = useProjectInfo(project_id);
+export default function ContributionDistribution({
+    project_id,
+}: {
+    project_id: string;
+}) {
+    const { data: project_users } = useUsersInProject({ project_id });
 
-const { data, error, isLoading } = useProjectTasks({project_id}
-    );
+    const { data, error, isLoading } = useProjectTasks({ project_id });
 
     if (error) return <>Error {error}</>;
     if (isLoading) return <>Loading...</>;
@@ -35,7 +39,7 @@ const { data, error, isLoading } = useProjectTasks({project_id}
         (task) => task.status.category === "complete"
     );
 
-    const users = (project_users as ProjectUsersResponse).users;
+    const users = (project_users as ProjectUsersResponse)?.users;
 
     const user_contributions = users.map((user) => {
         const user_tasks = tasks.filter((task) =>
