@@ -149,7 +149,7 @@ export default function AgendaPage({ params }: Props) {
   >([]);
   const router = useRouter();
   const { project_id } = params;
-  const { data: projectAgendas } = useProjectAgenda({ project_id });
+  const { data: projectAgendas,error:projectAgendasError,isLoading:projectAgendasIsLoading } = useProjectAgenda({ project_id });
   const typedProjectAgendas = projectAgendas as GetProjectAgendasResponse;
   const {
     data: agendasEvents,
@@ -207,21 +207,24 @@ export default function AgendaPage({ params }: Props) {
     }
   }, [typedProjectAgendas]);
 
-  if (agendasEventsIsLoading) return <Loading />;
+  if (agendasEventsIsLoading || projectAgendasIsLoading) return <Loading />;
 
-  if (agendasEventsError) return <>Error</>;
+  if (agendasEventsError || projectAgendasError) return <>Error</>;
 
-  if (agendasEvents) {
-    const filteredAgendasEvents = agendasEvents!.filter((event) =>
+  if (agendasEvents && projectAgendas) {
+    filteredAgendasEvents = agendasEvents!.filter((event) =>
       switchState.some(
         (state) => state.id === event.agendaId && state.checked === true
       )
     );
+    console.log("final events",filteredAgendasEvents);
+    console.log("final rendered events",agendaEventsToRenderedEvents(filteredAgendasEvents))
   }
     const handleEventClick = (event: RenderedEvent) => {
       router.push(`./agenda/${event.data.agenda_id}/${event.id}`);
     };
     // console.log("state",switchState);
+    // if(!filteredAgendasEvents) return <Loading />
     return (
       <div className="h-[90vh]">
         <div className="flex justify-between">

@@ -13,6 +13,8 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { AddEventContextProvider } from "@/app/(home)/agenda/components/add-event/context";
 import EventDialog from "@/app/(home)/agenda/components/eventDialog";
+import useEventAdd from "@/app/api/event/add-event";
+import { mutate } from "swr";
 
 interface IProps {
   params: { agenda_id: string };
@@ -47,6 +49,7 @@ export default function ConcreteAgendaPage({ params }: IProps) {
   const { agenda_id } = params;
 
   const router = useRouter();
+  const {trigger} = useEventAdd({agenda_id})
   const {
     data: agenda_data,
     error: agenda_error,
@@ -90,6 +93,12 @@ export default function ConcreteAgendaPage({ params }: IProps) {
     // console.log(event.title);
   };
 
+  function handleEventAdd(event:event_res){
+    trigger(event);
+    mutate(["/api/agendas/",agenda_id,"/events"]);
+  }
+
+
   if (!agenda_data || agenda_loading || event_loading) return <Loading />;
 
   return (
@@ -99,7 +108,7 @@ export default function ConcreteAgendaPage({ params }: IProps) {
           <h2>项目具体日程</h2>
           <Label className="text-lg font-bold">{agenda_name}</Label>
         </div>
-        <AddEventContextProvider>
+        <AddEventContextProvider handleEventAdd={handleEventAdd}>
           <EventDialog
             project={{
               isProject: false,

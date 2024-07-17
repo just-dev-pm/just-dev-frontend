@@ -19,7 +19,7 @@ export default function useAgendaDelete() {
         credentials: "include",
       })
         .then(handleResponse("删除日程"))
-        .then((res) => res.json()),
+        .then((res) => res),
     {
       onError() {
         toast({ description: "删除失败" });
