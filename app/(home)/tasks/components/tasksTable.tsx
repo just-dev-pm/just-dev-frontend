@@ -46,6 +46,7 @@ import useTasksFromTaskList from "@/app/api/task/get-tasks-from-tasklist";
 import useTaskDelete from "@/app/api/task/delete-task";
 import TasksDropdown from "./tasksTableDropdown";
 import TasksTableAvatar from "./tasksTableAvatar";
+import Loading from "@/components/ui/loading";
 
 export type Task = {
   id: string;
@@ -61,7 +62,7 @@ export function TasksTable({
   data,
   task_list_id,
 }: {
-  data: Task[];
+  data: any;
   task_list_id: string;
 }) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -89,8 +90,8 @@ export function TasksTable({
       }
     );
   }
-
-  data.forEach(task => {
+  console.log(data);
+  data.tasks.map((task:any) => {
     // 直接添加 list_id 属性到每个 Task 对象
     task.list_id = task_list_id;
   });
