@@ -36,9 +36,9 @@ export default function TaskListPage({ params }: IProps) {
   return error ? (
     <div>{error}</div>
   ) : (
-    <div className="max-h-screen">
+    <div className="h-screen flex flex-col gap-4">
       <Tabs defaultValue="board">
-        <div className="flex justify-between">
+        <div className="flex gap-4">
           <TabsList>
             <TabsTrigger value="board">看板</TabsTrigger>
             <TabsTrigger value="list">列表</TabsTrigger>
@@ -67,8 +67,8 @@ export default function TaskListPage({ params }: IProps) {
           ></TasksTable>
         </TabsContent>
       </Tabs>
-      <div className="flex justify-end">
-        <Button>
+      <div>
+        <Button asChild className="mt-16">
           <Link href={`./`}>返回</Link>
         </Button>
       </div>

@@ -1,6 +1,8 @@
 "use client";
-import { useProject } from "@/app/api/project/get-project";
+import useProjectInfo from "@/app/api/project/get-projectInfo";
+import { useUserInfo } from "@/app/api/useUserInfo";
 import Loading from "@/components/ui/loading";
+import { useUserStore } from "@/store/userStore";
 import React, {
   PropsWithChildren,
   createContext,
@@ -8,7 +10,6 @@ import React, {
   useEffect,
 } from "react";
 import { ExtractStatus } from "./extract-status-pool";
-import useProjectInfo from "@/app/api/project/get-projectInfo";
 
 /**
  * @description Arrange
@@ -33,16 +34,23 @@ const useCustomContext = () => useContext(Context);
  * @returns React.FC<>
  */
 const ContextProvider: React.FC<ContextProps> = ({ projectId, children }) => {
-
   const { data, isLoading, mutate } = useProjectInfo(projectId);
+  const userId = useUserStore.getState().userId;
+  const {
+    data: user_data,
+    error: user_error,
+    isLoading: user_loading,
+  } = useUserInfo({ userId });
   useEffect(() => {
-    if (!data?.name) {
+    if (projectId && !data?.name) {
       mutate();
     }
   }, []);
-  if (isLoading || !data?.id) return <Loading />;
+  if (isLoading || user_loading || (projectId && !data?.id)) return <Loading />;
 
-  const options = ExtractStatus(data.status_pool);
+  const options = ExtractStatus(
+    projectId ? data.status_pool : user_data.status_pool,
+  );
 
   return <Context.Provider value={{ options }}>{children}</Context.Provider>;
 };
