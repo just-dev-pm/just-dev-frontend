@@ -39,7 +39,9 @@ export default function TaskTime({ projectId }: { projectId: string }) {
         )
     ).map(([key, value]) => ({
         month: key,
-        all: value?.length ?? 0,
+        incomplete:
+            value?.filter((task) => task.status.category === "incomplete")
+                .length ?? 0,
         complete:
             value?.filter((task) => task.status.category === "complete")
                 .length ?? 0,
@@ -47,7 +49,7 @@ export default function TaskTime({ projectId }: { projectId: string }) {
 
     const chartConfig = {
         all: {
-            label: "All",
+            label: "Incomplete",
         },
         complete: {
             label: "Complete",
@@ -74,7 +76,11 @@ export default function TaskTime({ projectId }: { projectId: string }) {
                             content={<ChartTooltipContent hideLabel />}
                         />
                         <ChartLegend content={<ChartLegendContent />} />
-                        <Bar dataKey="all" stackId="a" radius={[0, 0, 4, 4]} />
+                        <Bar
+                            dataKey="incomplete"
+                            stackId="a"
+                            radius={[0, 0, 4, 4]}
+                        />
                         <Bar
                             dataKey="complete"
                             stackId="a"
