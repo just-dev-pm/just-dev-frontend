@@ -25,7 +25,10 @@ export default function ProjectsPage() {
     );
   return (
     <div className="flex flex-col gap-4">
-      <CreateProjectController />
+      <div className="flex">
+        <h2>项目列表</h2>
+        <CreateProjectController />
+      </div>
       <div className="grid xl:grid-cols-[1fr_1fr_1fr]  gap-4">
         <ProjectsRender projects={data!} />
       </div>

@@ -61,7 +61,7 @@ interface INotificationView {
 function NotificationView({ notifications, markAsRead }: INotificationView) {
   return (
     <>
-      <h1 className="text-2xl font-bold mb-4">所有通知</h1>
+      <h2>所有通知</h2>
       <div>
         {notifications.map(notification => (
           <Card key={notification.id} className="m-2">

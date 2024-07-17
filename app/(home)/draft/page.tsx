@@ -32,7 +32,7 @@ export default function DraftPage() {
   ) : (
     <div>
       <div className="flex justify-between">
-        <Label className="font-bold text-xl">草稿总览</Label>
+        <h2>草稿总览</h2>
         <DraftsDialog
           project={{
             isProject: false,

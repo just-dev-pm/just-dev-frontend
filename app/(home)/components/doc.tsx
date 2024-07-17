@@ -67,7 +67,6 @@ function YQuillRenderer() {
       <div id="editor-container" style={{ height: "400px" }}>
         {/* Quill 编辑器 */}
       </div>
-      <div id="test">hello???</div>
     </div>
   );
 }

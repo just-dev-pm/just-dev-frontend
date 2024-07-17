@@ -58,7 +58,7 @@ const formSchema = z.object({
   description: z.string().min(1, "任务描述不能为空"),
   assignees: z.array(z.object({ id: z.string() })),
   deadline: z.date({ required_error: "截止时间不能为空" }),
-  pr: z.string(),
+  pr: z.object({owner: z.string(),repo: z.string(),pull_number:z.number(),title:z.string()}).optional(),
   status: statusSchema,
 });
 
@@ -74,7 +74,6 @@ function TaskDialog({ message, members, project, task_list_id }: Props) {
       description: "",
       assignees: [],
       deadline: new Date(),
-      pr: "",
     },
   });
   const project_id = project.projectId;
@@ -97,9 +96,20 @@ function TaskDialog({ message, members, project, task_list_id }: Props) {
   const users = users_data.users;
 
   const onSubmit = async (data: Form) => {
-    await trigger(data);
+    if(data.pr === undefined){
+      const sendData = {
+        name: data.name,
+        description: data.description,
+        assignees: data.assignees,
+        deadline: data.deadline,
+        status: data.status
+      }
+      await trigger(sendData)
+    }else{
+      await trigger(data);
+    }
     mutate(["/api/task_lists/",task_list_id,"/tasks"])
-    console.log(data);
+    console.log("data!",data);
   };
 
   return (
@@ -253,8 +263,17 @@ function TaskDialog({ message, members, project, task_list_id }: Props) {
                         <FormItem>
                           <FormLabel>选择绑定的pr</FormLabel>
                           <Select
-                            onValueChange={field.onChange}
-                            defaultValue={field.value}
+                            onValueChange={v=>{
+                              const parts = v.split("-");
+                              const pull_number = parseInt(parts[2]) 
+                              form.setValue("pr.owner",parts[0])
+                              form.setValue("pr.repo",parts[1])
+                              form.setValue("pr.pull_number",pull_number)
+                              form.setValue("pr.title",parts[3])
+                              console.log(parts);
+                              console.log(form.getValues());
+                            }}
+                            
                           >
                             <FormControl>
                               <SelectTrigger>
@@ -264,8 +283,8 @@ function TaskDialog({ message, members, project, task_list_id }: Props) {
                             <SelectContent>
                               {prs.map((pr: any, index: number) => (
                                 <div key={index}>
-                                  <SelectItem value={pr.repo}>
-                                    {pr.repo}
+                                  <SelectItem value={pr.owner+"-"+pr.repo+"-"+pr.pull_number+"-"+pr.title}>
+                                    {pr.owner+"-"+pr.repo+"-"+pr.pull_number+"-"+pr.title}
                                   </SelectItem>
                                 </div>
                               ))}

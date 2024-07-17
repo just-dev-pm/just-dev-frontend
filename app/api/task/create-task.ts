@@ -41,9 +41,9 @@ export default function useTaskCreate({task_list_id}:{task_list_id:string}){
 const formSchema = z.object({
     name: z.string().min(1, "任务名不能为空"),
     description: z.string().min(1, "任务描述不能为空"),
-    assignees: z.array(z.object({id:z.string()})),
+    assignees: z.array(z.object({ id: z.string() })),
     deadline: z.date({ required_error: "截止时间不能为空" }),
-    pr: z.string(),
+    pr: z.object({owner: z.string(),repo: z.string(),pull_number:z.number(),title:z.string()}).optional(),
     status: statusSchema,
   });
   

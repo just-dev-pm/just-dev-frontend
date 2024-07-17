@@ -43,7 +43,7 @@ export default function TaskListOverrall({
   return (
     <div className="container mx-auto">
       <div className="flex">
-        <h1 className="text-3xl font-bold my-4">任务列表</h1>
+        <h2 className="my-2">任务列表</h2>
         <TasklistDialog project={project}>新增任务列表</TasklistDialog>
       </div>
       <div className="grid grid-cols-2 gap-4">

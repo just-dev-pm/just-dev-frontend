@@ -132,7 +132,7 @@ function ChatRenderer({
 }) {
   return (
     <div className="flex flex-col">
-      <div className="grow overflow-auto space-x-2">
+      <div className="grow overflow-auto">
         {messages.map(msg => (
           <Card key={msg.id}>
             <CardHeader>

@@ -16,7 +16,7 @@ export default function DashboardPage({
 }) {
   return (
     <div className="flex flex-col">
-      <Label className="font-bold text-2xl mb-2">项目仪表盘</Label>
+      <h2 className="mb-2">项目仪表盘</h2>
       <div>
         <Card className="border-none">
           <CardContent className="flex gap-8 justify-between">
