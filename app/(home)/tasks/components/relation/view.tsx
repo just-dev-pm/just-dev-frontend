@@ -3,6 +3,8 @@ import React from "react";
 import { Divider, Tag } from "rsuite";
 import { ChangeRelationControl } from "../change-relation/control";
 import { DeleteRelationTrigger } from "../delete-relation/trigger";
+import { mutate } from "swr";
+import { useSWRDeleteRelation } from "../delete-relation/swr";
 
 // Define your interface definitions here
 
@@ -13,8 +15,20 @@ interface TaskRelationViewProps {
 
 const View: React.FC<TaskRelationViewProps> = ({ taskLinks, taskId }) => {
   // Filter links for predecessors (to === taskId) and successors (from === taskId)
+
   const predecessors = taskLinks.filter((link) => link.to.id === taskId);
   const successors = taskLinks.filter((link) => link.from.id === taskId);
+  const { trigger } = useSWRDeleteRelation();
+
+
+  const mutatePredecessorsDelete = (linkId: string) => {
+    const newData = predecessors.filter(predecessor => predecessor.id !== linkId)
+    mutate(["/api/links/tasks/", taskId], async () => { await trigger(linkId); return newData }, { optimisticData: newData })
+  }
+  const mutateSuccessorsDelete = (linkId: string) => {
+    const newData = successors.filter(successor => successor.id !== linkId)
+    mutate(["/api/links/tasks/", taskId], async () => { await trigger(linkId); return newData }, { optimisticData: newData })
+  }
 
   return (
     <div className="space-y-4">
@@ -28,8 +42,8 @@ const View: React.FC<TaskRelationViewProps> = ({ taskLinks, taskId }) => {
               </div>
               <Divider vertical />
               <div className="grow">ID: {link.from.id}</div>
-              <ChangeRelationControl linkId={link.id} taskId={taskId}/>
-              <DeleteRelationTrigger linkId={link.id} taskId={taskId}/>
+              <ChangeRelationControl linkId={link.id} taskId={taskId} />
+              <DeleteRelationTrigger linkId={link.id} mutateDelete={mutatePredecessorsDelete} />
             </div>
           ))}
         </div>
@@ -47,7 +61,7 @@ const View: React.FC<TaskRelationViewProps> = ({ taskLinks, taskId }) => {
               <div className="grow">ID: {link.to.id}</div>
 
               <ChangeRelationControl linkId={link.id} taskId={taskId} />
-              <DeleteRelationTrigger linkId={link.id} taskId={taskId}/>
+              <DeleteRelationTrigger linkId={link.id} mutateDelete={mutateSuccessorsDelete} />
             </div>
           ))}
         </div>

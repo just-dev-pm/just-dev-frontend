@@ -41,8 +41,8 @@ export default function ConcreteTaskPage({ params }: IProps) {
   }
 
   if (!taskLink || loadingTaskLink) return <Loading />;
-  function handleTaskChange(res: any) {
-    taskChangeTrigger({ res, task_id });
+  async function handleTaskChange(res: any) {
+    await taskChangeTrigger({ res, task_id });
     mutate(["/api/task_lists/", task_list_id, "/tasks"]);
   }
   // const cardData = data;

@@ -37,6 +37,7 @@ export default function ConcreteTaskPage({ params }: IProps) {
   }
   if (!taskLink || loadingTaskLink) return <Loading />;
   console.log(data);
+  console.log("link",taskLink);
 
   console.log("cardDate:", cardData);
 
@@ -44,9 +45,10 @@ export default function ConcreteTaskPage({ params }: IProps) {
     await trigger({ res, task_id });
     mutate(["/api/task_lists/", task_list_id, "/tasks"]);
   }
-  function handleSubmit(data: any) {
+  async function handleSubmit(data: any) {
     console.log(data);
-    newRelation(data);
+    await newRelation(data);
+    mutate(["/api/links/tasks/",task_id])
   }
 
   return (
@@ -75,7 +77,7 @@ export default function ConcreteTaskPage({ params }: IProps) {
           <AddRelationTrigger />
         </NewRelationContextProvider>
       </div>
-      {taskLink.task_links.length === 0 ? (
+      {taskLink.length === 0 || taskLink.task_links.length === 0 ? (
         <p>该任务无关联任务</p>
       ) : (
         <TaskRelationView

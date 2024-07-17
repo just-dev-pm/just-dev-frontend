@@ -6,16 +6,15 @@ import { mutate } from "swr";
 
 interface TriggerProps {
   linkId: string;
-  taskId: string;
+  mutateDelete: (linkId: string) => void
 }
-const Trigger: React.FC<TriggerProps> = ({ linkId, taskId }) => {
-  const { trigger } = useSWRDeleteRelation(linkId);
+const Trigger: React.FC<TriggerProps> = ({ linkId , mutateDelete }) => {
+
   return (
     <>
       <Button
         onClick={() => {
-          trigger();
-          mutate(["/api/links/tasks",taskId])
+          mutateDelete(linkId)
         }}
         appearance="link"
         className="text-red-400 focus:text-red-700 hover:text-red-700"
