@@ -1,6 +1,7 @@
 import { TaskRelation } from "@/types/task-link/get";
 import React from "react";
-import { Divider, Tag } from "rsuite";
+import { Button, Divider, Tag } from "rsuite";
+import { ChangeRelationControl } from "../change-relation/control";
 
 // Define your interface definitions here
 
@@ -11,8 +12,8 @@ interface TaskRelationViewProps {
 
 const View: React.FC<TaskRelationViewProps> = ({ taskLinks, taskId }) => {
   // Filter links for predecessors (to === taskId) and successors (from === taskId)
-  const predecessors = taskLinks.filter(link => link.to.id === taskId);
-  const successors = taskLinks.filter(link => link.from.id === taskId);
+  const predecessors = taskLinks.filter((link) => link.to.id === taskId);
+  const successors = taskLinks.filter((link) => link.from.id === taskId);
 
   return (
     <div className="space-y-4">
@@ -40,7 +41,12 @@ const View: React.FC<TaskRelationViewProps> = ({ taskLinks, taskId }) => {
                 <Tag color="blue">{link.category}</Tag>
               </div>
               <Divider vertical />
-              <div>ID: {link.to.id}</div>
+              <div className="grow">ID: {link.to.id}</div>
+
+              <ChangeRelationControl linkId={link.id} />
+              <Button appearance="link" color="red">
+                删除
+              </Button>
             </div>
           ))}
         </div>

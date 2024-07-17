@@ -5,7 +5,7 @@ import { useUserStore } from "@/store/userStore";
 import useSWRMutation from "swr/mutation";
 import { NewRelationSchema } from "./request";
 
-function swr() {
+function Swr() {
   const userId = useUserStore.getState().userId;
   const { trigger } = useSWRMutation(
     ["/api/users/", userId, "/links"],
@@ -19,9 +19,9 @@ function swr() {
         credentials: "include",
       })
         .then(handleResponse("创建用户任务关联"))
-        .then(res => res)
+        .then((res) => res),
   );
   return { trigger };
 }
 
-export { swr as useSWRNewRelation };
+export { Swr as useSWRNewRelation };
