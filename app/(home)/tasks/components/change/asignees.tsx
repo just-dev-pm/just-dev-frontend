@@ -15,18 +15,10 @@ import { useChangeTaskContext } from "./context";
  */
 // type FormItemProps = ControllerRenderProps<,>
 
-const data = [
-  "Eugenia",
-  "Bryan",
-  "Linda",
-  "Nancy",
-  "Lloyd",
-  "Alice",
-  "Julia",
-  "Albert",
-].map(item => ({ label: item, value: item }));
-
-const AssigneesFormField = () => {
+interface FormFieldProps {
+  data: { label: string; value: string }[];
+}
+const AssigneesFormField: React.FC<FormFieldProps> = ({ data }) => {
   const context = useChangeTaskContext();
 
   if (!context) {
@@ -34,6 +26,7 @@ const AssigneesFormField = () => {
   }
 
   const { form, onSubmit } = context;
+
   return (
     <FormField
       control={form.control}

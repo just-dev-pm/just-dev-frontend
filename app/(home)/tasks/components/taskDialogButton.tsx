@@ -1,5 +1,9 @@
 "use client";
 
+import usePrs from "@/app/api/get-prs";
+import useUsersInProject from "@/app/api/project/get-users-in-project";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogClose,
@@ -10,15 +14,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   Form,
   FormControl,
@@ -27,35 +22,27 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import Loading from "@/components/ui/loading";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { toast } from "@/components/ui/use-toast";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Plus } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import AddTaskButton from "./taskAddButton";
-import { Plus } from "lucide-react";
-import useSWR from "swr";
-import { BASE_URL } from "@/lib/global";
-import {
-  MultiSelector,
-  MultiSelectorContent,
-  MultiSelectorInput,
-  MultiSelectorItem,
-  MultiSelectorList,
-  MultiSelectorTrigger,
-} from "@/components/ui/multi-select";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Checkbox } from "@/components/ui/checkbox";
-import { toast } from "@/components/ui/use-toast";
-import useUsersInProject from "@/app/api/project/get-users-in-project";
-import usePrs from "@/app/api/get-prs";
 import { statusSchema } from "./form/create-task-context";
+import { DatetimeReder } from "./form/datetime-picker";
 import {
   PreventOverflowContainer,
   ProjectRender,
-  SelectStatus,
   UserRender,
 } from "./form/select-status";
-import { DatetimeReder } from "./form/datetime-picker";
-import Loading from "@/components/ui/loading";
 
 type Props = {
   message: string;
@@ -106,7 +93,6 @@ function TaskDialog({ message, members, project }: Props) {
   } = useUsersInProject({
     project_id,
   });
-  const users = users_data.users;
   const {
     data: prs_data,
     error: prs_error,
@@ -114,7 +100,8 @@ function TaskDialog({ message, members, project }: Props) {
   } = usePrs({ project_id });
   const prs = prs_data.prs;
 
-  if (users_loading || prs_loading) return <Loading />;
+  if (!users_data || users_loading || prs_loading) return <Loading />;
+  const users = users_data.users;
   console.log(prs);
   return (
     <>
@@ -127,7 +114,7 @@ function TaskDialog({ message, members, project }: Props) {
 
         <DialogContent className="p-0">
           <PreventOverflowContainer>
-            {(getContainer) => (
+            {getContainer => (
               <Form {...form}>
                 <form
                   onSubmit={form.handleSubmit(onSubmit)}
@@ -199,7 +186,7 @@ function TaskDialog({ message, members, project }: Props) {
                                           checked={field.value?.includes(
                                             user.username
                                           )}
-                                          onCheckedChange={(checked) => {
+                                          onCheckedChange={checked => {
                                             const newValue = checked
                                               ? field.onChange([
                                                   ...field.value,
@@ -207,7 +194,7 @@ function TaskDialog({ message, members, project }: Props) {
                                                 ])
                                               : field.onChange(
                                                   field.value?.filter(
-                                                    (value) =>
+                                                    value =>
                                                       value !== user.username
                                                   )
                                                 );

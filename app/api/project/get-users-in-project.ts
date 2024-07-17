@@ -15,13 +15,13 @@ export default function useUsersInProject({
     ([urlPrefix, project_id, urlSuffix]) =>
       fetch(BASE_URL + urlPrefix + project_id + urlSuffix, {
         credentials: "include",
-      }).then((res) => {
+      }).then(res => {
         if (!res.ok) {
           throw new Error(`Error! Status:${res.status}`);
         }
         return res.json();
       }),
-    { suspense: true, fallbackData: { users: [] } }
+    { suspense: false }
   );
   return {
     data,
