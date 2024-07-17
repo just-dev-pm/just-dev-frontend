@@ -25,8 +25,8 @@ export default function DraftPage({ params }: IProps) {
           你还没有草稿, 点击{" "}
           <DraftsDialog
             project={{
-              isProject: false,
-              project_id: "",
+              isProject: true,
+              project_id: project_id,
             }} variant="default"         >
             新增草稿
           </DraftsDialog>
