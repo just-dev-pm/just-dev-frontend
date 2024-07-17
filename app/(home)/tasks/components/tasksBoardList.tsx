@@ -22,7 +22,7 @@ import { Label } from "@/components/ui/label";
 
 type Props = {
   task_list_id: string;
-  todoListName: string;
+  todoListIcon: JSX.Element;
   tasks: Task[];
   dialogMessage: string;
   dialogMembers: { id: string }[];
@@ -31,38 +31,27 @@ type Props = {
 
 function TasksList({
   task_list_id,
-  todoListName,
+  todoListIcon,
   tasks,
   dialogMessage,
   dialogMembers,
   project,
 }: Props) {
   const path = usePathname();
-  const [isShow, setShow] = React.useState(true);
-  const handleShowChange = () => {
-    setShow(!isShow);
-  };
   const { trigger } = useTaskChange({ task_list_id });
   const handleTaskChange = async (res: any, task_id: string) => {
     await trigger({ res, task_id });
     mutate(["/api/task_lists/", task_list_id, "/tasks"]);
   };
   return (
-    isShow && (
-      <Card className="w-[20%] min-h-[20vh] flex flex-col">
+    (
+      <Card className="min-w-[20%] min-h-[20vh] flex flex-col">
         <CardHeader>
           <CardTitle className="flex justify-between items-center">
-            <Label className="font-bold text-xl">{todoListName}</Label>
-
-            <Button
-              onClick={handleShowChange}
-              className="bg-white text-black hover:bg-white"
-            >
-              <X className="h-full"></X>
-            </Button>
+            <Label className="font-bold text-xl">{todoListIcon}</Label>
           </CardTitle>
         </CardHeader>
-        <CardContent className="flex flex-col gap-2">
+        <CardContent className="flex gap-2">
           {tasks.map((task, index) => (
             <ChangeStatusContextProvider
               initialData={task}

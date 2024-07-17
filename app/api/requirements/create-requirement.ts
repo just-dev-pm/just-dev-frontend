@@ -10,12 +10,21 @@ type Prop = {
 
 /** @key /api/projects/{project_id}/requirements */
 
+import * as z from "zod";
+
+export const ResponseSchema = z.object({
+  content: z.string(),
+  id: z.string(),
+  name: z.string(),
+});
+export type Response = z.infer<typeof ResponseSchema>;
+
 export default function useRequirementCreate({
   project_id,
-  onSuccess
+  onSuccess,
 }: {
   project_id: string;
-  onSuccess?: (data: any) => void
+  onSuccess?: (data: any) => void;
 }) {
   const { toast } = useToast();
   const urlPrefix = `/api/projects/`;
@@ -24,7 +33,7 @@ export default function useRequirementCreate({
     project_id ? [urlPrefix, project_id, urlSuffix] : null,
     (
       [urlPrefix, project_id, urlSuffix],
-      { arg: { name, content } }: { arg: Prop }
+      { arg: { name, content } }: { arg: Prop },
     ) =>
       fetch(BASE_URL + urlPrefix + project_id + urlSuffix, {
         method: "POST",
@@ -35,7 +44,8 @@ export default function useRequirementCreate({
         credentials: "include",
       })
         .then(handleResponse("创建需求"))
-        .then((res) => res.json()),
+        .then((res) => res.json())
+        .then((res) => ResponseSchema.parse(res)),
     {
       onError() {
         toast({ description: "创建失败" });
@@ -44,12 +54,12 @@ export default function useRequirementCreate({
         toast({ description: "创建成功" });
         if (onSuccess) onSuccess(data);
       },
-    }
+    },
   );
   return {
     data,
     error,
     trigger,
-    isMutating
+    isMutating,
   };
 }

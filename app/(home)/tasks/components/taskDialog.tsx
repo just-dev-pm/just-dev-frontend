@@ -7,6 +7,7 @@ import { useUserStore } from "@/store/userStore";
 import { Key } from "react";
 import useProjectInfo from "@/app/api/project/get-projectInfo";
 import Loading from "@/components/ui/loading";
+import { CircleCheck, CircleX } from "lucide-react";
 
 export function TasksBoardView({
   task_list_id,
@@ -43,7 +44,7 @@ export function TasksBoardView({
   const imcomplete_status = status_pool.incomplete;
 
   return (
-    <div className="flex justify-start gap-6">
+    <div className="flex gap-8">
       {imcomplete_status.map(
         (
           imcomplete: { status: { name: string }; id: string | undefined },
@@ -51,7 +52,7 @@ export function TasksBoardView({
         ) => (
           <TasksList
             key={index}
-            todoListName={"incomplete: " + imcomplete.status.name}
+            todoListIcon={<div className="flex gap-2 items-center"><CircleX />{imcomplete.status.name}</div>}
             tasks={incomplete_tasks.filter(
               (task) => task.status.id === imcomplete.id
             )}
@@ -63,7 +64,7 @@ export function TasksBoardView({
         )
       )}
       <TasksList
-        todoListName={"complete:  " + complete_status_title}
+        todoListIcon={<div className="flex gap-2 items-center text-green-700"><CircleCheck />{complete_status_title}</div>}
         tasks={complete_tasks}
         project={project}
         dialogMessage={""}

@@ -18,7 +18,7 @@ export default function TaskItem({
   const { form, onSubmit } = useChangeStatusContext();
   return (
     <div
-      className="grid grid-cols-[1fr_3fr] items-center z-50 gap-4"
+      className="flex items-center z-50 gap-4"
       key={task.id}
     >
       <Form {...form}>
@@ -27,7 +27,7 @@ export default function TaskItem({
         </form>
       </Form>
       <Divider vertical />
-      <div className="w-full text-primary px-2">
+      <div className="w-full px-2">
         <Link href={`${path}/${task.id}`}>{task.name}</Link>
       </div>
     </div>

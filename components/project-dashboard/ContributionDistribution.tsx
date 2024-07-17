@@ -23,6 +23,7 @@ import useProjectInfo from "@/app/api/project/get-projectInfo";
 import useProjectTasks from "@/app/api/task/get-project-tasks";
 import useUsersInProject from "@/app/api/project/get-users-in-project";
 import { cn } from "@/lib/utils";
+import Loading from "../ui/loading";
 
 export default function ContributionDistribution({
   project_id,
@@ -36,13 +37,13 @@ export default function ContributionDistribution({
   const { data, error, isLoading } = useProjectTasks({ project_id });
 
   if (error) return <>Error {error}</>;
-  if (isLoading) return <>Loading...</>;
+  if (isLoading) return <Loading />;
 
-  const tasks = (data as ProjectTasksResponse).tasks.filter(
+  const tasks = data.tasks.filter(
     (task) => task.status.category === "complete"
   );
 
-  const users = (project_users as ProjectUsersResponse)?.users;
+  const users = project_users?.users;
 
   const user_contributions = users.map((user) => {
     const user_tasks = tasks.filter((task) =>

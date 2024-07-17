@@ -32,7 +32,7 @@ export default function TaskTime({
     project_id: projectId,
   });
 
-    if (isLoading) return <>Loading</>;
+    if (isLoading) return <Loading />;
     if (error) return <>Error</>;
 
   const tasks = ProjectTasksResponseSchema.parse(data)?.tasks;

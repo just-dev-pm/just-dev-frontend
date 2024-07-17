@@ -91,7 +91,7 @@ export function TasksTable({
     );
   }
   console.log(data);
-  data.tasks.map((task:any) => {
+  data.map((task:any) => {
     // 直接添加 list_id 属性到每个 Task 对象
     task.list_id = task_list_id;
   });

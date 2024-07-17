@@ -38,8 +38,8 @@ export default function TaskDistribution({
   if (error) return <>Error {error}</>;
   if (isLoading) return <Loading />;
 
-  const status_pool = (project_data as ProjectDataResponse).status_pool;
-  const tasks = (data as ProjectTasksResponse).tasks;
+  const status_pool = (project_data).status_pool;
+  const tasks = (data).tasks;
 
   const taskStatusDistributionIncomplete =
     status_pool?.incomplete.map((status) => {

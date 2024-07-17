@@ -64,7 +64,7 @@ export default function IncompletedTaskTable({project_id}:{project_id:string}) {
     if (error) return <>Error {error}</>;
     if (project_data_loading || project_tasks_loading) return <Loading/>;
 
-    const tasks = (data as ProjectTasksResponse).tasks.filter(
+    const tasks = data.tasks.filter(
         (task) => task.status.category === "incomplete"
     );
 

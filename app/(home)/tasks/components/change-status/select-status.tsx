@@ -51,7 +51,7 @@ export const SelectStatus: React.FC<ChangeStatusProps> = props => {
             items.tag === "complete" && "text-green-700"
           )}
         >
-          {items.tag === "complete" ? <CircleCheckIcon /> : <CircleXIcon />}
+          {/* {items.tag === "complete" ? <CircleCheckIcon /> : <CircleXIcon />} */}
           <span>{items.label}</span>
         </div>
       )
@@ -64,7 +64,7 @@ export const SelectStatus: React.FC<ChangeStatusProps> = props => {
       labelKey="label"
       valueKey="value"
       placeholder="设置状态"
-      renderMenuItem={renderMenuItem}
+      // renderMenuItem={renderMenuItem}
       renderMenuGroup={renderMenuGroup}
       renderValue={renderValue}
       appearance="subtle"
