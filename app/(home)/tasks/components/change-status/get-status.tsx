@@ -8,7 +8,7 @@ import React, {
   useEffect,
 } from "react";
 import { ExtractStatus } from "./extract-status-pool";
-import { useProjectInfo } from "@/app/api/project/get-projectInfo";
+import useProjectInfo from "@/app/api/project/get-projectInfo";
 
 /**
  * @description Arrange

@@ -1,15 +1,19 @@
 "use client";
+
+/** @key /api/projects/{project_id} */
+
 import { BASE_URL } from "@/lib/global";
 import { handleResponse } from "@/lib/handle-response";
 import { useEffect } from "react";
 import useSWR from "swr";
 import useSWRImmutable from "swr/immutable";
 
-export const useProjectInfo = (projectId: string) => {
+export default function useProjectInfo(projectId: string){
+  const urlPrefix = `/api/projects/`;
   const { data, mutate, error, isLoading } = useSWR(
-    ["/api/projects/", projectId],
+    projectId ? [urlPrefix, projectId] : null,
     ([url, projectId]) =>
-      fetch(`${BASE_URL}${url}${projectId}`, {
+      fetch(BASE_URL + urlPrefix + projectId, {
         headers: {
           "Content-Type": "application/json; charset=UTF-8",
         },

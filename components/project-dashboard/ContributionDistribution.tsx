@@ -19,7 +19,7 @@ import {
     ChartTooltipContent,
 } from "@/components/ui/chart";
 import useSWR from "swr";
-import { useProjectInfo } from "@/app/api/project/get-projectInfo";
+import useProjectInfo from "@/app/api/project/get-projectInfo";
 import useProjectTasks from "@/app/api/task/get-project-tasks";
 import useUsersInProject from "@/app/api/project/get-users-in-project";
 

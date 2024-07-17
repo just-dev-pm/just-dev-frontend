@@ -11,7 +11,7 @@ import { useProject } from "@/app/api/project/get-project";
 import useProjectTasks from "@/app/api/task/get-project-tasks";
 import { BASE_URL } from "@/lib/global";
 import { handleResponse } from "@/lib/handle-response";
-import { useProjectInfo } from "@/app/api/project/get-projectInfo";
+import useProjectInfo from "@/app/api/project/get-projectInfo";
 
 const getColumns: (
     status_pool: StatusPool | null | undefined

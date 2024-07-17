@@ -5,7 +5,7 @@ import { useProject } from "@/app/api/project/get-project";
 import { useUserInfo } from "@/app/api/useUserInfo";
 import { useUserStore } from "@/store/userStore";
 import { Key } from "react";
-import { useProjectInfo } from "@/app/api/project/get-projectInfo";
+import useProjectInfo from "@/app/api/project/get-projectInfo";
 import Loading from "@/components/ui/loading";
 
 export function TasksBoardView({
