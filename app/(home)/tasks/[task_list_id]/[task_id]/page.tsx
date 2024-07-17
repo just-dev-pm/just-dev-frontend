@@ -1,12 +1,9 @@
 "use client";
 
-import TaskItemCard from "../../components/taskItemCard";
-import { BASE_URL } from "@/lib/global";
-import { task_items_data } from "@/lib/Mockdata";
-import { useRouter } from "next/router";
-import useSWR from "swr";
 import useTasksFromTaskList from "@/app/api/task/get-tasks-from-tasklist";
 import Loading from "@/components/ui/loading";
+import { ChangeTaskContextProvider } from "../../components/change/context";
+import { UserTaskView } from "../../components/change/user-view";
 
 interface IProps {
   params: {
@@ -17,10 +14,10 @@ interface IProps {
 }
 export default function ConcreteTaskPage({ params }: IProps) {
   const { project_id, task_list_id, task_id } = params;
-  const { data, error,isLoading } = useTasksFromTaskList({ task_list_id });
+  const { data, error, isLoading } = useTasksFromTaskList({ task_list_id });
 
-  if(isLoading){
-    return <Loading />
+  if (isLoading) {
+    return <Loading />;
   }
 
   if (data.tasks.length === 0) {
@@ -32,16 +29,19 @@ export default function ConcreteTaskPage({ params }: IProps) {
   const cardData = data.tasks.find(
     (task: { id: string }) => task.id === task_id
   );
-  // console.log("cardDate:", cardData);
+  console.log("cardDate:", cardData);
   return (
-    <div className="">
-      <TaskItemCard
+    <div className="p-16">
+      {/* <TaskItemCard
         title={cardData.name}
         description={cardData.description}
         ddl={cardData.deadline}
         collaborators={cardData.assignees}
         isProject={false}
-      ></TaskItemCard>
+      ></TaskItemCard> */}
+      <ChangeTaskContextProvider initialData={cardData}>
+        <UserTaskView />
+      </ChangeTaskContextProvider>
     </div>
   );
 }
