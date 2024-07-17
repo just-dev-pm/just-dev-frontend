@@ -19,12 +19,13 @@ import {
     ChartTooltipContent,
 } from "@/components/ui/chart";
 import useSWR from "swr";
+import { useProjectInfo } from "@/app/api/project/get-projectInfo";
+import useProjectTasks from "@/app/api/task/get-project-tasks";
 
-export default function ContributionDistribution() {
-    const { data: project_users } = useSWR("/api/projects/{project_id}/users");
+export default function ContributionDistribution({project_id}:{project_id:string}) {
+    const { data: project_users } = useProjectInfo(project_id);
 
-    const { data, error, isLoading } = useSWR(
-        "/api/projects/{project_id}/tasks"
+const { data, error, isLoading } = useProjectTasks({project_id}
     );
 
     if (error) return <>Error {error}</>;
