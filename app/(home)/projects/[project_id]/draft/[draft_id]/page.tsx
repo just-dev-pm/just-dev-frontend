@@ -11,6 +11,7 @@ import { useUserInfo } from "@/app/api/useUserInfo";
 import { WebsocketProvider } from "y-websocket";
 import * as Y from "yjs";
 import { useEffect, useState } from "react";
+import { HOST_URL } from "@/lib/global";
 
 interface IProps {
   params: { draft_id: string };
@@ -18,7 +19,7 @@ interface IProps {
 export default function ConcreteDraftPage({ params }: IProps) {
   const userId = useUserStore((stats) => stats.userId);
   const { draft_id } = params;
-  const hostUrl = "ws://localhost:3000/ws/drafts/";
+  const hostUrl = HOST_URL!;
   const [doc, setDoc] = useState<Y.Doc>(new Y.Doc());
   const [provider, setProvider] = useState<WebsocketProvider>(
     new WebsocketProvider(hostUrl, draft_id, doc)
