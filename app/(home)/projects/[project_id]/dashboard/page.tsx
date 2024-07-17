@@ -5,6 +5,7 @@ import IncompletedTaskTable from "@/components/project-dashboard/IncompletedTask
 import NewDraft from "@/components/project-dashboard/NewDraft";
 import NewRequirement from "@/components/project-dashboard/NewRequirement";
 import TaskDistribution from "@/components/project-dashboard/TaskDistribution";
+import TaskTime from "@/components/project-dashboard/TaskTime";
 
 export default function DashboardPage({
     params: { project_id },
@@ -22,6 +23,7 @@ export default function DashboardPage({
                     <IncompletedTaskTable project_id={project_id} />
                     <ContributionDistribution project_id={project_id} />
                     <TaskDistribution projectId={project_id} />
+                    <TaskTime projectId={project_id} />
                 </div>
             </div>
         </div>

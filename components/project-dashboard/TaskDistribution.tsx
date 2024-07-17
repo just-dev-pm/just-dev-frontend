@@ -50,8 +50,6 @@ export default function TaskDistribution({ projectId }: { projectId: string }) {
         taskStatusDistributionComplete
     );
 
-    console.log(taskStatusDistribution);
-
     const chartConfig = {
         contribution: {
             label: "Contribution",

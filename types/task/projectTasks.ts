@@ -23,7 +23,7 @@ export type Assignee = z.infer<typeof AssigneeSchema>;
 
 export const TaskSchema = z.object({
     assignees: z.array(AssigneeSchema),
-    deadline: z.date(),
+    deadline: z.coerce.date(),
     description: z.string(),
     id: z.string(),
     name: z.string(),
