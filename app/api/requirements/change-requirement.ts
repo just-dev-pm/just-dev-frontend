@@ -24,6 +24,9 @@ export const useRequirementsChange = ({
     ) =>
       fetch(BASE_URL + urlPrefix + project_id + urlMidfix + requirement_id, {
         method: "PATCH",
+        headers:{
+          "Content-Type":"application/json",
+        },
         body: JSON.stringify(arg),
         credentials: "include",
       })
