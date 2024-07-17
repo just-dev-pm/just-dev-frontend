@@ -37,7 +37,12 @@ const StatusFormField = () => {
           <FormLabel>任务状态</FormLabel>
           <FormControl>
             <SelectStatus
-              onSelect={v => {
+              defaultValue={
+                form.getValues().status.category === "complete"
+                  ? "complete"
+                  : form.getValues().status.id
+              }
+              onSelect={(v) => {
                 if (v === "complete") {
                   form.setValue("status.category", "complete");
                   form.setValue("status.id", "");

@@ -22,11 +22,14 @@ import useSWR from "swr";
 import useProjectInfo from "@/app/api/project/get-projectInfo";
 import useProjectTasks from "@/app/api/task/get-project-tasks";
 import useUsersInProject from "@/app/api/project/get-users-in-project";
+import { cn } from "@/lib/utils";
 
 export default function ContributionDistribution({
     project_id,
+    className="",
 }: {
     project_id: string;
+    className?:string;
 }) {
     const { data: project_users } = useUsersInProject({ project_id });
 
@@ -52,13 +55,14 @@ export default function ContributionDistribution({
     });
 
     const chartConfig = {
+        
         contribution: {
             label: "Contribution",
         },
     } satisfies ChartConfig;
 
     return (
-        <Card className="flex flex-col">
+        <Card className={cn("flex flex-col",className)}>
             <CardHeader className="items-center pb-0">
                 <CardTitle>成员贡献</CardTitle>
             </CardHeader>

@@ -10,10 +10,11 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { PieChart } from "recharts";
 import { Pie } from "recharts";
-import { useProjectInfo } from "@/app/api/project/get-projectInfo";
+import useProjectInfo from "@/app/api/project/get-projectInfo";
 import useProjectTasks from "@/app/api/task/get-project-tasks";
+import { cn } from "@/lib/utils";
 
-export default function TaskDistribution({ projectId }: { projectId: string }) {
+export default function TaskDistribution({ projectId,className="" }: { projectId: string,className?:string }) {
     const { data: project_data } = useProjectInfo(projectId);
 
     const { data, error, isLoading } = useProjectTasks({
@@ -57,7 +58,7 @@ export default function TaskDistribution({ projectId }: { projectId: string }) {
     } satisfies ChartConfig;
 
     return (
-        <Card className="flex flex-col">
+        <Card className={cn("flex flex-col",className)}>
             <CardHeader className="items-center pb-0">
                 <CardTitle>任务状态</CardTitle>
             </CardHeader>

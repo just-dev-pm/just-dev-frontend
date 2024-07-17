@@ -19,6 +19,7 @@ import {
 const Context = createContext<ContextReturn | null>(null);
 interface ContextProps extends PropsWithChildren {
   initialData?: FormSchema;
+  handleTaskChange: (res: any) => void;
 }
 interface ContextReturn {
   form: UseFormReturn<FormSchema>;
@@ -33,7 +34,7 @@ const useCustomContext = () => useContext<ContextReturn | null>(Context);
  * @param initialData
  * @returns React.FC<>
  */
-const ContextProvider: React.FC<ContextProps> = ({ children, initialData }) => {
+const ContextProvider: React.FC<ContextProps> = ({ children, initialData,handleTaskChange }) => {
   const form: UseFormReturn<FormSchema> = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: initialData,
@@ -41,6 +42,7 @@ const ContextProvider: React.FC<ContextProps> = ({ children, initialData }) => {
   });
 
   function onSubmit(data: FormSchema) {
+    handleTaskChange(data)
     console.log(JSON.stringify(data));
     /*
 

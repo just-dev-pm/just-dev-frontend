@@ -4,6 +4,8 @@ import useTasksFromTaskList from "@/app/api/task/get-tasks-from-tasklist";
 import Loading from "@/components/ui/loading";
 import { ChangeTaskContextProvider } from "../../components/change/context";
 import { UserTaskView } from "../../components/change/user-view";
+import useTaskChange from "@/app/api/task/change-task";
+import { mutate } from "swr";
 
 interface IProps {
   params: {
@@ -15,13 +17,17 @@ interface IProps {
 export default function ConcreteTaskPage({ params }: IProps) {
   const { project_id, task_list_id, task_id } = params;
   const { data, error, isLoading } = useTasksFromTaskList({ task_list_id });
-
+  const {trigger} = useTaskChange({task_list_id});
   if (isLoading) {
     return <Loading />;
   }
 
   if (data.tasks.length === 0) {
     return <Loading />;
+  }
+  function handleTaskChange(res:any){
+    trigger({res,task_id})
+    mutate(["/api/task_lists/", task_list_id, "/tasks"]);
   }
   // const cardData = data;
   // console.log(data);
@@ -39,7 +45,7 @@ export default function ConcreteTaskPage({ params }: IProps) {
         collaborators={cardData.assignees}
         isProject={false}
       ></TaskItemCard> */}
-      <ChangeTaskContextProvider initialData={cardData}>
+      <ChangeTaskContextProvider initialData={cardData} handleTaskChange={handleTaskChange}>
         <UserTaskView />
       </ChangeTaskContextProvider>
     </div>
