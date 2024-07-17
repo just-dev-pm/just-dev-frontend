@@ -27,7 +27,9 @@ const View: React.FC<TaskRelationViewProps> = ({ taskLinks, taskId }) => {
                 <Tag color="blue">{link.category}</Tag>
               </div>
               <Divider vertical />
-              <div>ID: {link.from.id}</div>
+              <div className="grow">ID: {link.from.id}</div>
+              <ChangeRelationControl linkId={link.id} />
+              <DeleteRelationTrigger linkId={link.id} />
             </div>
           ))}
         </div>
