@@ -26,8 +26,6 @@ export default function TaskTime({ projectId }: { projectId: string }) {
     if (isLoading) return <>Loading</>;
     if (error) return <>Error</>;
 
-    console.log("Project tasks repsonse: ", data);
-
     const tasks = ProjectTasksResponseSchema.parse(data)?.tasks;
 
     const chartData = Object.entries(

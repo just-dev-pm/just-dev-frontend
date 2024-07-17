@@ -69,8 +69,6 @@ export default function IncompletedTaskTable({project_id}:{project_id:string}) {
     );
 
     const status_pool = (project_data as ProjectDataResponse).status_pool;
-    console.log(project_data);
-    console.log(status_pool);
     const columns = getColumns(status_pool);
 
     return <DataTable columns={columns} data={tasks} />;
