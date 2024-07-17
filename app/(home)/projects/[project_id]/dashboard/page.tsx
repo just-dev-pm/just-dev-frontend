@@ -15,7 +15,7 @@ export default function DashboardPage({
                 <div></div>
                 <div>
                     <NewDraft projectId={project_id} />
-                    <NewRequirement />
+                    <NewRequirement projectId={project_id} />
                 </div>
             </div>
         </div>
