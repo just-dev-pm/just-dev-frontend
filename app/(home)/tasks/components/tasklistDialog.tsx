@@ -44,10 +44,10 @@ const formSchema = z.object({
 export function TasklistDialog({ project, children }: Props) {
   const isProject = project.isProject;
   const userId = useUserStore((stats) => stats.userId);
-  const { trigger: userDraftCreateTrigger } = useUserTasklistCreate({
+  const { trigger: userTasklistCreateTrigger } = useUserTasklistCreate({
     user_id: userId,
   });
-  const { trigger: projectDraftCreateTrigger } = useProjectTasklistCreate({
+  const { trigger: projectTasklistCreateTrigger } = useProjectTasklistCreate({
     project_id: project.project_id,
   });
   const form = useForm<z.infer<typeof formSchema>>({
@@ -59,10 +59,10 @@ export function TasklistDialog({ project, children }: Props) {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     if (isProject) {
-      projectDraftCreateTrigger({ name: values.name });
+      projectTasklistCreateTrigger({ name: values.name });
       mutate(["/api/projects/", project.project_id, "/task_lists"]);
     } else {
-      userDraftCreateTrigger({ name: values.name });
+      userTasklistCreateTrigger({ name: values.name });
       mutate(["/api/users/", userId, "/task_lists"]);
     }
   }
