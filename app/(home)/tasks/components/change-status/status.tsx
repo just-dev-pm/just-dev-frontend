@@ -25,6 +25,11 @@ const StatusFormField = () => {
         <FormItem>
           <FormControl>
             <SelectStatus
+              defaultValue={
+                form.getValues().status.category === "complete"
+                  ? "complete"
+                  : form.getValues().status.id
+              }
               onSelect={v => {
                 if (v === "complete") {
                   form.setValue("status.category", "complete");
