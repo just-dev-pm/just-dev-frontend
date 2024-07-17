@@ -5,6 +5,8 @@ import { useProject } from "@/app/api/project/get-project";
 import { useUserInfo } from "@/app/api/useUserInfo";
 import { useUserStore } from "@/store/userStore";
 import { Key } from "react";
+import { useProjectInfo } from "@/app/api/project/get-projectInfo";
+import Loading from "@/components/ui/loading";
 
 export function TasksBoardView({
   task_list_id,
@@ -16,16 +18,18 @@ export function TasksBoardView({
   project: { isProject: boolean; projectId: string };
 }) {
   const userId = useUserStore((stats) => stats.userId);
-  const { data, error } = useTasksFromTaskList({ task_list_id });
+  const { data, error,isLoading } = useTasksFromTaskList({ task_list_id });
+  const { data:project_data, error:project_error, isLoading:project_loading } = useProjectInfo(project.projectId);
+  const { data:user_data, error:user_error, isLoading:user_loading } = useUserInfo({ userId });
+
+  if(isLoading || project_loading || user_loading) return <Loading />
 
   const dialog_tasks: Task[] = data.tasks;
   let status_pool = undefined;
   if (project.isProject) {
-    const { data, error, isLoading } = useProject(project.projectId);
-    status_pool = data.status_pool;
+    status_pool = project_data.status_pool;
   } else {
-    const { data, error, isLoading } = useUserInfo({ userId });
-    status_pool = data.status_pool;
+    status_pool = user_data.status_pool;
   }
 
   const complete_tasks = dialog_tasks.filter(

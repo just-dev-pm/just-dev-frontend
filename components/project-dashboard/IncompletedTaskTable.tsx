@@ -11,6 +11,7 @@ import { useProject } from "@/app/api/project/get-project";
 import useProjectTasks from "@/app/api/task/get-project-tasks";
 import { BASE_URL } from "@/lib/global";
 import { handleResponse } from "@/lib/handle-response";
+import { useProjectInfo } from "@/app/api/project/get-projectInfo";
 
 const getColumns: (
     status_pool: StatusPool | null | undefined
@@ -54,30 +55,7 @@ const getColumns: (
 };
 
 export default function IncompletedTaskTable({project_id}:{project_id:string}) {
-    const { data: project_data,isLoading:project_data_loading } = useSWR(
-        ["/api/projects/", project_id],
-        ([url, projectId]) =>
-          fetch(`${BASE_URL}${url}${projectId}`, {
-            headers: {
-              "Content-Type": "application/json; charset=UTF-8",
-            },
-            credentials: "include",
-          })
-            .then(handleResponse("获取项目信息"))
-            .then(res => res.json()),
-        {
-          fallbackData: {
-            id: "",
-            description: "",
-            name: "",
-            github: 0,
-            status_pool: {
-              complete: {},
-              incomplete: [],
-            },
-          },
-        }
-      );
+    const { data: project_data,isLoading:project_data_loading } = useProjectInfo(project_id)
 
     const { data, error, isLoading:project_tasks_loading } = useProjectTasks(
         {project_id}
