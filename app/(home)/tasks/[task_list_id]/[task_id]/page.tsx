@@ -2,6 +2,7 @@
 
 import useTaskChange from "@/app/api/task/change-task";
 import useTasksFromTaskList from "@/app/api/task/get-tasks-from-tasklist";
+import useTaskLink from "@/app/api/tasklink/get-tasklink";
 import Loading from "@/components/ui/loading";
 import { mutate } from "swr";
 import { NewRelationContextProvider } from "../../components/add-relation/context";
@@ -9,7 +10,6 @@ import { useSWRNewRelation } from "../../components/add-relation/swr";
 import { AddRelationTrigger } from "../../components/add-relation/trigger";
 import { ChangeTaskContextProvider } from "../../components/change/context";
 import { UserTaskView } from "../../components/change/user-view";
-import { relationMock } from "../../components/relation/mock";
 import { TaskRelationView } from "../../components/relation/view";
 
 interface IProps {
@@ -24,6 +24,14 @@ export default function ConcreteTaskPage({ params }: IProps) {
   const { data, error, isLoading } = useTasksFromTaskList({ task_list_id });
   const { trigger } = useTaskChange({ task_list_id });
   const { trigger: newRelation } = useSWRNewRelation();
+
+  const cardData = data.tasks.find(
+    (task: { id: string }) => task.id === task_id,
+  );
+
+  const { data: taskLink, isLoading: loadingTaskLink } = useTaskLink({
+    task_id: cardData?.id,
+  });
   if (isLoading) {
     return <Loading />;
   }
@@ -31,6 +39,8 @@ export default function ConcreteTaskPage({ params }: IProps) {
   if (data.tasks.length === 0) {
     return <Loading />;
   }
+
+  if (!taskLink || loadingTaskLink) return <Loading />;
   function handleTaskChange(res: any) {
     trigger({ res, task_id });
     mutate(["/api/task_lists/", task_list_id, "/tasks"]);
@@ -38,9 +48,7 @@ export default function ConcreteTaskPage({ params }: IProps) {
   // const cardData = data;
   // console.log(data);
   // const cardData = data.find((task: { id: string; })=> task.id === task_id)
-  const cardData = data.tasks.find(
-    (task: { id: string }) => task.id === task_id
-  );
+
   console.log("cardDate:", cardData);
 
   function handleSubmit(data: any) {
@@ -72,7 +80,14 @@ export default function ConcreteTaskPage({ params }: IProps) {
           <AddRelationTrigger />
         </NewRelationContextProvider>
       </div>
-      <TaskRelationView taskLinks={relationMock} taskId="81" />
+      {taskLink.task_links.length === 0 ? (
+        <p>该任务无关联任务</p>
+      ) : (
+        <TaskRelationView
+          taskLinks={taskLink.task_links}
+          taskId={cardData?.id}
+        />
+      )}
     </div>
   );
 }
