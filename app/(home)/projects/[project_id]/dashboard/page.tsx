@@ -4,6 +4,7 @@ import ContributionDistribution from "@/components/project-dashboard/Contributio
 import IncompletedTaskTable from "@/components/project-dashboard/IncompletedTaskTable";
 import NewDraft from "@/components/project-dashboard/NewDraft";
 import NewRequirement from "@/components/project-dashboard/NewRequirement";
+import TaskDistribution from "@/components/project-dashboard/TaskDistribution";
 
 export default function DashboardPage({
     params: { project_id },
@@ -19,7 +20,8 @@ export default function DashboardPage({
                     <NewDraft projectId={project_id} />
                     <NewRequirement projectId={project_id} />
                     <IncompletedTaskTable project_id={project_id} />
-                    {/* <ContributionDistribution project_id={project_id} /> */}
+                    <ContributionDistribution project_id={project_id} />
+                    <TaskDistribution projectId={project_id} />
                 </div>
             </div>
         </div>
