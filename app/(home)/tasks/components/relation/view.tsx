@@ -1,7 +1,8 @@
 import { TaskRelation } from "@/types/task-link/get";
 import React from "react";
-import { Button, Divider, Tag } from "rsuite";
+import { Divider, Tag } from "rsuite";
 import { ChangeRelationControl } from "../change-relation/control";
+import { DeleteRelationTrigger } from "../delete-relation/trigger";
 
 // Define your interface definitions here
 
@@ -44,9 +45,7 @@ const View: React.FC<TaskRelationViewProps> = ({ taskLinks, taskId }) => {
               <div className="grow">ID: {link.to.id}</div>
 
               <ChangeRelationControl linkId={link.id} />
-              <Button appearance="link" color="red">
-                删除
-              </Button>
+              <DeleteRelationTrigger linkId={link.id} />
             </div>
           ))}
         </div>
