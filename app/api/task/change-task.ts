@@ -41,28 +41,26 @@ export enum Category {
 
 export default function useTaskChange({
   task_list_id,
-  task_id,
 }: {
   task_list_id: string;
-  task_id: string;
 }) {
   const { toast } = useToast();
   const urlPrefix = `/api/task_lists/`;
   const urlMidfix = `/tasks/`;
   const { data, error, trigger } = useSWRMutation(
-    task_list_id && task_id
-      ? [urlPrefix, task_list_id, urlMidfix, task_id]
+    task_list_id
+      ? [urlPrefix, task_list_id, urlMidfix]
       : null,
     (
-      [urlPrefix, task_list_id, urlMidfix, task_id],
-      { arg }: { arg: Request }
+      [urlPrefix, task_list_id, urlMidfix],
+      { arg }: { arg: {res:Request,task_id:string} }
     ) =>
-      fetch(BASE_URL + urlPrefix + task_list_id + urlMidfix + task_id, {
+      fetch(BASE_URL + urlPrefix + task_list_id + urlMidfix + arg.task_id, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json; charset=UTF-8",
         },
-        body: JSON.stringify(arg),
+        body: JSON.stringify(arg.res),
         credentials: "include",
       })
         .then(handleResponse("修改任务"))

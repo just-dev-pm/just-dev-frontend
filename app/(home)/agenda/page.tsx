@@ -1,19 +1,16 @@
 "use client";
 
-import { Label } from "@/components/ui/label";
 import AgendaDataSheeet from "./components/AgendaDataSheet";
 import Calendar from "./components/calendar";
 import useUserAgenda from "@/app/api/agenda/get-user-agenda";
 import { useUserStore } from "@/store/userStore";
 import Loading from "@/components/ui/loading";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { BASE_URL } from "@/lib/global";
 import { handleResponse } from "@/lib/handle-response";
-import moment from "moment";
-import useAgenda from "@/app/api/agenda/get-agenda";
 import * as z from "zod";
 import useSWR from "swr";
-import { isDeepStrictEqual } from "util";
+import { useRouter } from "next/navigation";
 
 export const ParticipantSchema = z.object({
   id: z.string(),
@@ -69,7 +66,7 @@ function agendaEventsToRenderedEvents(
     agenda.events.forEach((event) => {
       events.push({
         title: event.name,
-        start:event.start_time,
+        start: event.start_time,
         end: event.end_time,
         id: event.id,
         data: {
@@ -141,6 +138,7 @@ export default function AgendaPage() {
   const [switchState, setSwitchState] = useState<
     { id: string; checked: boolean }[]
   >([]);
+  const router = useRouter();
   const user_id = useUserStore.getState().userId;
   const { data: userAgendas } = useUserAgenda({ user_id });
   const typedUserAgendas = userAgendas as GetUserAgendasResponse;
@@ -152,10 +150,6 @@ export default function AgendaPage() {
     typedUserAgendas ? typedUserAgendas.agendas.map((agenda) => agenda.id) : []
   );
 
-  //   typedUserAgendas.agendas.map((agenda) => {
-  //     //setSwitchState((State) => [...State,{ id: agenda.id, checked: true }]);
-  //     calendars.push({ id: agenda.id, name: agenda.name });
-  //   });
   useMemo(() => {
     if (typedUserAgendas && typedUserAgendas.agendas) {
       typedUserAgendas.agendas.forEach((agenda) => {
@@ -178,14 +172,19 @@ export default function AgendaPage() {
         (state) => state.id === event.agendaId && state.checked === true
       )
     );
+    const handleEventClick = (event: RenderedEvent) => {
+      router.push(`./agenda/${event.data.agenda_id}/${event.id}`);
+    };
     // console.log("state",switchState);
     return (
-      <>
-        <div className="flex justify-end">
+      <div className="h-[90vh]">
+        <div className="flex justify-between">
+          <h2>个人总日程</h2>
           <AgendaDataSheeet
             calendars={calendars}
             switchState={switchState}
             setSwitchState={setSwitchState}
+            setCalendars={setCalendars}
             project={{
               isProject: false,
               project_id: "",
@@ -196,8 +195,11 @@ export default function AgendaPage() {
           className="mt-4"
           events={agendaEventsToRenderedEvents(filteredAgendasEvents)}
           views={["month", "week", "day"]}
+          onSelectEvent={(event) => {
+            handleEventClick(event as any);
+          }}
         />
-      </>
+      </div>
     );
   }
 }

@@ -2,7 +2,7 @@
  * 任务
  */
 export interface Task {
-  assignees: Assignee[];
+  assignees: Assignee [];
   /**
    * 截止时间
    */

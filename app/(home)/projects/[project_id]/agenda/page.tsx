@@ -1,62 +1,210 @@
 "use client";
 
-import Calendar from "@/app/(home)/agenda/components/calendar";
 import AgendaDataSheeet from "@/app/(home)/agenda/components/AgendaDataSheet";
-import useProjectAgenda from "@/app/api/agenda/get-project-agenda";
-import { Label } from "@/components/ui/label";
+import Calendar from "@/app/(home)/agenda/components/calendar";
 import Loading from "@/components/ui/loading";
-import { agenda_calendar, events } from "@/lib/Mockdata";
+import { useMemo, useState } from "react";
+import { BASE_URL } from "@/lib/global";
+import { handleResponse } from "@/lib/handle-response";
+import * as z from "zod";
+import useSWR from "swr";
+import { useRouter } from "next/navigation";
+import useProjectAgenda from "@/app/api/agenda/get-project-agenda";
 
-type agenda = {
-  id: string;
-  name: string;
-  events: {event_id:string}[]
-}
+export const ParticipantSchema = z.object({
+  id: z.string(),
+});
+export type Participant = z.infer<typeof ParticipantSchema>;
 
-type event_res = {
-  description: string;
-  end_time: string;
+export const EventSchema = z.object({
+  description: z.string(),
+  end_time: z.coerce.date(),
+  id: z.string(),
+  name: z.string(),
+  participants: z.array(ParticipantSchema),
+  start_time: z.coerce.date(),
+});
+export type Event = z.infer<typeof EventSchema>;
+
+export const GetAgendaEventsResponseSchema = z.object({
+  events: z.array(EventSchema),
+});
+export type GetAgendaEventsResponse = z.infer<
+  typeof GetAgendaEventsResponseSchema
+>;
+
+type RenderedEvent = {
+  title: string;
+  start: Date;
+  end: Date;
   id: string;
-  name: string;
-  participants: Participant[];
-  start_time: string;
+  data: {
+    agenda_id: string;
+    description: string;
+    participants: { id: string }[];
+  };
 };
 
-type Participant = {
-  id: string;
-};
-
-type IProps = {
-  params:{project_id:string}
+function agendaEventsToRenderedEvents(
+  agendaEvents: {
+    agendaId: string;
+    events: {
+      id: string;
+      description: string;
+      end_time: Date;
+      name: string;
+      participants: {
+        id: string;
+      }[];
+      start_time: Date;
+    }[];
+  }[]
+): RenderedEvent[] {
+  const events: RenderedEvent[] = [];
+  agendaEvents.forEach((agenda) => {
+    agenda.events.forEach((event) => {
+      events.push({
+        title: event.name,
+        start: event.start_time,
+        end: event.end_time,
+        id: event.id,
+        data: {
+          agenda_id: agenda.agendaId,
+          description: event.description,
+          participants: event.participants,
+        },
+      });
+    });
+  });
+  return events;
 }
 
-export default function AgendaPage({params}:IProps) {
-  const {project_id} = params;
-  const {data,error} = useProjectAgenda({project_id})
+export const EventIdSchema = z.object({
+  id: z.string(),
+});
+export type EventId = z.infer<typeof EventIdSchema>;
 
-  if(!data) return <Loading />
+export const AgendaSchema = z.object({
+  events: z.array(EventIdSchema),
+  id: z.string(),
+  name: z.string(),
+});
+export type Agenda = z.infer<typeof AgendaSchema>;
 
-  const agendas = data.agendas;
-  let idsAndNames:{id:string,name:string}[] = [];
-  let event_ids:{event_id:string}[] = []; 
-  if(agendas){
-    agendas.map((agenda: agenda) => {
-      idsAndNames.push({id:agenda.id,name:agenda.name})
-      event_ids = event_ids.concat(agenda.events)
-    })
-  }
-  return (
-    <div>
-      <div style={{ height: "88vh" }} className="flex flex-col gap-4">
-        <div className="flex justify-between">
-          <Label className="text-xl font-bold">日程总览</Label>
-          <AgendaDataSheeet calendars={idsAndNames} project={{
-            isProject: true,
-            project_id: project_id
-          }}></AgendaDataSheeet>
-        </div>
-        <Calendar events={events} views={["month", "week", "day"]}></Calendar>
-      </div>
-    </div>
+export const GetProjectAgendasResponseSchema = z.object({
+  agendas: z.array(AgendaSchema),
+});
+export type GetProjectAgendasResponse = z.infer<
+  typeof GetProjectAgendasResponseSchema
+>;
+
+function useAgendaEventSWR(agenda_ids: string[]) {
+  const { data, error, isLoading } = useSWR(
+    agenda_ids ? agenda_ids.join("-") : null,
+    async () => {
+      const promises = agenda_ids
+        .map((id) => ({
+          url: `/api/agendas/${id}/events`,
+          agendaId: id,
+        }))
+        .map(async ({ url, agendaId }) => {
+          const events = await fetch(`${BASE_URL}${url}`)
+            .then(handleResponse())
+            .then((data) => {
+              return data.json();
+            })
+            .then((data) => {
+              const typed = GetAgendaEventsResponseSchema.parse(data);
+              return typed;
+            });
+          return { agendaId, events: events.events };
+        });
+      return Promise.all(promises);
+    }
   );
+
+  return {
+    data,
+    isLoading,
+    error,
+  };
+}
+
+type Props = {
+  params: { project_id: string };
+};
+
+export default function AgendaPage({ params }: Props) {
+  const [calendars, setCalendars] = useState<{ id: string; name: string }[]>(
+    []
+  );
+  const [switchState, setSwitchState] = useState<
+    { id: string; checked: boolean }[]
+  >([]);
+  const router = useRouter();
+  const { project_id } = params;
+  const { data: projectAgendas } = useProjectAgenda({ project_id });
+  const typedProjectAgendas = projectAgendas as GetProjectAgendasResponse;
+  const {
+    data: agendasEvents,
+    error: agendasEventsError,
+    isLoading: agendasEventsIsLoading,
+  } = useAgendaEventSWR(
+    typedProjectAgendas
+      ? typedProjectAgendas.agendas.map((agenda) => agenda.id)
+      : []
+  );
+
+  useMemo(() => {
+    if (typedProjectAgendas && typedProjectAgendas.agendas) {
+      typedProjectAgendas.agendas.forEach((agenda) => {
+        setCalendars((pre) => [...pre, { id: agenda.id, name: agenda.name }]);
+        setSwitchState((prevStates) => [
+          ...prevStates,
+          { id: agenda.id, checked: true },
+        ]);
+      });
+    }
+  }, [typedProjectAgendas]);
+
+  if (agendasEventsIsLoading) return <Loading />;
+
+  if (agendasEventsError) return <>Error</>;
+
+  if (agendasEvents) {
+    const filteredAgendasEvents = agendasEvents!.filter((event) =>
+      switchState.some(
+        (state) => state.id === event.agendaId && state.checked === true
+      )
+    );
+    const handleEventClick = (event: RenderedEvent) => {
+      router.push(`./agenda/${event.data.agenda_id}/${event.id}`);
+    };
+    // console.log("state",switchState);
+    return (
+      <div className="h-[90vh]">
+        <div className="flex justify-between">
+          <h2>项目总日程</h2>
+          <AgendaDataSheeet
+            calendars={calendars}
+            switchState={switchState}
+            setSwitchState={setSwitchState}
+            setCalendars={setCalendars}
+            project={{
+              isProject: true,
+              project_id: project_id,
+            }}
+          ></AgendaDataSheeet>
+        </div>
+        <Calendar
+          className="mt-4"
+          events={agendaEventsToRenderedEvents(filteredAgendasEvents)}
+          views={["month", "week", "day"]}
+          onSelectEvent={(event) => {
+            handleEventClick(event as any);
+          }}
+        />
+      </div>
+    );
+  }
 }

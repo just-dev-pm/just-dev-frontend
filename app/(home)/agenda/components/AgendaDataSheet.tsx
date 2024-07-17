@@ -31,6 +31,7 @@ export default function AgendaDataSheeet({
   project,
   switchState,
   setSwitchState,
+  setCalendars
 }: {
   calendars: calendars;
   project: { isProject: boolean; project_id: string };
@@ -47,6 +48,10 @@ export default function AgendaDataSheeet({
       }[]
     >
   >;
+  setCalendars: Dispatch<SetStateAction<{
+    id: string;
+    name: string;
+}[]>>
 }) {
   const useId = useUserStore((stats) => stats.userId);
   // const {mutate} = useUserAgenda({user_id:useId})
@@ -56,24 +61,12 @@ export default function AgendaDataSheeet({
   });
   const { trigger } = useAgendaDelete();
   function onDelete(agenda_id: string) {
-    const newData = {
-      calendars: calendars.filter(({ id }: { id: string }) => id !== agenda_id),
-    };
+    setCalendars((pre) => [...pre.filter((stats)=> stats.id !== agenda_id)]);
+    setSwitchState((prevStates) => [
+      ...prevStates.filter((state_now) => state_now.id !== agenda_id)]);
     project.isProject
-      ? project_mutate(
-          async () => {
-            await trigger(agenda_id);
-            return newData;
-          },
-          { optimisticData: newData }
-        )
-      : user_mutate(
-          async () => {
-            await trigger(agenda_id);
-            return newData;
-          },
-          { optimisticData: newData }
-        );
+      ? trigger(agenda_id)
+      : trigger(agenda_id)
   }
 
   const getSwitchState = (id: string) =>

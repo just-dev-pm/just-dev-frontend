@@ -4,7 +4,6 @@ import useEventDelete from "@/app/api/event/delete-event";
 import AgendaItemCard from "../../components/agendaItemCard";
 import useEvent from "@/app/api/event/get-events";
 import Loading from "@/components/ui/loading";
-import { agenda_items_data } from "@/lib/Mockdata";
 
 type event_res = {
   description: string;
@@ -24,7 +23,7 @@ interface IProps {
 }
 export default function AgendaItemPage({ params }: IProps) {
   const { agenda_id, agenda_item_id } = params;
-  const { data, error,isLoading } = useEvent({ agenda_id });
+  const { data, error, isLoading } = useEvent({ agenda_id });
   const { trigger } = useEventDelete({ agenda_id, event_id: agenda_item_id });
   if (isLoading) {
     return <Loading />;

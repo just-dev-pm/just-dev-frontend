@@ -94,8 +94,11 @@ export default function ConcreteAgendaPage({ params }: IProps) {
 
   return (
     <div style={{ height: "80vh" }}>
-      <div className="flex justify-between">
-        <Label>{agenda_name}</Label>
+      <div className="flex justify-between items-center">
+        <div className="flex flex-col gap-2">
+          <h2>个人具体日程</h2>
+          <Label className="text-lg font-bold">{agenda_name}</Label>
+        </div>
         <AddEventContextProvider>
           <EventDialog
             project={{
@@ -112,7 +115,7 @@ export default function ConcreteAgendaPage({ params }: IProps) {
       <Calendar
         events={events_new}
         views={["month", "week", "day"]}
-        onSelectEvent={event => {
+        onSelectEvent={(event) => {
           handleEventClick(event as any);
         }}
         className="mt-4"

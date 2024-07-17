@@ -18,11 +18,9 @@ export default function TaskItem({
   const { form, onSubmit } = useChangeStatusContext();
   return (
     <div
-      className="grid grid-cols-[10px_5px_1fr_5px_3fr] items-center justify-center z-50 gap-4 h-10"
+      className="grid grid-cols-[1fr_3fr] items-center z-50 gap-4"
       key={task.id}
     >
-      <div className="text-gray-600">{index}. </div>
-      <Divider vertical />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <StatusFormField />
