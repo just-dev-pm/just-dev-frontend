@@ -175,11 +175,34 @@ export default function AgendaPage({ params }: Props) {
   useMemo(() => {
     if (typedProjectAgendas && typedProjectAgendas.agendas) {
       typedProjectAgendas.agendas.forEach((agenda) => {
-        setCalendars((pre) => [...pre, { id: agenda.id, name: agenda.name }]);
-        setSwitchState((prevStates) => [
-          ...prevStates,
-          { id: agenda.id, checked: true },
-        ]);
+        setCalendars((prevCalendars) => {
+          // Check if the agenda with the same id already exists in calendars
+          const existingIndex = prevCalendars.findIndex((item) => item.id === agenda.id);
+      
+          if (existingIndex !== -1) {
+            // If exists, update the item
+            const updatedCalendars = [...prevCalendars];
+            updatedCalendars[existingIndex] = { id: agenda.id, name: agenda.name };
+            return updatedCalendars;
+          } else {
+            // If not exists, add new item
+            return [...prevCalendars, { id: agenda.id, name: agenda.name }];
+          }
+        });
+        setSwitchState((prevSwitchState) => {
+          // Check if the agenda with the same id already exists in switchState
+          const existingIndex = prevSwitchState.findIndex((item) => item.id === agenda.id);
+      
+          if (existingIndex !== -1) {
+            // If exists, update the item
+            const updatedSwitchState = [...prevSwitchState];
+            updatedSwitchState[existingIndex] = { id: agenda.id, checked: true };
+            return updatedSwitchState;
+          } else {
+            // If not exists, add new item
+            return [...prevSwitchState, { id: agenda.id, checked: true }];
+          }
+        });
       });
     }
   }, [typedProjectAgendas]);
