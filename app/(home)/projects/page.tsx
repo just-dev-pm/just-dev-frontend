@@ -1,15 +1,15 @@
 "use client";
 
-import ProjectsRender from "./components/projects-render";
-import Loading from "@/components/ui/loading";
-import CreateProjectController from "./components/create-project-controller";
 import { useMyProjects } from "@/app/api/project/get-my-projects";
+import Loading from "@/components/ui/loading";
 import { useEffect } from "react";
+import CreateProjectController from "./components/create-project-controller";
+import ProjectsRender from "./components/projects-render";
 
 export default function ProjectsPage() {
   const { data, mutateMyProjects, isLoading } = useMyProjects();
   useEffect(() => {
-    mutateMyProjects();
+    if (!data) mutateMyProjects();
   }, []);
 
   if (!data || isLoading) return <Loading />;
@@ -26,10 +26,11 @@ export default function ProjectsPage() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex">
-        <h2>项目列表</h2>
+        <h4 className="grow">项目列表</h4>
         <CreateProjectController />
       </div>
-      <div className="grid xl:grid-cols-[1fr_1fr_1fr]  gap-4">
+
+      <div className="grid xl:grid-cols-[1fr_1fr]  gap-4">
         <ProjectsRender projects={data!} />
       </div>
     </div>
