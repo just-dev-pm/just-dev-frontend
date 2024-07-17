@@ -6,7 +6,7 @@ import useSWRImmutable from "swr/immutable";
 
 export const useProject = (projectId: string) => {
   const { data, mutate, error, isLoading } = useSWRImmutable(
-    ["/api/projects/", projectId],
+    projectId ? ["/api/projects/", projectId] : null,
     ([url, projectId]) =>
       fetch(`${BASE_URL}${url}${projectId}`, {
         headers: {

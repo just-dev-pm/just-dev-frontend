@@ -8,6 +8,7 @@ import React, {
   useEffect,
 } from "react";
 import { ExtractStatus } from "./extract-status-pool";
+import { useProjectInfo } from "@/app/api/project/get-projectInfo";
 
 /**
  * @description Arrange
@@ -32,7 +33,8 @@ const useCustomContext = () => useContext(Context);
  * @returns React.FC<>
  */
 const ContextProvider: React.FC<ContextProps> = ({ projectId, children }) => {
-  const { data, isLoading, mutate } = useProject(projectId);
+
+  const { data, isLoading, mutate } = useProjectInfo(projectId);
   useEffect(() => {
     if (!data?.name) {
       mutate();

@@ -19,7 +19,7 @@ export default function DashboardPage({
                     <NewDraft projectId={project_id} />
                     <NewRequirement projectId={project_id} />
                     <IncompletedTaskTable project_id={project_id} />
-                    <ContributionDistribution project_id={project_id} />
+                    {/* <ContributionDistribution project_id={project_id} /> */}
                 </div>
             </div>
         </div>

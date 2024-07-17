@@ -14,6 +14,7 @@ interface ProjectsRenderProps {
   projects: Projects;
 }
 export default function ProjectsRender({ projects }: ProjectsRenderProps) {
+  if(!projects || projects.projects.length === 0) return <Loading />
   return (
     <>
       {projects.projects.map((rawProject: RawProject) => (
