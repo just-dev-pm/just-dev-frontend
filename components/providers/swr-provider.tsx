@@ -1,12 +1,9 @@
 "use client";
+import { ClearUserInfo } from "@/lib/clear-user-info";
 import { testBaseUrl } from "@/lib/global";
-import { logger } from "@/lib/swr-logger";
-import { Suspense } from "react";
+import { useRouter } from "next/navigation";
 import { SWRConfig } from "swr";
 import { useToast } from "../ui/use-toast";
-import { MyError } from "@/lib/handle-response";
-import { useRouter } from "next/navigation";
-import { ClearUserInfo } from "@/lib/clear-user-info";
 
 export const SWRProvider = ({ children }: { children: React.ReactNode }) => {
   const { toast } = useToast();
@@ -18,7 +15,6 @@ export const SWRProvider = ({ children }: { children: React.ReactNode }) => {
           fetch(testBaseUrl + url).then(res => res.json()),
         errorRetryCount: 3,
         suspense: true,
-        use: [logger],
         onError: error => {
           if (error.status === 400) {
             toast({
