@@ -51,7 +51,7 @@ const View: React.FC<ViewProps> = ({ projectId }) => {
         <StatusFormField />
         <AssigneesFormField data={convertUsersToOptions(data.users)} />
         <DeadlineFormField />
-        <PrView />
+        {/* <PrView /> */}
       </div>
     </Form>
   );

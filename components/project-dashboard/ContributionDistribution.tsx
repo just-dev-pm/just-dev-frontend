@@ -68,7 +68,7 @@ export default function ContributionDistribution({
         color: `hsl(var(--chart-${(index % 5) + 1}))`,
       },
     }));
-    return Object.assign({ chartConfig }, ...chartConfigNew);
+    return Object.assign(chartConfig, ...chartConfigNew);
   }
 
   const finalchartConfig = generateChartConfig(user_contributions);

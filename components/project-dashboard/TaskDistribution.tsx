@@ -75,7 +75,7 @@ export default function TaskDistribution({
         color: `hsl(var(--chart-${(index % 5) + 1}))`,
       },
     }));
-    return Object.assign({ chartConfig }, ...chartConfigNew);
+    return Object.assign(chartConfig, ...chartConfigNew);
   }
 
   const finalchartConfig = generateChartConfig(taskStatusDistribution);
