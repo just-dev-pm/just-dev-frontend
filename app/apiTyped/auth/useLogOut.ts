@@ -9,7 +9,7 @@ export default function useLogOut(onSuccess?: (data?: any) => void) {
   const { toast } = useToast();
   const { data, error, trigger, isMutating } = useSWRMutation(
     [url],
-    () => {
+    ([url]) => {
       fetch(BASE_URL + url, {
         method: "POST",
         headers: {

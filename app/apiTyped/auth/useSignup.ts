@@ -39,12 +39,12 @@ export const ResponseSchema = z.object({
 });
 export type Response = z.infer<typeof ResponseSchema>;
 
-export function useSignUp(onSuccess?: (data?: any) => void) {
+export default function useSignUp(onSuccess?: (data?: any) => void) {
   const { toast } = useToast();
   const url = `/api/auth/signup`;
   const { data, error, trigger, isMutating } = useSWRMutation(
     [url],
-    ([], { arg }: { arg: Request }) =>
+    ([url], { arg }: { arg: Request }) =>
       fetch(BASE_URL + url, {
         method: "POST",
         headers: {

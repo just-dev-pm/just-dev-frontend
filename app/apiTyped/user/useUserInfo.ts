@@ -1,16 +1,10 @@
-import { useToast } from "@/components/ui/use-toast";
 import { BASE_URL } from "@/lib/global";
 import { handleResponse } from "@/lib/handle-response";
 import { useUserStore } from "@/store/userStore";
-import useSWRMutation from "swr/mutation";
+import useSWR from "swr";
+import useSWRImmutable from "swr";
 
 import * as z from "zod";
-
-export const RequestSchema = z.object({
-  password: z.string(),
-  username: z.string(),
-});
-export type Request = z.infer<typeof RequestSchema>;
 
 export const StatusContentSchema = z.object({
   description: z.string(),
@@ -39,45 +33,29 @@ export const ResponseSchema = z.object({
 });
 export type Response = z.infer<typeof ResponseSchema>;
 
-/** @key /api/auth/login */
-
-export default function useLogIn(
-    onSuccess?:(data?: any) => void
-) {
-  const setUserId = useUserStore((stats) => stats.setUserId);
-  const { toast } = useToast();
-  const url = `/api/auth/login`;
-  const { data, error, trigger,isMutating } = useSWRMutation(
-    [url],
-    ([url], { arg }: { arg: Request }) => (
-      fetch(BASE_URL + url, {
-        method: "POST",
+export default function useUserInfo({ userId }: { userId: string }) {
+  const url = `/api/users/`;
+  const { data, error, isLoading } = useSWR(
+    userId ? [url, userId] : null,
+    ([url, user_Id]) =>
+      fetch(BASE_URL + url + user_Id, {
+        method: "GET",
         headers: {
           "Content-Type": "application/json; charset=UTF-8",
         },
-        body: JSON.stringify(arg),
         credentials: "include",
-      }).then(handleResponse("登录"))
+      })
+        .then(handleResponse("获取用户信息"))
         .then((res) => res.json())
-        .then((res) => ResponseSchema.parse(res))
-    ),
+        .then((res) => ResponseSchema.parse(res)),
     {
-      onError(data,key,config) {
-        toast({ description: "登录失败" });
-      },
-      onSuccess(data, key, config) {
-        toast({ description: "登录成功" });
-        if (data) {
-          setUserId(data.id);
-        }
-        onSuccess ? onSuccess(data) : undefined
-      },
+      suspense: true,
+      fallbackData: { username: "", avatar: "", id: "", email: "" },
     },
   );
   return {
     data,
     error,
-    trigger,
-    isMutating
+    isLoading,
   };
 }
