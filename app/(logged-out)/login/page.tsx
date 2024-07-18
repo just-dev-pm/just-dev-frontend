@@ -63,7 +63,6 @@ function LoginPage(props: Props) {
 
   return (
     <>
-      error ? <div>{JSON.stringify(error)}</div> :
       <FolderKanbanIcon size={50} />
       <Card className="w-full max-w-sm">
         <CardHeader>
