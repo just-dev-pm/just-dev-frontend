@@ -38,20 +38,16 @@ export const ResponseSchema = z.object({
 });
 export type Response = z.infer<typeof ResponseSchema>;
 
-export default function useUsersInProject({
-  project_id,
-}: {
-  project_id: string;
-}) {
+export default function useUsersInProject(project_id: string) {
   const urlPrefix = `/api/projects/`;
   const urlSuffix = `/users`;
-  const { data, error, isLoading,mutate } = useSWR(
+  const { data, error, isLoading, mutate } = useSWR(
     project_id ? [urlPrefix, project_id, urlSuffix] : null,
     ([urlPrefix, project_id, urlSuffix]) =>
       fetch(BASE_URL + urlPrefix + project_id + urlSuffix, {
-        method:"GET",
-        headers:{
-            "Content-Type":"application/json; charset=UTF-8"
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json; charset=UTF-8",
         },
         credentials: "include",
       })
@@ -64,6 +60,6 @@ export default function useUsersInProject({
     data,
     error,
     isLoading,
-    mutate
+    mutate,
   };
 }

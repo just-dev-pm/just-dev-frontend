@@ -18,7 +18,7 @@ export const ResponseSchema = z.object({
 });
 export type Response = z.infer<typeof ResponseSchema>;
 
-export default function useInvitation(
+export default function useInvitationCreate(
     onSuccess?: (data?: any) => void,
 ){
   const url = `/api/invitation/generate`;

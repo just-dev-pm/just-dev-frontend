@@ -12,16 +12,12 @@ export const RequestSchema = z.object({
 });
 export type Request = z.infer<typeof RequestSchema>;
 
-export default function useAccepteInvitation({
-  onSuccess,
-}: {
-  onSuccess?: (data?: any) => void;
-}) {
+export default function useInvitationAccept(onSuccess?: (data?: any) => void) {
   const { toast } = useToast();
   const urlPrefix = `/api/invitation/accept`;
   const { data, error, trigger, isMutating } = useSWRMutation(
     [urlPrefix],
-    ([urlPrefix],{arg}:{arg:Request}) =>
+    ([urlPrefix], { arg }: { arg: Request }) =>
       fetch(BASE_URL + urlPrefix, {
         method: "POST",
         headers: {

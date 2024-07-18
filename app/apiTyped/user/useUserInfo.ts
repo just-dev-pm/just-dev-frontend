@@ -33,7 +33,7 @@ export const ResponseSchema = z.object({
 });
 export type Response = z.infer<typeof ResponseSchema>;
 
-export default function useUserInfo({ userId }: { userId: string }) {
+export default function useUserInfo(userId: string) {
   const url = `/api/users/`;
   const { data, error, isLoading,mutate } = useSWR(
     userId ? [url, userId] : null,
