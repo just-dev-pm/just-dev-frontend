@@ -47,6 +47,7 @@ import useTaskDelete from "@/app/api/task/delete-task";
 import TasksDropdown from "./tasksTableDropdown";
 import TasksTableAvatar from "./tasksTableAvatar";
 import Loading from "@/components/ui/loading";
+import { cn } from "@/lib/utils";
 
 export type Task = {
   id: string;
@@ -55,7 +56,7 @@ export type Task = {
   description: string;
   status: "complete" | "incomplete";
   deadline: string;
-  assignees: string[];
+  assignees: { id: string }[];
 };
 
 export function TasksTable({
@@ -91,7 +92,7 @@ export function TasksTable({
     );
   }
   console.log(data);
-  data.map((task:any) => {
+  data.map((task: any) => {
     // 直接添加 list_id 属性到每个 Task 对象
     task.list_id = task_list_id;
   });
@@ -143,13 +144,14 @@ export function TasksTable({
       accessorKey: "assignees",
       header: "Assignees",
       cell: ({ row }) => {
-        const collaborators: string[] = row.original.assignees;
+        const collaborators: { id: string }[] = row.original.assignees;
         if (collaborators)
-          return collaborators.map(c_user_id => (
-            <div key={c_user_id}>
-              <TasksTableAvatar c_user_id={c_user_id} />
-            </div>
-          ));
+          return <div className="flex">
+            {collaborators.map(c_user_id => (
+              <TasksTableAvatar key={c_user_id.id} c_user_id={c_user_id.id} />
+            ))}
+          </div>
+
       },
     },
     {
@@ -158,7 +160,8 @@ export function TasksTable({
       cell: ({ row }) => {
         const status: any = row.getValue("status");
         const status_item = status.category;
-        return <Badge className="capitalize">{status_item}</Badge>;
+        const color = status_item === "complete" ? "text-green-700" : "";
+        return <Badge className={cn("capitalize", color)}>{status_item}</Badge>;
       },
     },
     {
@@ -267,9 +270,9 @@ export function TasksTable({
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                     </TableHead>
                   );
                 })}
