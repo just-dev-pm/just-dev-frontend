@@ -1,8 +1,8 @@
-import { UserData } from "@/app/(home)/profile/components/edit-profile-form";
 import { useToast } from "@/components/ui/use-toast";
 import { BASE_URL } from "@/lib/global";
 import { handleResponse } from "@/lib/handle-response";
-import { useUserStore } from "@/store/userStore";
+import { Project } from "@/types/project";
+import { CreateProjectFormSchema } from "@/types/project/create-project-form";
 import useSWRMutation from "swr/mutation";
 
 import * as z from "zod";
@@ -27,9 +27,9 @@ export type RequestStatusPool = z.infer<typeof RequestStatusPoolSchema>;
 
 export const RequestSchema = z.object({
   avatar: z.union([z.null(), z.string()]).optional(),
-  email: z.union([z.null(), z.string()]).optional(),
+  description: z.union([z.null(), z.string()]).optional(),
+  name: z.union([z.null(), z.string()]).optional(),
   status_pool: z.union([RequestStatusPoolSchema, z.null()]).optional(),
-  username: z.string(),
 });
 export type Request = z.infer<typeof RequestSchema>;
 
@@ -53,21 +53,24 @@ export type ResponseStatusPool = z.infer<typeof ResponseStatusPoolSchema>;
 
 export const ResponseSchema = z.object({
   avatar: z.union([z.null(), z.string()]).optional(),
-  email: z.union([z.null(), z.string()]).optional(),
+  description: z.string(),
+  github: z.union([z.number(), z.null()]).optional(),
   id: z.string(),
+  name: z.string(),
   status_pool: z.union([ResponseStatusPoolSchema, z.null()]).optional(),
-  username: z.string(),
 });
 export type Response = z.infer<typeof ResponseSchema>;
 
-export default function useUserInfoChange(onSuccess?: (data?: any) => void) {
+export default function useProjectChange(
+  project_id: string,
+  onSuccess?: (data?: any) => void,
+) {
+  const urlPrefix = `/api/projects/`;
   const { toast } = useToast();
-  const userId = useUserStore.getState().userId;
-  const url = "/api/users";
-  const { data, error, trigger, isMutating } = useSWRMutation(
-    userId ? [url] : null,
-    ([url], { arg }: { arg: Request }) =>
-      fetch(BASE_URL + url + userId, {
+  const { data, error, isMutating, trigger } = useSWRMutation(
+    project_id ? [urlPrefix, project_id] : null,
+    ([urlPrefix, project_id], { arg }: { arg: Request }) =>
+      fetch(BASE_URL + urlPrefix + project_id, {
         method: "PATCH",
         body: JSON.stringify(arg),
         headers: {
@@ -75,11 +78,11 @@ export default function useUserInfoChange(onSuccess?: (data?: any) => void) {
         },
         credentials: "include",
       })
-        .then(handleResponse("修改用户信息"))
+        .then(handleResponse("修改项目信息"))
         .then((res) => res.json())
         .then((res) => ResponseSchema.parse(res)),
     {
-      onError(data, key, config) {
+      onError(err, key, config) {
         toast({ description: "修改失败" });
       },
       onSuccess(data, key, config) {
@@ -88,5 +91,10 @@ export default function useUserInfoChange(onSuccess?: (data?: any) => void) {
       },
     },
   );
-  return { data, error, trigger, isMutating };
+  return {
+    data,
+    error,
+    isMutating,
+    trigger,
+  };
 }

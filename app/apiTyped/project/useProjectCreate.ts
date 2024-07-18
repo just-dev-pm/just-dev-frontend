@@ -1,8 +1,9 @@
-import { UserData } from "@/app/(home)/profile/components/edit-profile-form";
+"use client";
 import { useToast } from "@/components/ui/use-toast";
 import { BASE_URL } from "@/lib/global";
 import { handleResponse } from "@/lib/handle-response";
-import { useUserStore } from "@/store/userStore";
+import { Project } from "@/types/project";
+import { CreateProjectFormSchema } from "@/types/project/create-project-form";
 import useSWRMutation from "swr/mutation";
 
 import * as z from "zod";
@@ -27,9 +28,10 @@ export type RequestStatusPool = z.infer<typeof RequestStatusPoolSchema>;
 
 export const RequestSchema = z.object({
   avatar: z.union([z.null(), z.string()]).optional(),
-  email: z.union([z.null(), z.string()]).optional(),
+  description: z.string(),
+  github: z.union([z.number(), z.null()]).optional(),
+  name: z.string(),
   status_pool: z.union([RequestStatusPoolSchema, z.null()]).optional(),
-  username: z.string(),
 });
 export type Request = z.infer<typeof RequestSchema>;
 
@@ -43,50 +45,55 @@ export const ResponseIncompleteSchema = z.object({
   id: z.string(),
   status: ResponseStatusContentSchema,
 });
-export type ResponseIncomplete = z.infer<typeof ResponseIncompleteSchema>;
+export type Incomplete = z.infer<typeof ResponseIncompleteSchema>;
 
 export const ResponseStatusPoolSchema = z.object({
   complete: ResponseStatusContentSchema,
   incomplete: z.array(ResponseIncompleteSchema),
 });
-export type ResponseStatusPool = z.infer<typeof ResponseStatusPoolSchema>;
+export type StatusPool = z.infer<typeof ResponseStatusPoolSchema>;
 
 export const ResponseSchema = z.object({
   avatar: z.union([z.null(), z.string()]).optional(),
-  email: z.union([z.null(), z.string()]).optional(),
+  description: z.string(),
+  github: z.union([z.number(), z.null()]).optional(),
   id: z.string(),
+  name: z.string(),
   status_pool: z.union([ResponseStatusPoolSchema, z.null()]).optional(),
-  username: z.string(),
 });
 export type Response = z.infer<typeof ResponseSchema>;
 
-export default function useUserInfoChange(onSuccess?: (data?: any) => void) {
+export default function useProjectCreate(onSuccess?: (data?: any) => void) {
   const { toast } = useToast();
-  const userId = useUserStore.getState().userId;
-  const url = "/api/users";
-  const { data, error, trigger, isMutating } = useSWRMutation(
-    userId ? [url] : null,
-    ([url], { arg }: { arg: Request }) =>
-      fetch(BASE_URL + url + userId, {
-        method: "PATCH",
+  const url = `/api/projects`;
+  const { data, error, isMutating, trigger } = useSWRMutation(
+    url,
+    (url, { arg }: { arg: Response }) =>
+      fetch(BASE_URL + url, {
+        method: "POST",
         body: JSON.stringify(arg),
         headers: {
           "Content-type": "application/json; charset=UTF-8",
         },
         credentials: "include",
       })
-        .then(handleResponse("修改用户信息"))
+        .then(handleResponse("创建项目"))
         .then((res) => res.json())
         .then((res) => ResponseSchema.parse(res)),
     {
-      onError(data, key, config) {
-        toast({ description: "修改失败" });
+      onError(err, key, config) {
+        toast({ description: "创建失败" });
       },
       onSuccess(data, key, config) {
-        toast({ description: "修改成功" });
+        toast({ description: "创建成功" });
         onSuccess ? onSuccess(data) : undefined;
       },
     },
   );
-  return { data, error, trigger, isMutating };
+  return {
+    data,
+    error,
+    isMutating,
+    trigger,
+  };
 }

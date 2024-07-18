@@ -1,8 +1,12 @@
+"use client";
+
+/** @key /api/projects/{project_id} */
+
 import { BASE_URL } from "@/lib/global";
 import { handleResponse } from "@/lib/handle-response";
-import { useUserStore } from "@/store/userStore";
+import { useEffect } from "react";
 import useSWR from "swr";
-import useSWRImmutable from "swr";
+import useSWRImmutable from "swr/immutable";
 
 import * as z from "zod";
 
@@ -26,37 +30,42 @@ export type StatusPool = z.infer<typeof StatusPoolSchema>;
 
 export const ResponseSchema = z.object({
   avatar: z.union([z.null(), z.string()]).optional(),
-  email: z.union([z.null(), z.string()]).optional(),
+  description: z.string(),
+  github: z.union([z.number(), z.null()]).optional(),
   id: z.string(),
+  name: z.string(),
   status_pool: z.union([StatusPoolSchema, z.null()]).optional(),
-  username: z.string(),
 });
 export type Response = z.infer<typeof ResponseSchema>;
 
-export default function useUserInfo({ userId }: { userId: string }) {
-  const url = `/api/users/`;
-  const { data, error, isLoading,mutate } = useSWR(
-    userId ? [url, userId] : null,
-    ([url, user_Id]) =>
-      fetch(BASE_URL + url + user_Id, {
-        method: "GET",
+export default function useProjectInfo(projectId: string) {
+  const urlPrefix = `/api/projects/`;
+  const { data, mutate, error, isLoading } = useSWR(
+    projectId ? [urlPrefix, projectId] : null,
+    ([urlPrefix, projectId]) =>
+      fetch(BASE_URL + urlPrefix + projectId, {
+        method:"GET",
         headers: {
           "Content-Type": "application/json; charset=UTF-8",
         },
         credentials: "include",
       })
-        .then(handleResponse("获取用户信息"))
+        .then(handleResponse("获取项目信息"))
         .then((res) => res.json())
         .then((res) => ResponseSchema.parse(res)),
     {
-      suspense: true,
-      fallbackData: { username: "", avatar: "", id: "", email: "" },
+      fallbackData: {
+        id: "",
+        description: "",
+        name: "",
+        github: 0,
+        status_pool: {
+          complete: { name: "", description: "" },
+          incomplete: [],
+        },
+      },
     },
   );
-  return {
-    data,
-    error,
-    isLoading,
-    mutate
-  };
+
+  return { data, mutate, error, isLoading };
 }

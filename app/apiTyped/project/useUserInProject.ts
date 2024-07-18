@@ -1,8 +1,8 @@
 import { BASE_URL } from "@/lib/global";
 import { handleResponse } from "@/lib/handle-response";
-import { useUserStore } from "@/store/userStore";
 import useSWR from "swr";
-import useSWRImmutable from "swr";
+
+/** @key [/api/projects/,{project_id},/users] */
 
 import * as z from "zod";
 
@@ -24,34 +24,41 @@ export const StatusPoolSchema = z.object({
 });
 export type StatusPool = z.infer<typeof StatusPoolSchema>;
 
-export const ResponseSchema = z.object({
+export const UserSchema = z.object({
   avatar: z.union([z.null(), z.string()]).optional(),
   email: z.union([z.null(), z.string()]).optional(),
   id: z.string(),
   status_pool: z.union([StatusPoolSchema, z.null()]).optional(),
   username: z.string(),
 });
+export type User = z.infer<typeof UserSchema>;
+
+export const ResponseSchema = z.object({
+  users: z.array(UserSchema),
+});
 export type Response = z.infer<typeof ResponseSchema>;
 
-export default function useUserInfo({ userId }: { userId: string }) {
-  const url = `/api/users/`;
+export default function useUsersInProject({
+  project_id,
+}: {
+  project_id: string;
+}) {
+  const urlPrefix = `/api/projects/`;
+  const urlSuffix = `/users`;
   const { data, error, isLoading,mutate } = useSWR(
-    userId ? [url, userId] : null,
-    ([url, user_Id]) =>
-      fetch(BASE_URL + url + user_Id, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json; charset=UTF-8",
+    project_id ? [urlPrefix, project_id, urlSuffix] : null,
+    ([urlPrefix, project_id, urlSuffix]) =>
+      fetch(BASE_URL + urlPrefix + project_id + urlSuffix, {
+        method:"GET",
+        headers:{
+            "Content-Type":"application/json; charset=UTF-8"
         },
         credentials: "include",
       })
-        .then(handleResponse("获取用户信息"))
+        .then(handleResponse("获取项目中的用户"))
         .then((res) => res.json())
         .then((res) => ResponseSchema.parse(res)),
-    {
-      suspense: true,
-      fallbackData: { username: "", avatar: "", id: "", email: "" },
-    },
+    { suspense: false, fallbackData: { users: [] } },
   );
   return {
     data,
