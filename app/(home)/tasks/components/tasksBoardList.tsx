@@ -1,3 +1,4 @@
+"use client";
 import useTaskChange from "@/app/api/task/change-task";
 import {
   Card,
@@ -8,9 +9,9 @@ import {
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { usePathname } from "next/navigation";
+import { Divider } from "rsuite";
 import { mutate } from "swr";
 import { ChangeStatusContextProvider } from "./change-status/context";
-import { StatusContextProvider } from "./change-status/get-status";
 import { Task } from "./change-status/task";
 import TaskItem from "./change-status/task-item";
 import TaskDialog from "./taskDialogButton";
@@ -39,11 +40,12 @@ function TasksList({
     mutate(["/api/task_lists/", task_list_id, "/tasks"]);
   };
   return (
-    <Card className="min-w-[25vw] min-h-[20vh] flex flex-col">
+    <Card className="min-w-[25vw] h-[60vh] flex flex-col">
       <CardHeader>
         <CardTitle className="flex justify-between items-center">
           <Label className="font-bold text-xl">{todoListIcon}</Label>
         </CardTitle>
+        <Divider />
       </CardHeader>
       <CardContent className="flex gap-2 flex-col">
         {tasks.map((task, index) => (
@@ -53,9 +55,7 @@ function TasksList({
             handleTaskChange={handleTaskChange}
             task_id={task.id}
           >
-            <StatusContextProvider projectId={project.projectId}>
-              <TaskItem task={task} index={index + 1} />
-            </StatusContextProvider>
+            <TaskItem task={task} index={index + 1} />
           </ChangeStatusContextProvider>
         ))}
       </CardContent>

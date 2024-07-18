@@ -2,9 +2,9 @@
 
 import useTasksFromTaskList from "@/app/api/task/get-tasks-from-tasklist";
 import useTaskList from "@/app/api/useTaskList";
-import { Button } from "@/components/ui/button";
 import Loading from "@/components/ui/loading";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import { TasksBoardView } from "../components/taskDialog";
 import TaskDialog from "../components/taskDialogButton";
@@ -67,11 +67,9 @@ export default function TaskListPage({ params }: IProps) {
           ></TasksTable>
         </TabsContent>
       </Tabs>
-      <div>
-        <Button asChild className="mt-16">
-          <Link href={`./`}>返回</Link>
-        </Button>
-      </div>
+      <Link href={`./`}>
+        <ChevronLeft className="fixed left-[20vw] bottom-10" />
+      </Link>
     </div>
   );
 }

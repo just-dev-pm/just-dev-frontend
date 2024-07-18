@@ -1,8 +1,8 @@
 "use client";
 import { FormControl, FormField, FormItem } from "@/components/ui/form";
 import { useChangeStatusContext } from "./context";
+import { SelectStatus } from "./deprecated-select-status";
 import { useStatusContext } from "./get-status";
-import { SelectStatus } from "./select-status";
 
 /**
  * @description Arrange
@@ -30,7 +30,7 @@ const StatusFormField = () => {
                   ? "complete"
                   : form.getValues().status.id
               }
-              onSelect={v => {
+              onSelect={(v) => {
                 if (v === "complete") {
                   form.setValue("status.category", "complete");
                   form.setValue("status.id", "");
