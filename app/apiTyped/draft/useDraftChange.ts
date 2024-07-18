@@ -44,7 +44,7 @@ export function useDraftChange(
       },
       onSuccess(data, key, config) {
         toast({ description: "修改成功" });
-        onSuccess ? onSuccess(data) : undefined;
+        if(onSuccess) onSuccess(data)
       },
     },
   );

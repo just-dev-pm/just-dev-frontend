@@ -86,7 +86,7 @@ export default function useProjectCreate(onSuccess?: (data?: any) => void) {
       },
       onSuccess(data, key, config) {
         toast({ description: "创建成功" });
-        onSuccess ? onSuccess(data) : undefined;
+        if(onSuccess) onSuccess(data)
       },
     },
   );

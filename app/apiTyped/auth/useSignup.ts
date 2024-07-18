@@ -62,7 +62,7 @@ export default function useSignUp(onSuccess?: (data?: any) => void) {
       },
       onSuccess(data, key, config) {
         toast({ description: "注册成功" });
-        onSuccess ? onSuccess(data) : undefined;
+        if(onSuccess) onSuccess(data)
       },
     },
   );

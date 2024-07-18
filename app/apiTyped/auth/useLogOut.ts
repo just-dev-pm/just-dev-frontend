@@ -26,7 +26,7 @@ export default function useLogOut(onSuccess?: (data?: any) => void) {
       },
       onSuccess(data, key, config) {
         toast({ description: "登出成功" });
-        onSuccess ? onSuccess(data) : undefined;
+        if(onSuccess) onSuccess(data)
       },
     },
   );

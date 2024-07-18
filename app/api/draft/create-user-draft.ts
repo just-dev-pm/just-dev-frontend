@@ -10,7 +10,7 @@ export function useUserDraftCreate({
     onSuccess,
 }: {
     user_id: string;
-    onSuccess: (data: any) => void;
+    onSuccess?: (data?: any) => void;
 }) {
     const { toast } = useToast();
     const urlPrefix = `/api/users/`;

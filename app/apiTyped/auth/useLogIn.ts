@@ -70,7 +70,7 @@ export default function useLogIn(
         if (data) {
           setUserId(data.id);
         }
-        onSuccess ? onSuccess(data) : undefined
+        if(onSuccess) onSuccess(data)
       },
     },
   );

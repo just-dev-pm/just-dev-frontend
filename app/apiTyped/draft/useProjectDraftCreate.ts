@@ -45,7 +45,7 @@ export function useProjectDraftCreate(
       },
       onSuccess(data, key, config) {
         toast({ description: "创建成功" });
-        onSuccess ? onSuccess(data) : undefined;
+        if(onSuccess) onSuccess(data)
       },
     },
   );

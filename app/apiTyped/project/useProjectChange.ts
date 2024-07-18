@@ -87,7 +87,7 @@ export default function useProjectChange(
       },
       onSuccess(data, key, config) {
         toast({ description: "修改成功" });
-        onSuccess ? onSuccess(data) : undefined;
+        if(onSuccess) onSuccess(data)
       },
     },
   );

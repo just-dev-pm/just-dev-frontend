@@ -34,7 +34,7 @@ export default function useInvitationAccept(onSuccess?: (data?: any) => void) {
       },
       onSuccess(data, key, config) {
         toast({ description: "加入成功" });
-        onSuccess ? onSuccess(data) : undefined;
+        if(onSuccess) onSuccess(data)
       },
     },
   );

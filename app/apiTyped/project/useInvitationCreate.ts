@@ -43,7 +43,7 @@ export default function useInvitationCreate(
             },
             onSuccess(data, key, config) {
                 toast({description:"生成成功"})
-                onSuccess ? onSuccess(data) : undefined;
+                if(onSuccess) onSuccess(data)
             },
         }
   );
