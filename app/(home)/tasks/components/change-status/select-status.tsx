@@ -58,7 +58,7 @@ const CustomFormField = ({ defaultValue }: CustomFormFieldProps) => {
                 <Tag color="green">{complete.name}</Tag>
               </Radio>
               {incomplete.map((item) => (
-                <Radio value={item.id} color="orange">
+                <Radio value={item.id} color="orange" key={item.id}>
                   <Tag color="orange">{item.status.name}</Tag>
                 </Radio>
               ))}
