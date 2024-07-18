@@ -5,6 +5,9 @@ import useTaskChange from "@/app/api/task/change-task";
 import useTasksFromTaskList from "@/app/api/task/get-tasks-from-tasklist";
 import useTaskLink from "@/app/api/tasklink/get-tasklink";
 import Loading from "@/components/ui/loading";
+import { toast } from "@/components/ui/use-toast";
+import { CopyToClipboard } from "react-copy-to-clipboard";
+import { Button } from "rsuite";
 import { mutate } from "swr";
 import { NewRelationContextProvider } from "../../components/add-relation/context";
 import { useSWRNewRelation } from "../../components/add-relation/swr";
@@ -69,7 +72,22 @@ export default function ConcreteTaskPage({ params }: IProps) {
         collaborators={cardData.assignees}
         isProject={false}
       ></TaskItemCard> */}
-        <h4>任务信息</h4>
+        <div className="flex gap-4 items-center">
+          <h4>任务信息</h4>
+          <CopyToClipboard
+            text={cardData.id}
+            onCopy={() => {
+              toast({
+                title: `成功复制任务${cardData.name}的ID`,
+                description: cardData.id,
+              });
+            }}
+          >
+            <Button appearance="link" className="underline decoration-dashed">
+              复制ID
+            </Button>
+          </CopyToClipboard>
+        </div>
         <ChangeTaskContextProvider
           initialData={cardData}
           handleTaskChange={handleTaskChange}
