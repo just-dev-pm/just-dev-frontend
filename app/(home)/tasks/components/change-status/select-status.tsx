@@ -6,7 +6,7 @@
  */
 // type FormItemProps = ControllerRenderProps<,>
 
-import { useStatusPool } from "@/app/(home)/components/status/context";
+import { StatusPool } from "@/app/(home)/components/status/response";
 import { FormControl, FormField, FormItem } from "@/components/ui/form";
 import { PropsWithChildren, useEffect } from "react";
 import { Radio, RadioGroup, Tag } from "rsuite";
@@ -21,10 +21,13 @@ const RadioLabel = ({ children }: PropsWithChildren) => (
  */
 interface CustomFormFieldProps {
   defaultValue: string;
+  statusPool: StatusPool;
 }
-const CustomFormField = ({ defaultValue }: CustomFormFieldProps) => {
+const CustomFormField = ({
+  defaultValue,
+  statusPool,
+}: CustomFormFieldProps) => {
   const { form, onSubmit } = useChangeStatusContext();
-  const { getStatusById, statusPool } = useStatusPool();
 
   useEffect(() => {
     form.setValue("status.id", defaultValue);

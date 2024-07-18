@@ -1,23 +1,25 @@
 "use client";
-import { StatusControl } from "@/app/(home)/components/status/status-pool/status/control";
+import { StatusPool } from "@/app/(home)/components/status/response";
 import { Form } from "@/components/ui/form";
-import React from "react";
+import React, { FunctionComponent } from "react";
 import { Button, Modal } from "rsuite";
 import { useChangeStatusContext } from "./context";
 import { ChangeStatusFormField } from "./select-status";
 
 interface TriggerProps {
   statusId: string;
+  statusPool: StatusPool;
+  Control: FunctionComponent;
 }
-const Trigger = ({ statusId }: TriggerProps) => {
+const Trigger = ({ statusId, statusPool, Control }: TriggerProps) => {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const { form, onSubmit } = useChangeStatusContext();
   const handleClose = () => setOpen(false);
   return (
-    <>
+    <div>
       <div onClick={handleOpen} className="flex">
-        <StatusControl statusId={statusId!} />
+        <Control />
       </div>
 
       <Modal open={open} onClose={handleClose} className="w-[20vw]">
@@ -26,7 +28,10 @@ const Trigger = ({ statusId }: TriggerProps) => {
         </Modal.Header>
         <Modal.Body className="flex justify-center">
           <Form {...form}>
-            <ChangeStatusFormField defaultValue={statusId!} />
+            <ChangeStatusFormField
+              defaultValue={statusId!}
+              statusPool={statusPool}
+            />
           </Form>
         </Modal.Body>
         <Modal.Footer>
@@ -47,7 +52,7 @@ const Trigger = ({ statusId }: TriggerProps) => {
           </Button>
         </Modal.Footer>
       </Modal>
-    </>
+    </div>
   );
 };
 

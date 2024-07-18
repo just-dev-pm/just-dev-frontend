@@ -55,7 +55,11 @@ function TasksList({
             handleTaskChange={handleTaskChange}
             task_id={task.id}
           >
-            <TaskItem task={task} index={index + 1} />
+            <TaskItem
+              task={task}
+              index={index + 1}
+              projectId={project.projectId}
+            />
           </ChangeStatusContextProvider>
         ))}
       </CardContent>
