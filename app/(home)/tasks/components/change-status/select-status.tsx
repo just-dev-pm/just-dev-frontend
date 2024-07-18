@@ -26,14 +26,14 @@ const CustomFormField = ({ defaultValue }: CustomFormFieldProps) => {
   const { form, onSubmit } = useChangeStatusContext();
   const { getStatusById, statusPool } = useStatusPool();
 
+  useEffect(() => {
+    form.setValue("status.id", defaultValue);
+  }, []);
+
   if (!statusPool || !defaultValue)
     return <div>您的状态池为空, 请添加状态</div>;
 
   const { complete, incomplete } = statusPool;
-
-  useEffect(() => {
-    form.setValue("status.id", defaultValue);
-  }, []);
 
   return (
     <FormField
@@ -46,12 +46,12 @@ const CustomFormField = ({ defaultValue }: CustomFormFieldProps) => {
               className="border-none"
               defaultValue={defaultValue}
               value={form.value}
-              onChange={() => {
-                form.onChange();
+              onChange={(v) => {
                 form.setValue(
                   "status.category",
-                  form.value === "complete" ? "complete" : "incomplete",
+                  v === "complete" ? "complete" : "incomplete",
                 );
+                form.setValue("status.id", v);
               }}
             >
               <Radio value="complete" color="green">
