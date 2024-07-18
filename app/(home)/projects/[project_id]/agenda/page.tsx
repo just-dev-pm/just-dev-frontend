@@ -9,7 +9,7 @@ import { handleResponse } from "@/lib/handle-response";
 import * as z from "zod";
 import useSWR from "swr";
 import { useRouter } from "next/navigation";
-import useProjectAgenda from "@/app/api/agenda/get-project-agenda";
+import useProjectAgenda from "@/app/apiTyped/agenda/useProjectAgenda";
 
 export const ParticipantSchema = z.object({
   id: z.string(),
@@ -149,7 +149,7 @@ export default function AgendaPage({ params }: Props) {
   >([]);
   const router = useRouter();
   const { project_id } = params;
-  const { data: projectAgendas,error:projectAgendasError,isLoading:projectAgendasIsLoading } = useProjectAgenda({ project_id });
+  const { data: projectAgendas,error:projectAgendasError,isLoading:projectAgendasIsLoading } = useProjectAgenda(project_id);
   const typedProjectAgendas = projectAgendas as GetProjectAgendasResponse;
   const {
     data: agendasEvents,
@@ -217,8 +217,8 @@ export default function AgendaPage({ params }: Props) {
         (state) => state.id === event.agendaId && state.checked === true
       )
     );
-    console.log("final events",filteredAgendasEvents);
-    console.log("final rendered events",agendaEventsToRenderedEvents(filteredAgendasEvents))
+    // console.log("final events",filteredAgendasEvents);
+    // console.log("final rendered events",agendaEventsToRenderedEvents(filteredAgendasEvents))
   }
     const handleEventClick = (event: RenderedEvent) => {
       router.push(`./agenda/${event.data.agenda_id}/${event.id}`);

@@ -15,8 +15,8 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "../ui/chart";
-import useProjectTasks from "@/app/api/task/get-project-tasks";
-import { ProjectTasksResponseSchema } from "@/types/task/projectTasks";
+import useProjectTasks from "@/app/apiTyped/task/useProjectTasks";
+// import { ProjectTasksResponseSchema } from "@/types/task/projectTasks";
 import { group } from "radash";
 import { cn } from "@/lib/utils";
 import Loading from "../ui/loading";
@@ -28,14 +28,12 @@ export default function TaskTime({
   projectId: string;
   className: string;
 }) {
-  const { data, isLoading, error } = useProjectTasks({
-    project_id: projectId,
-  });
+  const { data, isLoading, error } = useProjectTasks(projectId);
 
     if (isLoading) return <Loading />;
     if (error) return <>Error</>;
 
-  const tasks = ProjectTasksResponseSchema.parse(data)?.tasks;
+  const tasks = data.tasks;
 
   const chartData = Object.entries(
     group(tasks, (task) =>

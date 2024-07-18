@@ -1,7 +1,5 @@
 "use client";
 
-import { ProjectTasksResponse } from "@/types/task/projectTasks";
-import { ProjectUsersResponse } from "@/types/project/projectUser";
 import { Pie, PieChart } from "recharts";
 
 import {
@@ -18,10 +16,8 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import useSWR from "swr";
-import useProjectInfo from "@/app/api/project/get-projectInfo";
-import useProjectTasks from "@/app/api/task/get-project-tasks";
-import useUsersInProject from "@/app/api/project/get-users-in-project";
+import useProjectTasks from "@/app/apiTyped/task/useProjectTasks";
+import useUsersInProject from "@/app/apiTyped/project/useUserInProject";
 import { cn } from "@/lib/utils";
 import Loading from "../ui/loading";
 
@@ -32,18 +28,18 @@ export default function ContributionDistribution({
   project_id: string;
   className?: string;
 }) {
-  const { data: project_users } = useUsersInProject({ project_id });
+  const { data: project_users,error: project_error , isLoading:project_isLoading } = useUsersInProject(project_id);
 
-  const { data, error, isLoading } = useProjectTasks({ project_id });
+  const { data, error, isLoading } = useProjectTasks(project_id);
 
-  if (error) return <>Error {error}</>;
-  if (isLoading) return <Loading />;
+  if (error || project_error) return <>Error {error}</>;
+  if (isLoading || project_isLoading) return <Loading />;
 
   const tasks = data.tasks.filter(
     (task) => task.status.category === "complete"
   );
 
-  const users = project_users?.users;
+  const users = project_users.users;
 
   const user_contributions = users.map((user) => {
     const user_tasks = tasks.filter((task) =>
@@ -72,7 +68,6 @@ export default function ContributionDistribution({
   }
 
   const finalchartConfig = generateChartConfig(user_contributions);
-  console.log(finalchartConfig);
 
   const finaluserStatusDistribution = user_contributions.map((item) => {
     return { ...item, fill: `var(--color-${item.name})` };

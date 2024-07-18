@@ -1,15 +1,14 @@
 "use client";
 
-import useAssignedTasks from "@/app/apiTyped/task/useAssignedTask";
-import useUserPersonalTasks from "@/app/apiTyped/task/useUserTasks";
-import useUserInfo from "@/app/apiTyped/user/useUserInfo";
-import { GetAssignedTasksResponseSchema } from "@/types/GetAssignedTasksResponse";
-import { StatusPool } from "@/types/user";
+import useAssignedTasks, {
+  Task as GetAssignedTasksReponseTask,
+} from "@/app/apiTyped/task/useAssignedTask";
+import useUserPersonalTasks, {
+  Task as GetUserPersonalTasksResponseTask,
+} from "@/app/apiTyped/task/useUserTasks";
+import useUserInfo, { StatusPool } from "@/app/apiTyped/user/useUserInfo";
 import { ColumnDef } from "@tanstack/react-table";
 import { Circle, SquareGanttChartIcon, UserRound } from "lucide-react";
-import { Task as GetAssignedTasksReponseTask } from "@/types/GetAssignedTasksResponse";
-import { Task as GetUserPersonalTasksResponseTask } from "@/types/GetUserPersonalTasksResponse";
-import { use } from "react";
 import { DataTable } from "../ui/data-table";
 import Link from "next/link";
 
@@ -112,8 +111,7 @@ export default function IncompletedTaskTable({ userId }: { userId: string }) {
     error: personalTasksError,
   } = useUserPersonalTasks(userId);
 
-  const typedAssignedTasks =
-    userAssignedTasks;
+  const typedAssignedTasks = userAssignedTasks;
 
   if (
     userInfoIsLoading ||

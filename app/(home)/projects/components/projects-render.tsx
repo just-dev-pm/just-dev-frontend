@@ -1,14 +1,14 @@
 "use client";
 import Loading from "@/components/ui/loading";
 import { BASE_URL } from "@/lib/global";
-import { Project } from "@/types/project";
-import { Project as RawProject, Projects } from "@/types/projects";
+import { Project as RawProject } from "@/types/projects";
 import useSWR from "swr";
 import ProjectCard from "./project-card";
 import { useEffect } from "react";
 import useMenuTabStore from "@/store/menuTabStore";
 import { AlertDestructive } from "@/components/ui/alert-destructive";
-import { useProject } from "@/app/api/project/get-project";
+import useProject from "@/app/apiTyped/project/useProjectInfo";
+import {Response as Projects,Project} from "@/app/apiTyped/project/useUserProjects"
 
 interface ProjectsRenderProps {
   projects: Projects;
@@ -17,7 +17,7 @@ export default function ProjectsRender({ projects }: ProjectsRenderProps) {
   if(!projects || projects.projects.length === 0) return <Loading />
   return (
     <>
-      {projects.projects.map((rawProject: RawProject) => (
+      {projects.projects.map((rawProject) => (
         <div key={rawProject.id}>
           <ProjectRender rawProject={rawProject} />
         </div>
@@ -27,7 +27,7 @@ export default function ProjectsRender({ projects }: ProjectsRenderProps) {
 }
 
 interface ProjectRenderProps {
-  rawProject: RawProject;
+  rawProject: Project;
 }
 export function ProjectRender({ rawProject }: ProjectRenderProps) {
   const { data, mutate, error } = useProject(rawProject.id);
@@ -48,11 +48,13 @@ export function ProjectRender({ rawProject }: ProjectRenderProps) {
       />
     );
   if (!data) return <Loading />;
-  return (
-    <ProjectCard
-      data={data}
-      position={rawProject.position === "admin" ? "管理员" : "成员"}
-      onEnterProject={onEnterProject}
-    />
-  );
+  if(data){
+    return (
+      <ProjectCard
+        data={data}
+        position={rawProject.position === "admin" ? "管理员" : "成员"}
+        onEnterProject={onEnterProject}
+      />
+    );
+  }
 }

@@ -1,6 +1,3 @@
-import { ProjectDataResponse } from "@/types/project/projectData";
-import { ProjectTasksResponse } from "@/types/task/projectTasks";
-import useSWR from "swr";
 import {
   ChartConfig,
   ChartContainer,
@@ -17,8 +14,8 @@ import {
 } from "../ui/card";
 import { PieChart } from "recharts";
 import { Pie } from "recharts";
-import useProjectInfo from "@/app/api/project/get-projectInfo";
-import useProjectTasks from "@/app/api/task/get-project-tasks";
+import useProjectInfo from "@/app/apiTyped/project/useProjectInfo";
+import useProjectTasks from "@/app/apiTyped/task/useProjectTasks";
 import { cn } from "@/lib/utils";
 import Loading from "../ui/loading";
 
@@ -29,14 +26,13 @@ export default function TaskDistribution({
   projectId: string;
   className?: string;
 }) {
-  const { data: project_data } = useProjectInfo(projectId);
+  const { data: project_data,error:project_error,isLoading:project_isLoading } = useProjectInfo(projectId);
 
-  const { data, error, isLoading } = useProjectTasks({
-    project_id: projectId,
-  });
+  const { data, error, isLoading } = useProjectTasks(
+    projectId);
 
-  if (error) return <>Error {error}</>;
-  if (isLoading) return <Loading />;
+  if (error || project_error) return <>Error {error}</>;
+  if (isLoading || project_isLoading) return <Loading />;
 
   const status_pool = (project_data).status_pool;
   const tasks = (data).tasks;
@@ -84,7 +80,7 @@ export default function TaskDistribution({
   const finaltaskStatusDistribution = taskStatusDistribution.map((item) => {
     return { ...item, fill: `var(--color-${item.name.toLowerCase()})` };
   });
-  console.log("task dis data", finaltaskStatusDistribution);
+  // console.log(finaltaskStatusDistribution);
   return (
     <Card className={cn("flex flex-col", className)}>
       <CardHeader className="items-center pb-0">

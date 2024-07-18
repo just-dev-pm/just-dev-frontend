@@ -13,9 +13,9 @@ import {
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { useState } from "react";
-import { NewDraftResponseSchema } from "@/types/NewDraftResponse";
+// import { NewDraftResponseSchema } from "@/types/NewDraftResponse";
 import { useRouter } from "next/navigation";
-import useUserDraftCreate from "@/app/apiTyped/draft/useUserDraftCreate";
+import useUserDraftCreate,{ResponseSchema as NewDraftResponseSchema} from "@/app/apiTyped/draft/useUserDraftCreate";
 import { cn } from "@/lib/utils";
 
 export default function NewDraft({ userId, className }: { userId: string; className: string }) {

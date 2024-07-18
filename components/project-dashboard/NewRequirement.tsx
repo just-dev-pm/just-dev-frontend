@@ -13,15 +13,15 @@ import {
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { useRouter } from "next/navigation";
-import useRequirementCreate from "@/app/api/requirements/create-requirement";
+import useRequirementCreate,{ResponseSchema as NewRequirementResponseSchema} from "@/app/apiTyped/requirements/useProjectRequrementCreate";
 import { useState } from "react";
-import { NewRequirementResponseSchema } from "@/types/requirements/NewRequirementResponse";
+// import { NewRequirementResponseSchema } from "@/types/requirements/NewRequirementResponse";
 
 export default function NewRequirement({ projectId }: { projectId: string }) {
     const router = useRouter();
-    const { trigger } = useRequirementCreate({
-        project_id: projectId,
-        onSuccess: (data) => {
+    const { trigger } = useRequirementCreate(
+        projectId,
+        (data) => {
             if (data) {
                 const typedData = NewRequirementResponseSchema.parse(data);
                 if (typedData) {
@@ -31,7 +31,7 @@ export default function NewRequirement({ projectId }: { projectId: string }) {
                 }
             }
         },
-    });
+    );
     const [requirementTitle, setRequirementTitle] = useState<string>("");
 
     async function submitRequirement() {

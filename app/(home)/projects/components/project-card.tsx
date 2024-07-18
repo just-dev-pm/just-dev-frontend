@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Incomplete, Project } from "@/types/project";
+import { Response as Project,Incomplete } from "@/app/apiTyped/project/useProjectInfo";
 import { CompleteStatusView, InCompleteStatusView } from "./status-view";
 import Link from "next/link";
 import ChangeProjectInfoController from "./change-project-info-controller";

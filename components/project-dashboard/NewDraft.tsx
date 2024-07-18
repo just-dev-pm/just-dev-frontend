@@ -13,16 +13,17 @@ import {
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { useState } from "react";
-import { NewDraftResponseSchema } from "@/types/NewDraftResponse";
+// import { NewDraftResponseSchema } from "@/types/NewDraftResponse";
 import { useRouter } from "next/navigation";
-import { useProjectDraftCreate } from "@/app/api/draft/create-project-draft";
+import useProjectDraftCreate from "@/app/apiTyped/draft/useUserDraftCreate";
+import {ResponseSchema as NewDraftResponseSchema} from "@/app/apiTyped/draft/useUserDraftCreate"
 import { cn } from "@/lib/utils";
 
 export default function NewDraft({ projectId,className }: { projectId: string,className:string }) {
     const router = useRouter();
-    const { trigger } = useProjectDraftCreate({
-        project_id: projectId,
-        onSuccess: (data) => {
+    const { trigger } = useProjectDraftCreate(
+        projectId,
+        (data) => {
             if (data) {
                 const typedData = NewDraftResponseSchema.parse(data);
                 if (typedData) {
@@ -30,7 +31,7 @@ export default function NewDraft({ projectId,className }: { projectId: string,cl
                 }
             }
         },
-    });
+    );
     const [draftTitle, setDraftTitle] = useState<string>("");
 
     async function submitDraft() {
