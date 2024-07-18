@@ -1,5 +1,6 @@
 import React from "react";
 import { Task } from "../user/types"; // 确保路径和文件名正确
+import { StatusItem } from "./statusItem";
 
 interface Props {
   task: Task;
@@ -7,7 +8,8 @@ interface Props {
 
 const Item: React.FC<Props> = ({ task }) => {
   return (
-    <li className="mb-2">
+    <li className="my-1 text-1xl flex gap-4">
+      <StatusItem status={task.status} />
       {task.name}
       {/* {task?.pr && (
         <div className="ml-4">

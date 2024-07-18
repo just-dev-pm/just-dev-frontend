@@ -1,7 +1,7 @@
 // View.tsx
 
 import { Button } from "@/components/ui/button";
-import { Trash2 } from "lucide-react";
+import { ListIcon, Trash2 } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 import { Divider } from "rsuite";
@@ -18,9 +18,13 @@ const View: React.FC<Props> = ({ data, handleDelete }) => {
     <div className="grid grid-cols-2 gap-4">
       {data.task_lists.map((taskList: TaskList) => (
         <div key={taskList.id} className="p-4 border rounded">
-          <div className="flex pr-2">
-            <Link href={`./tasks/${taskList.id}`} className="grow">
-              <h2 className="text-xl font-bold mb-2">{taskList.name}</h2>
+          <div className="flex pr-2 gap-4 items-center">
+            <ListIcon />
+            <Link
+              href={`./tasks/${taskList.id}`}
+              className="grow flex items-center"
+            >
+              <h2 className="text-xl font-bold">{taskList.name}</h2>
             </Link>
             <Button variant="ghost" onClick={() => handleDelete(taskList.id)}>
               <Trash2 size={20} />
