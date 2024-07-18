@@ -10,7 +10,7 @@ import { ToFormField } from "./to";
 
 const Trigger = () => {
   const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
+
   const handleClose = () => setOpen(false);
   const [isPre, setIsPre] = React.useState(true);
 
@@ -21,6 +21,14 @@ const Trigger = () => {
   }
 
   const { form, onSubmit, taskId } = context;
+
+  const handleOpen = () => {
+    setOpen(true);
+    if (form) {
+      form.setValue("from.id", taskId);
+    }
+  };
+
   return (
     <>
       <ButtonToolbar>
@@ -36,7 +44,7 @@ const Trigger = () => {
           <div className="flex flex-col justify-center">
             <div className="flex items-center justify-center">
               <RelationTypePicker
-                onChange={v => {
+                onChange={(v) => {
                   if (v === "A") {
                     form.setValue("to.id", taskId);
                     setIsPre(true);
