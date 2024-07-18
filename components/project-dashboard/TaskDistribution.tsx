@@ -79,12 +79,12 @@ export default function TaskDistribution({
   }
 
   const finalchartConfig = generateChartConfig(taskStatusDistribution);
-  console.log(finalchartConfig);
+  console.log("task dis config",finalchartConfig);
 
   const finaltaskStatusDistribution = taskStatusDistribution.map((item) => {
-    return { ...item, fill: `var(--color-${item.name})` };
+    return { ...item, fill: `var(--color-${item.name.toLowerCase()})` };
   });
-  console.log(finaltaskStatusDistribution);
+  console.log("task dis data", finaltaskStatusDistribution);
   return (
     <Card className={cn("flex flex-col", className)}>
       <CardHeader className="items-center pb-0">
