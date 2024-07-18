@@ -51,23 +51,7 @@ export const NotificationsProvider = ({ children }) => {
 
   const notifications: Notification[] = data.notifications;
   const markAsRead = (nid: string) => {
-    const newData = {
-      notifications: notifications.map((notification) => {
-        return notification.id === nid
-          ? {
-              ...notification,
-              handled: true,
-            }
-          : notification;
-      }),
-    };
-
-    const Async = async () => {
-      await trigger(nid);
-      return newData;
-    };
-
-    mutate(Async, { optimisticData: newData });
+    trigger(nid);
   };
 
   const sortedNotifications = data.notifications.sort((a, b) => a.handled);
