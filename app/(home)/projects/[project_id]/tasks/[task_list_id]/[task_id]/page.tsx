@@ -1,10 +1,12 @@
 "use client";
 
+import { ProjectStatusPoolProvider } from "@/app/(home)/components/status/status-pool/project/context";
 import { ProjectTasksProvider } from "@/app/(home)/projects/components/list/project/context";
 import { TaskRelationView } from "@/app/(home)/projects/components/list/relation/view";
 import { NewRelationContextProvider } from "@/app/(home)/tasks/components/add-relation/context";
 import { useSWRNewRelation } from "@/app/(home)/tasks/components/add-relation/swr";
 import { AddRelationTrigger } from "@/app/(home)/tasks/components/add-relation/trigger";
+import { ChangeStatusContextProvider } from "@/app/(home)/tasks/components/change-status/context";
 import { ChangeTaskContextProvider } from "@/app/(home)/tasks/components/change/context";
 import { ProjectTaskView } from "@/app/(home)/tasks/components/change/project-view";
 import useTaskChange from "@/app/api/task/change-task";
@@ -67,7 +69,14 @@ export default function ConcreteTaskPage({ params }: IProps) {
           initialData={cardData}
           handleTaskChange={handleTaskChange}
         >
-          <ProjectTaskView projectId={project_id} />
+          <ProjectStatusPoolProvider projectId={project_id}>
+            <ChangeStatusContextProvider
+              handleTaskChange={handleTaskChange}
+              task_id={cardData.id}
+            >
+              <ProjectTaskView projectId={project_id} />
+            </ChangeStatusContextProvider>
+          </ProjectStatusPoolProvider>
         </ChangeTaskContextProvider>
         <div className="flex gap-4">
           {" "}

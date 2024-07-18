@@ -57,19 +57,6 @@ export function TasksBoardView({
     <StatusPoolProvider>
       <ProjectStatusPoolProvider projectId={project.projectId}>
         <div className="flex gap-8">
-          <TasksList
-            todoListIcon={
-              <div className="flex gap-2 items-center text-green-700 mb-2">
-                <Badge className="bg-green-600">已完成</Badge>
-                {complete_status_title}
-              </div>
-            }
-            tasks={complete_tasks}
-            project={project}
-            dialogMessage={""}
-            dialogMembers={[]}
-            task_list_id={task_list_id}
-          ></TasksList>
           {imcomplete_status.map(
             (
               imcomplete: { status: { name: string }; id: string | undefined },
@@ -93,6 +80,19 @@ export function TasksBoardView({
               ></TasksList>
             ),
           )}
+          <TasksList
+            todoListIcon={
+              <div className="flex gap-2 items-center text-green-700 mb-2">
+                <Badge className="bg-green-600">已完成</Badge>
+                {complete_status_title}
+              </div>
+            }
+            tasks={complete_tasks}
+            project={project}
+            dialogMessage={""}
+            dialogMembers={[]}
+            task_list_id={task_list_id}
+          ></TasksList>
         </div>
       </ProjectStatusPoolProvider>
     </StatusPoolProvider>
