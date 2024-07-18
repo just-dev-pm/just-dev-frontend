@@ -1,4 +1,4 @@
-"use cliennt";
+"use client";
 
 import useProjectTasks from "@/app/api/task/get-project-tasks";
 import React, { PropsWithChildren, createContext, useContext } from "react";
