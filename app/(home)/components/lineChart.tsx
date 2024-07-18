@@ -1,6 +1,5 @@
 "use client";
 
-import { TrendingUp } from "lucide-react";
 import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
 import { lineChartData, lineChartConfig } from "@/lib/Mockdata";
 import {

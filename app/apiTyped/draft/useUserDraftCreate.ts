@@ -18,7 +18,7 @@ export const ResponseSchema = z.object({
 });
 export type Response = z.infer<typeof ResponseSchema>;
 
-export function useUserDraftCreate(
+export default function useUserDraftCreate(
   user_id: string,
   onSuccess?: (data?: any) => void,
 ) {

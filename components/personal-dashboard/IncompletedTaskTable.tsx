@@ -1,8 +1,8 @@
 "use client";
 
-import useAssignedTasks from "@/app/api/task/get-assigned-tasks";
-import useUserPersonalTasks from "@/app/api/task/get-personal-tasks";
-import { useUserInfo } from "@/app/api/useUserInfo";
+import useAssignedTasks from "@/app/apiTyped/task/useAssignedTask";
+import useUserPersonalTasks from "@/app/apiTyped/task/useUserTasks";
+import useUserInfo from "@/app/apiTyped/user/useUserInfo";
 import { GetAssignedTasksResponseSchema } from "@/types/GetAssignedTasksResponse";
 import { StatusPool } from "@/types/user";
 import { ColumnDef } from "@tanstack/react-table";
@@ -81,7 +81,7 @@ const getColumns: (
         const time = row.original.deadline;
         return (
           <time>
-            {time.toLocaleDateString(undefined, {
+            {new Date(time).toLocaleDateString(undefined, {
               year: "numeric",
               month: "2-digit",
             })}
@@ -98,22 +98,22 @@ export default function IncompletedTaskTable({ userId }: { userId: string }) {
     data: userInfo,
     isLoading: userInfoIsLoading,
     error: userInfoError,
-  } = useUserInfo({ userId });
+  } = useUserInfo(userId);
 
   const {
     data: userAssignedTasks,
     isLoading: userAssignedTasksIsLoading,
     error: userAssignedTasksError,
-  } = useAssignedTasks({ user_id: userId });
+  } = useAssignedTasks(userId);
 
   const {
     data: personalTasks,
     isLoading: personalTasksIsLoading,
     error: personalTasksError,
-  } = useUserPersonalTasks({ user_id: userId });
+  } = useUserPersonalTasks(userId);
 
   const typedAssignedTasks =
-    GetAssignedTasksResponseSchema.parse(userAssignedTasks);
+    userAssignedTasks;
 
   if (
     userInfoIsLoading ||
@@ -128,7 +128,7 @@ export default function IncompletedTaskTable({ userId }: { userId: string }) {
   }
 
   if (personalTasks && typedAssignedTasks && userInfo) {
-    const tasks: Task[] = [
+    const tasks = [
       ...typedAssignedTasks.tasks.map((task) => ({
         ...task,
         kind: "assigned" as const,

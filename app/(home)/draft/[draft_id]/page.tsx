@@ -5,29 +5,31 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ChatRoom from "../../components/chatRoom";
 import Doc from "../../components/doc";
 import Whiteboard from "../../components/whiteboard";
-import useDraft from "@/app/api/draft/get-draft";
 import { useUserInfo } from "@/app/api/useUserInfo";
 import { useUserStore } from "@/store/userStore";
 import { useEffect, useState } from "react";
 import { WebsocketProvider } from "y-websocket";
-import * as Y from 'yjs'
+import * as Y from "yjs";
 import { HOST_URL } from "@/lib/global";
 
 interface IProps {
   params: { draft_id: string };
 }
 export default function ConcreteDraftPage({ params }: IProps) {
-  const userId = useUserStore(status => status.userId)
+  const userId = useUserStore((status) => status.userId);
   const { draft_id } = params;
-  const hostUrl = HOST_URL!
-  const [doc,setDoc] = useState<Y.Doc>(new Y.Doc())
-  const [provider,setProvider] = useState<WebsocketProvider>(new WebsocketProvider(hostUrl,draft_id,doc))
-  const { data: draft_data, error: draft_error } = useDraft({ draft_id });
-  const { data:user_data, error:user_error} = useUserInfo({userId})
+  const hostUrl = HOST_URL!;
+  const [doc, setDoc] = useState<Y.Doc>(new Y.Doc());
+  const [provider, setProvider] = useState<WebsocketProvider>(
+    new WebsocketProvider(hostUrl, draft_id, doc),
+  );
+  const { data: user_data, error: user_error } = useUserInfo({ userId });
+
+  if (user_error) return <>Error</>;
 
   useEffect(() => {
     return () => {
-      provider?.disconnect()
+      provider?.disconnect();
     };
   }, []);
   return (

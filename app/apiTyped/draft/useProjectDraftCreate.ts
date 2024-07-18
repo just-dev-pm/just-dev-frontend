@@ -18,7 +18,7 @@ export const RequestSchema = z.object({
 });
 export type Request = z.infer<typeof RequestSchema>;
 
-export function useProjectDraftCreate(
+export default function useProjectDraftCreate(
   project_id: string,
   onSuccess?: (data: any) => void
 ) {

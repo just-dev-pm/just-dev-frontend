@@ -1,7 +1,7 @@
 "use client";
 
-import { useProjectDraftCreate } from "@/app/api/draft/create-project-draft";
-import { useUserDraftCreate } from "@/app/api/draft/create-user-draft";
+import useProjectDraftCreate from "@/app/apiTyped/draft/useProjectDraftCreate";
+import useUserDraftCreate from "@/app/apiTyped/draft/useUserDraftCreate";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -35,22 +35,31 @@ type Props = {
     project_id: string;
   };
   children: React.ReactNode;
-  variant: "link" | "default" | "destructive" | "outline" | "secondary" | "ghost" | null | undefined
+  variant:
+    | "link"
+    | "default"
+    | "destructive"
+    | "outline"
+    | "secondary"
+    | "ghost"
+    | null
+    | undefined;
 };
 
 const formSchema = z.object({
   name: z.string().min(1, "名称不能为空"),
 });
 
-export function DraftsDialog({ project, children ,variant }: Props) {
+export function DraftsDialog({ project, children, variant }: Props) {
   const isProject = project.isProject;
   const userId = useUserStore((stats) => stats.userId);
-  const { trigger: userDraftCreateTrigger } = useUserDraftCreate({
-    user_id: userId,
-  });
-  const { trigger: projectDraftCreateTrigger } = useProjectDraftCreate({
-    project_id: project.project_id,
-  });
+  const { trigger: userDraftCreateTrigger } = useUserDraftCreate(userId, () =>
+    mutate(["/api/users/", userId, "/drafts"]),
+  );
+  const { trigger: projectDraftCreateTrigger } = useProjectDraftCreate(
+    project.project_id,
+    () => mutate(["/api/projects/", project.project_id, "/drafts"]),
+  );
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -61,10 +70,8 @@ export function DraftsDialog({ project, children ,variant }: Props) {
   function onSubmit(values: z.infer<typeof formSchema>) {
     if (isProject) {
       projectDraftCreateTrigger({ name: values.name });
-      mutate(["/api/projects/", project.project_id, "/drafts"]);
     } else {
       userDraftCreateTrigger({ name: values.name });
-      mutate(["/api/users/", userId, "/drafts"]);
     }
   }
 

@@ -3,15 +3,16 @@
 import { Label } from "@/components/ui/label";
 import { useUserStore } from "@/store/userStore";
 import DraftsView from "./components/draftsView";
-import useUserDrafts from "@/app/api/draft/get-user-drafts";
+import useUserDrafts from "@/app/apiTyped/draft/useUserDrafts";
 import { DraftsDialog } from "./components/draftsDialog";
 import Loading from "@/components/ui/loading";
 
 export default function DraftPage() {
   const userId = useUserStore((stats) => stats.userId);
-  const { data, error, isLoading } = useUserDrafts({ user_id: userId });
+  const { data, error, isLoading } = useUserDrafts(userId);
   if (isLoading) return <Loading />;
-  if ((data?.drafts as any[]).length < 1)
+  if (error) return <>Error</>
+  if (data.drafts.length < 1)
     return (
       <div className="flex h-screen items-center justify-center">
         <h3 className="flex items-center">
@@ -27,9 +28,7 @@ export default function DraftPage() {
         </h3>
       </div>
     );
-  return error ? (
-    <div>{error}</div>
-  ) : (
+  return (
     <div>
       <div className="flex justify-between">
         <h2>草稿总览</h2>

@@ -15,23 +15,21 @@ import { Label } from "../ui/label";
 import { useState } from "react";
 import { NewDraftResponseSchema } from "@/types/NewDraftResponse";
 import { useRouter } from "next/navigation";
-import { useProjectDraftCreate } from "@/app/api/draft/create-project-draft";
-import { useUserDraftCreate } from "@/app/api/draft/create-user-draft";
+import useUserDraftCreate from "@/app/apiTyped/draft/useUserDraftCreate";
 import { cn } from "@/lib/utils";
 
 export default function NewDraft({ userId, className }: { userId: string; className: string }) {
     const router = useRouter();
-    const { trigger } = useUserDraftCreate({
-        user_id: userId,
-        onSuccess: (data) => {
+    const { trigger } = useUserDraftCreate(
+        userId,
+        (data) => {
             if (data) {
                 const typedData = NewDraftResponseSchema.parse(data);
                 if (typedData) {
                     router.push(`/draft/${typedData.id}`);
                 }
             }
-        },
-    });
+        },);
     const [draftTitle, setDraftTitle] = useState<string>("");
 
     async function submitDraft() {

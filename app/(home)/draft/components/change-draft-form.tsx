@@ -1,9 +1,7 @@
 "use client";
 
-import { useDraftChange } from "@/app/api/draft/change-draft";
-import { useProjectDraftCreate } from "@/app/api/draft/create-project-draft";
-import { useUserDraftCreate } from "@/app/api/draft/create-user-draft";
-import useDraft from "@/app/api/draft/get-draft";
+import useDraftChange from "@/app/apiTyped/draft/useDraftChange";
+import useDraft from "@/app/apiTyped/draft/useDraft";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -24,12 +22,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useUserStore } from "@/store/userStore";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Edit2Icon } from "lucide-react";
 import React from "react";
 import { useForm } from "react-hook-form";
-import { mutate } from "swr";
 import { z } from "zod";
 
 type Props = {
@@ -44,10 +40,8 @@ const formSchema = z.object({
 type FormSchema = z.infer<typeof formSchema>;
 
 export function ChangeDraftForm({ draft_id, oldData }: Props) {
-  const { trigger } = useDraftChange({
-    draft_id: draft_id,
-  });
-  const { mutate } = useDraft({ draft_id });
+  const { trigger } = useDraftChange(draft_id,);
+  const { mutate } = useDraft(draft_id);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: oldData,

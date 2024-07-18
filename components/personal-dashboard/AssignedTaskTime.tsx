@@ -1,4 +1,4 @@
-import useAssignedTasks from "@/app/api/task/get-assigned-tasks";
+import useAssignedTasks from "@/app/apiTyped/task/useAssignedTask";
 import { group } from "radash";
 import { ChartConfig, ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent } from "../ui/chart";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../ui/card";
@@ -16,7 +16,7 @@ export default function AssignedTaskTime({
     data: tasks,
     error,
     isLoading,
-  } = useAssignedTasks({ user_id: userId });
+  } = useAssignedTasks(userId);
 
   if (isLoading) return <>Loading...</>;
 
