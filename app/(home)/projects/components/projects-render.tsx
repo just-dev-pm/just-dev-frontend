@@ -1,20 +1,18 @@
 "use client";
-import Loading from "@/components/ui/loading";
-import { BASE_URL } from "@/lib/global";
-import { Project } from "@/types/project";
-import { Project as RawProject, Projects } from "@/types/projects";
-import useSWR from "swr";
-import ProjectCard from "./project-card";
-import { useEffect } from "react";
-import useMenuTabStore from "@/store/menuTabStore";
-import { AlertDestructive } from "@/components/ui/alert-destructive";
 import { useProject } from "@/app/api/project/get-project";
+import { AlertDestructive } from "@/components/ui/alert-destructive";
+import Loading from "@/components/ui/loading";
+import useMenuTabStore from "@/store/menuTabStore";
+import { Projects, Project as RawProject } from "@/types/projects";
+import { useEffect } from "react";
+import { ProjectStatusPoolProvider } from "../../components/status/status-pool/project/context";
+import ProjectCard from "./project-card";
 
 interface ProjectsRenderProps {
   projects: Projects;
 }
 export default function ProjectsRender({ projects }: ProjectsRenderProps) {
-  if(!projects || projects.projects.length === 0) return <Loading />
+  if (!projects || projects.projects.length === 0) return <Loading />;
   return (
     <>
       {projects.projects.map((rawProject: RawProject) => (
@@ -49,10 +47,12 @@ export function ProjectRender({ rawProject }: ProjectRenderProps) {
     );
   if (!data) return <Loading />;
   return (
-    <ProjectCard
-      data={data}
-      position={rawProject.position === "admin" ? "管理员" : "成员"}
-      onEnterProject={onEnterProject}
-    />
+    <ProjectStatusPoolProvider projectId={rawProject.id}>
+      <ProjectCard
+        data={data}
+        position={rawProject.position === "admin" ? "管理员" : "成员"}
+        onEnterProject={onEnterProject}
+      />
+    </ProjectStatusPoolProvider>
   );
 }
