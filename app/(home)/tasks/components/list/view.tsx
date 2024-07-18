@@ -19,7 +19,9 @@ const View: React.FC<Props> = ({ data, handleDelete }) => {
       {data.task_lists.map((taskList: TaskList) => (
         <div key={taskList.id} className="p-4 border rounded">
           <div className="flex pr-2">
-            <h2 className="text-xl font-bold mb-2 grow">{taskList.name}</h2>
+            <Link href={`./tasks/${taskList.id}`} className="grow">
+              <h2 className="text-xl font-bold mb-2">{taskList.name}</h2>
+            </Link>
             <Button variant="ghost" onClick={() => handleDelete(taskList.id)}>
               <Trash2 size={20} />
             </Button>
