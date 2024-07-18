@@ -64,8 +64,11 @@ export default function useUserPersonalTasks({ user_id }: { user_id: string }) {
         credentials: "include",
       }).then(handleResponse("获取用户的个人任务"))
       .then((res) => {
-        // ResponseSchema.parse(res)
         return res.json()
+      })
+      .then(data => {
+        console.log("get personal tasks", data)
+        return ResponseSchema.parse(data)
       }),
     {
       suspense: true,
