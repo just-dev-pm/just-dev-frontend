@@ -1,5 +1,6 @@
 "use client";
 
+import { StatusPoolProvider } from "@/app/(home)/components/status/context";
 import useTaskChange from "@/app/api/task/change-task";
 import useTasksFromTaskList from "@/app/api/task/get-tasks-from-tasklist";
 import useTaskLink from "@/app/api/tasklink/get-tasklink";
@@ -8,6 +9,7 @@ import { mutate } from "swr";
 import { NewRelationContextProvider } from "../../components/add-relation/context";
 import { useSWRNewRelation } from "../../components/add-relation/swr";
 import { AddRelationTrigger } from "../../components/add-relation/trigger";
+import { ChangeStatusContextProvider } from "../../components/change-status/context";
 import { ChangeTaskContextProvider } from "../../components/change/context";
 import { UserTaskView } from "../../components/change/user-view";
 import { UserTasksProvider } from "../../components/list/user/context";
@@ -72,7 +74,14 @@ export default function ConcreteTaskPage({ params }: IProps) {
           initialData={cardData}
           handleTaskChange={handleTaskChange}
         >
-          <UserTaskView />
+          <StatusPoolProvider>
+            <ChangeStatusContextProvider
+              handleTaskChange={handleTaskChange}
+              task_id={cardData.id}
+            >
+              <UserTaskView />
+            </ChangeStatusContextProvider>
+          </StatusPoolProvider>
         </ChangeTaskContextProvider>
         <div className="flex gap-4">
           <h4>任务关联</h4>

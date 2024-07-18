@@ -26,7 +26,6 @@ const DeadlineFormField = () => {
   }
 
   const { form, onSubmit } = context;
-  console.log("任务截止时间", dateSchema.safeParse(form.getValues("deadline")));
   const check = dateSchema.safeParse(form.getValues("deadline"));
 
   useEffect(() => {
