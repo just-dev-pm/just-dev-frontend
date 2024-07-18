@@ -160,8 +160,9 @@ export function TasksTable({
       cell: ({ row }) => {
         const status: any = row.getValue("status");
         const status_item = status.category;
-        const color = status_item === "complete" ? "text-green-700" : "";
-        return <Badge className={cn("capitalize", color)}>{status_item}</Badge>;
+        const color = status_item === "complete" ? "bg-green-700" : "";
+        const hoverColor = status_item === "complete" ? "hover:bg-green-800" : "";
+        return <Badge className={cn("capitalize", color , hoverColor)}>{status_item}</Badge>;
       },
     },
     {
