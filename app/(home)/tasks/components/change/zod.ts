@@ -5,9 +5,7 @@ export const changeTaskSchema = z.object({
   name: z.string().min(1, "任务名不能为空").default(""),
   description: z.string().min(1, "任务描述不能为空").default(""),
   asignees: z.array(z.string()).default([]),
-  deadline: z.coerce
-    .date({ required_error: "截止时间不能为空", message: "请选择截止时间" })
-    .default(new Date()),
+  deadline: z.coerce.date(),
   pr: z.object({
     owner: z.string(),
     repo: z.string(),
@@ -17,3 +15,4 @@ export const changeTaskSchema = z.object({
 });
 
 export type ChangeTaskSchema = z.infer<typeof changeTaskSchema>;
+export const dateSchema = z.coerce.date();
