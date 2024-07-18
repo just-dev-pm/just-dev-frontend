@@ -1,10 +1,10 @@
+import { Badge, BadgeProps } from "@/components/ui/badge";
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import { Incomplete, StatusItem } from "@/types/project";
-import { Badge, BadgeProps } from "@/components/ui/badge";
 import MaxLineOne from "../../components/max-line-one";
 
 interface ICompleteStatusView {
