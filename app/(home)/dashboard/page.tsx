@@ -10,14 +10,14 @@ import AssignedTaskTime from "@/components/personal-dashboard/AssignedTaskTime";
 export default function DashboardPage() {
   const userId = useUserStore.getState().userId;
   return (
-    <div className="space-y-6">
-      <div className="flex items-start gap-8">
+    <div className="flex gap-x-8">
+      <div className="space-y-6 flex-none">
         <AssignedTaskTime userId={userId} className="flex-none w-[350px]" />
-        <div className="flex-grow">
-        <IncompletedTaskTable userId={userId} />
-        </div>
+        <NewDraft userId={userId} className="" />
       </div>
-      <NewDraft userId={userId} className="flex-none" />
+      <div className="flex-grow">
+        <IncompletedTaskTable userId={userId} />
+      </div>
     </div>
   );
 }
