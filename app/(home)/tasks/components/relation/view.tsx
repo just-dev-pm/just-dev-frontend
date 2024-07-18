@@ -1,7 +1,7 @@
+import useTaskLink from "@/app/api/tasklink/get-tasklink";
 import { TaskRelation } from "@/types/task-link/get";
 import React from "react";
 import { Divider, Tag } from "rsuite";
-import { mutate } from "swr";
 import { ChangeRelationControl } from "../change-relation/control";
 import { useSWRDeleteRelation } from "../delete-relation/swr";
 import { DeleteRelationTrigger } from "../delete-relation/trigger";
@@ -20,30 +20,11 @@ const View: React.FC<TaskRelationViewProps> = ({ taskLinks, taskId }) => {
   const predecessors = taskLinks.filter((link) => link.to.id === taskId);
   const successors = taskLinks.filter((link) => link.from.id === taskId);
   const { trigger } = useSWRDeleteRelation();
+  const { mutate } = useTaskLink({ task_id: taskId });
 
-  const mutatePredecessorsDelete = (linkId: string) => {
-    const newData = predecessors.filter(
-      (predecessor) => predecessor.id !== linkId,
-    );
-    mutate(
-      ["/api/links/tasks/", taskId],
-      async () => {
-        await trigger(linkId);
-        return newData;
-      },
-      { optimisticData: newData },
-    );
-  };
-  const mutateSuccessorsDelete = (linkId: string) => {
-    const newData = successors.filter((successor) => successor.id !== linkId);
-    mutate(
-      ["/api/links/tasks/", taskId],
-      async () => {
-        await trigger(linkId);
-        return newData;
-      },
-      { optimisticData: newData },
-    );
+  const mutateDelete = async (linkId: string) => {
+    await trigger(linkId);
+    mutate();
   };
 
   return (
@@ -65,7 +46,7 @@ const View: React.FC<TaskRelationViewProps> = ({ taskLinks, taskId }) => {
               <ChangeRelationControl linkId={link.id} taskId={taskId} />
               <DeleteRelationTrigger
                 linkId={link.id}
-                mutateDelete={mutatePredecessorsDelete}
+                mutateDelete={mutateDelete}
               />
             </div>
           ))}
@@ -90,7 +71,7 @@ const View: React.FC<TaskRelationViewProps> = ({ taskLinks, taskId }) => {
               <ChangeRelationControl linkId={link.id} taskId={taskId} />
               <DeleteRelationTrigger
                 linkId={link.id}
-                mutateDelete={mutateSuccessorsDelete}
+                mutateDelete={mutateDelete}
               />
             </div>
           ))}
