@@ -17,8 +17,9 @@ import { NewDraftResponseSchema } from "@/types/NewDraftResponse";
 import { useRouter } from "next/navigation";
 import { useProjectDraftCreate } from "@/app/api/draft/create-project-draft";
 import { useUserDraftCreate } from "@/app/api/draft/create-user-draft";
+import { cn } from "@/lib/utils";
 
-export default function NewDraft({ userId }: { userId: string }) {
+export default function NewDraft({ userId, className }: { userId: string; className: string }) {
     const router = useRouter();
     const { trigger } = useUserDraftCreate({
         user_id: userId,
@@ -39,7 +40,7 @@ export default function NewDraft({ userId }: { userId: string }) {
     }
 
     return (
-        <Card className="w-[350px]">
+        <Card className={cn("w-[350px]", className)}>
             <CardHeader>
                 <CardTitle>新草稿</CardTitle>
                 <CardDescription>立即开始您的思考</CardDescription>

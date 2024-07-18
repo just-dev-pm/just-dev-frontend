@@ -33,7 +33,7 @@ export default function ConcreteTaskPage({ params }: IProps) {
   const { data: taskLink, isLoading: loadingTaskLink } = useTaskLink({
     task_id: cardData?.id,
   });
-  if (isLoading) {
+  if (isLoading || !cardData) {
     return <Loading />;
   }
 
