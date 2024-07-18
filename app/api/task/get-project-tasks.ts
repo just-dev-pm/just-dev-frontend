@@ -62,8 +62,8 @@ export default function useProjectTasks({
         credentials: "include",
       })
         .then(handleResponse("获取项目任务"))
-        .then((res) => res.json()),
-    // .then(res => ResponseSchema.parse(res)),
+        .then((res) => res.json())
+        .then((res) => ResponseSchema.parse(res)),
     {
       fallbackData: { tasks: [] },
     },
