@@ -34,10 +34,10 @@ const View: React.FC<ViewProps> = ({ projectId }) => {
    * @returns { label: string, value: string }[] 转换后的数组
    */
   const convertUsersToOptions = (
-    users: User[]
+    users: User[],
   ): { label: string; value: string }[] => {
     if (!users || users.length === 0) return [];
-    return users.map(user => ({
+    return users.map((user) => ({
       label: user.username,
       value: user.id,
     }));
@@ -51,7 +51,7 @@ const View: React.FC<ViewProps> = ({ projectId }) => {
         <StatusFormField />
         <AssigneesFormField data={convertUsersToOptions(data.users)} />
         <DeadlineFormField />
-        {/* <PrView /> */}
+        <PrView />
       </div>
     </Form>
   );

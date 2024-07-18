@@ -1,11 +1,12 @@
 "use client";
 
+import { ProjectTasksProvider } from "@/app/(home)/projects/components/list/project/context";
+import { TaskRelationView } from "@/app/(home)/projects/components/list/relation/view";
 import { NewRelationContextProvider } from "@/app/(home)/tasks/components/add-relation/context";
 import { useSWRNewRelation } from "@/app/(home)/tasks/components/add-relation/swr";
 import { AddRelationTrigger } from "@/app/(home)/tasks/components/add-relation/trigger";
 import { ChangeTaskContextProvider } from "@/app/(home)/tasks/components/change/context";
 import { ProjectTaskView } from "@/app/(home)/tasks/components/change/project-view";
-import { TaskRelationView } from "@/app/(home)/tasks/components/relation/view";
 import useTaskChange from "@/app/api/task/change-task";
 import useTasksFromTaskList from "@/app/api/task/get-tasks-from-tasklist";
 import useTaskLink from "@/app/api/tasklink/get-tasklink";
@@ -32,12 +33,12 @@ export default function ConcreteTaskPage({ params }: IProps) {
   const { data: taskLink, isLoading: loadingTaskLink } = useTaskLink({
     task_id: cardData?.id,
   });
-  if (isLoading) {
+  if (isLoading || !cardData) {
     return <Loading />;
   }
   if (!taskLink || loadingTaskLink) return <Loading />;
   console.log(data);
-  console.log("link",taskLink);
+  console.log("link", taskLink);
 
   console.log("cardDate:", cardData);
 
@@ -48,43 +49,45 @@ export default function ConcreteTaskPage({ params }: IProps) {
   async function handleSubmit(data: any) {
     console.log(data);
     await newRelation(data);
-    mutate(["/api/links/tasks/",task_id])
+    mutate(["/api/links/tasks/", task_id]);
   }
 
   return (
-    <div className="p-8 flex flex-col gap-4">
-      {/* <TaskItemCard
+    <ProjectTasksProvider projectId={project_id}>
+      <div className="p-8 flex flex-col gap-4">
+        {/* <TaskItemCard
         title={cardData.name}
         description={cardData.description}
         ddl={cardData.deadline}
         collaborators={cardData.assignees}
         isProject={true}
       ></TaskItemCard> */}
-      <h4>任务信息</h4>
-      <ChangeTaskContextProvider
-        initialData={cardData}
-        handleTaskChange={handleTaskChange}
-      >
-        <ProjectTaskView projectId={project_id} />
-      </ChangeTaskContextProvider>
-      <div className="flex gap-4">
-        {" "}
-        <h4>任务关联</h4>
-        <NewRelationContextProvider
-          onSubmit={handleSubmit}
-          taskId={cardData.id}
+        <h4>任务信息</h4>
+        <ChangeTaskContextProvider
+          initialData={cardData}
+          handleTaskChange={handleTaskChange}
         >
-          <AddRelationTrigger />
-        </NewRelationContextProvider>
+          <ProjectTaskView projectId={project_id} />
+        </ChangeTaskContextProvider>
+        <div className="flex gap-4">
+          {" "}
+          <h4>任务关联</h4>
+          <NewRelationContextProvider
+            onSubmit={handleSubmit}
+            taskId={cardData.id}
+          >
+            <AddRelationTrigger />
+          </NewRelationContextProvider>
+        </div>
+        {taskLink.length === 0 || taskLink.task_links.length === 0 ? (
+          <p>该任务无关联任务</p>
+        ) : (
+          <TaskRelationView
+            taskLinks={taskLink.task_links}
+            taskId={cardData?.id}
+          />
+        )}
       </div>
-      {taskLink.length === 0 || taskLink.task_links.length === 0 ? (
-        <p>该任务无关联任务</p>
-      ) : (
-        <TaskRelationView
-          taskLinks={taskLink.task_links}
-          taskId={cardData?.id}
-        />
-      )}
-    </div>
+    </ProjectTasksProvider>
   );
 }

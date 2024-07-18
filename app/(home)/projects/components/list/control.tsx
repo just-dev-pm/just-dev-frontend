@@ -4,8 +4,8 @@ import { Loader } from "rsuite";
 import { useSWRTaskLists } from "./swr";
 import { TaskListView } from "./view";
 
-function Control() {
-  const { data, isLoading, mutate } = useSWRTaskLists();
+function Control({ projectId }: { projectId: string }) {
+  const { data, isLoading, mutate } = useSWRTaskLists(projectId);
 
   /**
    * 删除功能

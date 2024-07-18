@@ -1,33 +1,22 @@
 "use client";
 
-import TaskListOverrall from "@/app/(home)/tasks/components/task-list-overrall";
-import { BASE_URL } from "@/lib/global";
-import useSWR from "swr";
-
+import { TasklistDialog } from "@/app/(home)/tasks/components/tasklistDialog";
+import { TaskListControl } from "../../components/list/control";
+import { ProjectTasksProvider } from "../../components/list/project/context";
 const TaskListsPage = ({ params }: { params: { project_id: string } }) => {
   const { project_id } = params;
-  const urlPrefix = `/api/projects/`;
-  const urlSuffix = `/task_lists`;
-  const { data, error } = useSWR(
-    project_id ? [urlPrefix, project_id, urlSuffix] : null,
-    ([urlPrefix, project_id, urlSuffix]) =>
-      fetch(BASE_URL + urlPrefix + project_id + urlSuffix, {
-        credentials: "include",
-      }).then((res) => {
-        if (!res.ok) {
-          throw new Error(`Error! Status:${res.status}`);
-        }
-        return res.json();
-      }),
-    { suspense: true, fallbackData: { task_lists: [] } }
-  );
-  return error ? (
-    <div>{error}</div>
-  ) : (
-    <TaskListOverrall taskLists={data.task_lists} project={{
-        isProject: true,
-        project_id: project_id
-      }} />
+  return (
+    <ProjectTasksProvider projectId={project_id}>
+      <div className="flex flex-col gap-4">
+        <div className="flex pr-2">
+          <h4>任务列表</h4>
+          <TasklistDialog project={{ isProject: true, project_id: project_id }}>
+            新建列表
+          </TasklistDialog>
+        </div>
+        <TaskListControl projectId={project_id} />
+      </div>
+    </ProjectTasksProvider>
   );
 };
 
