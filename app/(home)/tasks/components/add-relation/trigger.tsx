@@ -25,7 +25,7 @@ const Trigger = () => {
   const handleOpen = () => {
     setOpen(true);
     if (form) {
-      form.setValue("from.id", taskId);
+      form.setValue("to.id", taskId);
     }
   };
 
