@@ -50,8 +50,9 @@ export const NotificationsProvider = ({ children }) => {
   const { trigger } = useMarkNotifications();
 
   const notifications: Notification[] = data.notifications;
-  const markAsRead = (nid: string) => {
-    trigger(nid);
+  const markAsRead = async (nid: string) => {
+    await trigger(nid);
+    mutate();
   };
 
   const sortedNotifications = data.notifications.sort((a, b) => a.handled);
