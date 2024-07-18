@@ -63,13 +63,18 @@ export default function useUserPersonalTasks({ user_id }: { user_id: string }) {
         },
         credentials: "include",
       }).then(handleResponse("获取用户的个人任务"))
-      .then((res) => res.json())
-      .then(res => ResponseSchema.parse(res)),
+      .then((res) => {
+        // ResponseSchema.parse(res)
+        return res.json()
+      }),
     {
       suspense: true,
       fallbackData: { tasks: [] },
+      refreshInterval: 5000
     }
   );
+
+  console.log("jxkb", data)
   return {
     data,
     error,

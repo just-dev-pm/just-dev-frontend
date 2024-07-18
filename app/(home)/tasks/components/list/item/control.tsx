@@ -12,6 +12,10 @@ function Control({ taskId }: ControlProps) {
 
   const task = getTaskById(taskId);
 
+  console.log(
+"sldjfsd", task
+  )
+
   if (isLoading || !task)
     return (
       <Placeholder.Paragraph rows={1} rowSpacing={0} rowHeight={15} active />

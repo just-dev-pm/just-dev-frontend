@@ -50,7 +50,7 @@ const Trigger = () => {
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)}>
                 <div className="m-4 flex flex-col gap-4">
-                  {!isPre ? <FromFormField /> : <ToFormField />}
+                  {isPre ? <FromFormField /> : <ToFormField />}
                   <CategoryFormField />
                 </div>
                 <Modal.Footer>
