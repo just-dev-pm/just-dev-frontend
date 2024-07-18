@@ -8,7 +8,7 @@ interface Props {
 
 const Item: React.FC<Props> = ({ task }) => {
   return (
-    <li className="my-1 text-1xl flex gap-4">
+    <li className="text-1xl flex gap-4">
       <StatusItem status={task.status} />
       {task.name}
       {/* {task?.pr && (

@@ -10,6 +10,7 @@ import { useSWRNewRelation } from "../../components/add-relation/swr";
 import { AddRelationTrigger } from "../../components/add-relation/trigger";
 import { ChangeTaskContextProvider } from "../../components/change/context";
 import { UserTaskView } from "../../components/change/user-view";
+import { UserTasksProvider } from "../../components/list/user/context";
 import { TaskRelationView } from "../../components/relation/view";
 
 interface IProps {
@@ -54,41 +55,43 @@ export default function ConcreteTaskPage({ params }: IProps) {
   async function handleSubmit(data: any) {
     console.log(data);
     await relationAddTrigger(data);
-    mutate(["/api/links/tasks/",task_id])
+    mutate(["/api/links/tasks/", task_id]);
   }
   return (
-    <div className="p-8 flex flex-col gap-4">
-      {/* <TaskItemCard
+    <UserTasksProvider>
+      <div className="p-8 flex flex-col gap-4">
+        {/* <TaskItemCard
         title={cardData.name}
         description={cardData.description}
         ddl={cardData.deadline}
         collaborators={cardData.assignees}
         isProject={false}
       ></TaskItemCard> */}
-      <h4>任务信息</h4>
-      <ChangeTaskContextProvider
-        initialData={cardData}
-        handleTaskChange={handleTaskChange}
-      >
-        <UserTaskView />
-      </ChangeTaskContextProvider>
-      <div className="flex gap-4">
-        <h4>任务关联</h4>
-        <NewRelationContextProvider
-          onSubmit={handleSubmit}
-          taskId={cardData.id}
+        <h4>任务信息</h4>
+        <ChangeTaskContextProvider
+          initialData={cardData}
+          handleTaskChange={handleTaskChange}
         >
-          <AddRelationTrigger />
-        </NewRelationContextProvider>
+          <UserTaskView />
+        </ChangeTaskContextProvider>
+        <div className="flex gap-4">
+          <h4>任务关联</h4>
+          <NewRelationContextProvider
+            onSubmit={handleSubmit}
+            taskId={cardData.id}
+          >
+            <AddRelationTrigger />
+          </NewRelationContextProvider>
+        </div>
+        {taskLink.task_links.length === 0 ? (
+          <p>该任务无关联任务</p>
+        ) : (
+          <TaskRelationView
+            taskLinks={taskLink.task_links}
+            taskId={cardData?.id}
+          />
+        )}
       </div>
-      {taskLink.task_links.length === 0 ? (
-        <p>该任务无关联任务</p>
-      ) : (
-        <TaskRelationView
-          taskLinks={taskLink.task_links}
-          taskId={cardData?.id}
-        />
-      )}
-    </div>
+    </UserTasksProvider>
   );
 }

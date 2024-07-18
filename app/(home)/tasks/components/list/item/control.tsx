@@ -14,7 +14,7 @@ function Control({ taskId }: ControlProps) {
 
   if (isLoading || !task)
     return (
-      <Placeholder.Paragraph rows={1} rowSpacing={25} rowHeight={15} active />
+      <Placeholder.Paragraph rows={1} rowSpacing={0} rowHeight={15} active />
     );
 
   return <TaskItem task={task} />;

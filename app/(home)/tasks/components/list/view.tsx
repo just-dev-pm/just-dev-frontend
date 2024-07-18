@@ -33,7 +33,7 @@ const View: React.FC<Props> = ({ data, handleDelete }) => {
           <Divider />
           <ul>
             {taskList.tasks.slice(0, 3).map((task: Task) => (
-              <li key={task.id}>
+              <li key={task.id} className="my-2">
                 <TaskControl taskId={task.id} />
               </li>
             ))}
