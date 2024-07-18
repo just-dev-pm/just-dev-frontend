@@ -1,8 +1,24 @@
-import useProjectAgendaCreate from "@/app/api/agenda/create-project-agenda";
-import useUserAgendaCreate from "@/app/api/agenda/create-user-agenda";
+import useProjectAgendaCreate from "@/app/apiTyped/agenda/useProjectAgendaCreate";
+import useUserAgendaCreate from "@/app/apiTyped/agenda/useUserAgendaCreate";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useUserStore } from "@/store/userStore";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -23,29 +39,32 @@ const formSchema = z.object({
   name: z.string().min(1, "名称不能为空"),
 });
 
-export default function AgendaSheetDialog({ project, children,className }: Props) {
+export default function AgendaSheetDialog({
+  project,
+  children,
+  className,
+}: Props) {
   const isProject = project.isProject;
   const userId = useUserStore((stats) => stats.userId);
-  const { trigger: userAgendaCreateTrigger } = useUserAgendaCreate({
-    user_id: userId,
-  });
-  const { trigger: projectAgendaCreateTrigger } = useProjectAgendaCreate({
-    project_id: project.project_id,
-  });
+  const { trigger: userAgendaCreateTrigger } = useUserAgendaCreate(userId, () =>
+    mutate(["/api/users/", userId, "/agendas"]),
+  );
+  const { trigger: projectAgendaCreateTrigger } = useProjectAgendaCreate(
+    project.project_id,
+    () => mutate(["/api/projects/", project.project_id, "/agendas"]),
+  );
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues:{
-        name:""
-    }
-  })
+    defaultValues: {
+      name: "",
+    },
+  });
 
-  function onSubmit(values: z.infer<typeof formSchema>){
-    if(isProject){
-        projectAgendaCreateTrigger({name: values.name,events:[]});
-        mutate(["/api/projects/",project.project_id,"/agendas"])
-    }else{
-        userAgendaCreateTrigger({name:values.name,events:[]});
-        mutate(["/api/users/",userId,"/agendas"])
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    if (isProject) {
+      projectAgendaCreateTrigger({ name: values.name, events: [] });
+    } else {
+      userAgendaCreateTrigger({ name: values.name, events: [] });
     }
   }
 
@@ -75,9 +94,8 @@ export default function AgendaSheetDialog({ project, children,className }: Props
               )}
             />
             <DialogFooter className="mt-4">
-              <Button
+              <DialogClose
                 asChild
-                type="submit"
                 onClick={async (event) => {
                   if (!form.formState.isValid) {
                     event.preventDefault();
@@ -85,8 +103,8 @@ export default function AgendaSheetDialog({ project, children,className }: Props
                   }
                 }}
               >
-                <DialogClose>保存</DialogClose>
-              </Button>
+                <Button type="submit">保存</Button>
+              </DialogClose>
             </DialogFooter>
           </form>
         </Form>

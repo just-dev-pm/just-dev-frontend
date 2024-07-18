@@ -2,8 +2,8 @@
 
 import Calendar from "../components/calendar";
 // import WithDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop'
-import useAgenda from "@/app/api/agenda/get-agenda";
-import useEvent from "@/app/api/event/get-events";
+import useAgenda from "@/app/apiTyped/agenda/useAgenda";
+import useEvent from "@/app/apiTyped/event/useEvent";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import Loading from "@/components/ui/loading";
@@ -13,7 +13,7 @@ import { useRouter } from "next/navigation";
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 import { AddEventContextProvider } from "../components/add-event/context";
 import EventDialog from "../components/eventDialog";
-import useEventAdd from "@/app/api/event/add-event";
+import useEventAdd from "@/app/apiTyped/event/useEventCreate";
 import { mutate } from "swr";
 
 interface IProps {
@@ -28,6 +28,8 @@ type event_res = {
   participants: Participant[];
   start_time: string;
 };
+
+
 
 type Participant = {
   id: string;
@@ -50,23 +52,23 @@ export default function ConcreteAgendaPage({ params }: IProps) {
   //const DnDCalendar = WithDragAndDrop(BasicCalendar);
 
   const router = useRouter();
-  const {trigger} = useEventAdd({agenda_id})
+  const {trigger} = useEventAdd(agenda_id,()=> mutate(["/api/agendas/",agenda_id,"/events"]))
   const {
     data: agenda_data,
     error: agenda_error,
     isLoading: agenda_loading,
-  } = useAgenda({ agenda_id });
+  } = useAgenda(agenda_id);
   const agenda_name = agenda_data.name;
 
   const {
     data: event_data,
     error: event_error,
     isLoading: event_loading,
-  } = useEvent({ agenda_id });
+  } = useEvent(agenda_id);
   const events = event_data.events;
   let events_new: event[] = [];
 
-  events.map((event: event_res) => {
+  events.map((event) => {
     const startDate = moment(
       event.start_time,
       "YYYY-MM-DDThh:mm:ss[.mmm]TZD"
@@ -95,10 +97,10 @@ export default function ConcreteAgendaPage({ params }: IProps) {
 
   function handleEventAdd(event:event_res){
     trigger(event);
-    mutate(["/api/agendas/",agenda_id,"/events"]);
   }
 
   if (!agenda_data || agenda_loading || event_loading) return <Loading />;
+  if (agenda_error || event_error) return <>Error</>
 
   return (
     <div style={{ height: "80vh" }}>
@@ -124,7 +126,7 @@ export default function ConcreteAgendaPage({ params }: IProps) {
         events={events_new}
         views={["month", "week", "day"]}
         onSelectEvent={(event) => {
-          handleEventClick(event as any);
+          handleEventClick(event as event);
         }}
         className="mt-4"
       ></Calendar>

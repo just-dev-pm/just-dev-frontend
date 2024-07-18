@@ -9,13 +9,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { NoStyleInput } from "../../components/noStyleInput";
-import { useState } from "react";
 import { Edit3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { useUserInfo } from "@/app/api/useUserInfo";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useRouter } from "next/navigation";
 import ParticipantAvatar from "./user-avatar";
 

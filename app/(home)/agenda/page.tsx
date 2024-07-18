@@ -2,7 +2,7 @@
 
 import AgendaDataSheeet from "./components/AgendaDataSheet";
 import Calendar from "./components/calendar";
-import useUserAgenda from "@/app/api/agenda/get-user-agenda";
+import useUserAgenda from "@/app/apiTyped/agenda/useUserAgenda";
 import { useUserStore } from "@/store/userStore";
 import Loading from "@/components/ui/loading";
 import { useMemo, useState } from "react";
@@ -148,7 +148,7 @@ export default function AgendaPage() {
   >([]);
   const router = useRouter();
   const user_id = useUserStore.getState().userId;
-  const { data: userAgendas } = useUserAgenda({ user_id });
+  const { data: userAgendas } = useUserAgenda(user_id);
   const typedUserAgendas = userAgendas as GetUserAgendasResponse;
   const {
     data: agendasEvents,

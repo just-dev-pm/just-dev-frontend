@@ -1,6 +1,6 @@
 import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useUserInfo } from "@/app/api/useUserInfo";
+import useUserInfo from "@/app/apiTyped/user/useUserInfo";
 import Loading from "@/components/ui/loading";
 
 interface ParticipantAvatarProps {
@@ -10,9 +10,7 @@ interface ParticipantAvatarProps {
 const ParticipantAvatar: React.FC<ParticipantAvatarProps> = ({
   participantId,
 }) => {
-  const { data: participantInfo, error,isLoading } = useUserInfo({
-    userId: participantId,
-  });
+  const { data: participantInfo, error,isLoading } = useUserInfo(participantId);
 
   if (error) {
     return <div>Error: {error.message}</div>;
@@ -22,12 +20,14 @@ const ParticipantAvatar: React.FC<ParticipantAvatarProps> = ({
     return <Loading />
   }
 
-  return (
-    <Avatar>
-      <AvatarImage src={participantInfo.avatar} alt={participantInfo.name} />
-      <AvatarFallback>{participantInfo.name}</AvatarFallback>
-    </Avatar>
-  );
+  if(participantInfo.avatar && participantInfo.username){
+    return (
+      <Avatar>
+        <AvatarImage src={participantInfo.avatar} alt={participantInfo.username} />
+        <AvatarFallback>{participantInfo.username}</AvatarFallback>
+      </Avatar>
+    );
+  }
 };
 
 export default ParticipantAvatar;

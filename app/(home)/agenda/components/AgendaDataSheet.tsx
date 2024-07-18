@@ -14,12 +14,12 @@ import { Switch } from "@/components/ui/switch";
 import { Plus, Trash2 } from "lucide-react";
 import Link from "next/link";
 import AgendaSheetDialog from "./agendaSheetDialog";
-import useAgendaDelete from "@/app/api/agenda/delete-agenda";
-import { mutate } from "swr";
+import useAgendaDelete from "@/app/apiTyped/agenda/useAgendaDelete";
 import { useUserStore } from "@/store/userStore";
-import useUserAgenda from "@/app/api/agenda/get-user-agenda";
-import useProjectAgenda from "@/app/api/agenda/get-project-agenda";
 import { Dispatch, SetStateAction } from "react";
+import { mutate } from "swr";
+import useProjectAgenda from "@/app/api/agenda/get-project-agenda";
+import useUserAgenda from "@/app/api/agenda/get-user-agenda";
 
 type calendars = {
   id: string;
