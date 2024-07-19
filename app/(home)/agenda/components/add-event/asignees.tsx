@@ -27,6 +27,8 @@ const AssigneesFormField: React.FC<FormFieldProps> = ({ data }) => {
 
   const { form, onSubmit } = context;
 
+  console.log(form.getValues("participants"));
+
   return (
     <FormField
       control={form.control}
