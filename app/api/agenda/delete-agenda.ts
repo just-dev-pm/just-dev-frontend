@@ -5,7 +5,7 @@ import { BASE_URL } from "@/lib/global";
 import { handleResponse } from "@/lib/handle-response";
 import useSWRMutation from "swr/mutation";
 
-export default function useAgendaDelete() {
+export default function useAgendaDelete( onSuccess? : (data? : any) => void ) {
   const { toast } = useToast();
   const urlPrefix = `/api/agendas/`;
   const { data, error, trigger } = useSWRMutation(
@@ -24,8 +24,9 @@ export default function useAgendaDelete() {
       onError() {
         toast({ description: "删除失败" });
       },
-      onSuccess() {
+      onSuccess(data,key,config) {
         toast({ description: "删除成功" });
+        if(onSuccess) onSuccess(data)
       },
     }
   );

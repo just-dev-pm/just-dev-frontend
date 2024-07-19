@@ -46,6 +46,7 @@ import useTasksFromTaskList from "@/app/api/task/get-tasks-from-tasklist";
 import useAssignedTasks from "@/app/api/task/get-assigned-tasks";
 import { useUserStore } from "@/store/userStore";
 import TasksTableAvatar from "./tasksTableAvatar";
+import { cn } from "@/lib/utils";
 
 
 export type Task = {
@@ -120,7 +121,9 @@ export const columns: ColumnDef<Task>[] = [
     cell: ({ row }) => {
       const status: any = row.getValue("status");
       const status_item = status.category;
-      return <Badge className="capitalize">{status_item}</Badge>;
+      const color = status_item === "complete" ? "bg-green-700" : "";
+      const hoverColor = status_item === "complete" ? "hover:bg-green-800" : "";
+      return <Badge className={cn("capitalize", color , hoverColor)}>{status_item}</Badge>;
     },
   },
   {

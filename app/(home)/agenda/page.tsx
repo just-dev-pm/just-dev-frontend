@@ -100,6 +100,7 @@ export type GetUserAgendasResponse = z.infer<
 >;
 
 function useAgendaEventSWR(agenda_ids: string[]) {
+  console.log("agenda_ids",agenda_ids)
   const { data, error, isLoading } = useSWR(
     agenda_ids ? agenda_ids.join("-") : null,
     async () => {
@@ -126,7 +127,7 @@ function useAgendaEventSWR(agenda_ids: string[]) {
             });
           return { agendaId, events: events.events };
         });
-      console.log(promises);
+      // console.log(promises);
       return Promise.all(promises);
     }
   );
@@ -217,7 +218,6 @@ export default function AgendaPage() {
       )
     );
 
-    console.log(filteredAgendasEvents);
   }
   return (
     <div className="h-[90vh]">

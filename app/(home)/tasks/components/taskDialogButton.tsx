@@ -179,14 +179,13 @@ function TaskDialog({ message, members, project, task_list_id }: Props) {
                     <FormField
                       control={form.control}
                       name="assignees"
-                      render={({}) => (
+                      render={({ }) => (
                         <FormItem className="w-full">
                           <FormLabel>指派给</FormLabel>
                           {users.map(
                             (user: {
                               id: string;
                               username: string;
-                              avatar: string;
                             }) => (
                               <FormField
                                 key={user.username}
@@ -206,15 +205,15 @@ function TaskDialog({ message, members, project, task_list_id }: Props) {
                                           onCheckedChange={(checked) => {
                                             const newValue = checked
                                               ? field.onChange([
-                                                  ...(field.value ?? []),
-                                                  { id: user.id },
-                                                ])
+                                                ...(field.value ?? []),
+                                                { id: user.id },
+                                              ])
                                               : field.onChange(
-                                                  field.value?.filter(
-                                                    (value) =>
-                                                      value.id !== user.id,
-                                                  ),
-                                                );
+                                                field.value?.filter(
+                                                  (value) =>
+                                                    value.id !== user.id,
+                                                ),
+                                              );
                                             console.log(newValue);
                                             return newValue;
                                           }}
@@ -319,7 +318,15 @@ function TaskDialog({ message, members, project, task_list_id }: Props) {
                     />
                   )}
                   <DialogFooter className="flex gap-4">
-                    <Button type="submit">立即新建</Button>
+                    <DialogClose asChild>
+                      <Button type="submit" onClick={async (event) => {
+                        if (!form.formState.isValid) {
+                          event.preventDefault()
+                          await form.trigger();
+                        }
+                      }}>立即新建</Button>
+                    </DialogClose>
+
                     <DialogClose asChild>
                       <Button type="button">退出</Button>
                     </DialogClose>
