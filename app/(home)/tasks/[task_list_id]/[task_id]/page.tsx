@@ -83,7 +83,10 @@ export default function ConcreteTaskPage({ params }: IProps) {
               });
             }}
           >
-            <Button appearance="link" className="underline decoration-dashed">
+            <Button
+              appearance="link"
+              className="underline-offset-1 decoration-dashed"
+            >
               复制ID
             </Button>
           </CopyToClipboard>
@@ -95,6 +98,7 @@ export default function ConcreteTaskPage({ params }: IProps) {
           <StatusPoolProvider>
             <ChangeStatusContextProvider
               handleTaskChange={handleTaskChange}
+              initialData={cardData}
               task_id={cardData.id}
             >
               <UserTaskView />

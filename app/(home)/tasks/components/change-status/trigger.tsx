@@ -16,6 +16,7 @@ const Trigger = ({ statusId, statusPool, Control }: TriggerProps) => {
   const handleOpen = () => setOpen(true);
   const { form, onSubmit } = useChangeStatusContext();
   const handleClose = () => setOpen(false);
+  console.log("任务状态id", statusId);
   return (
     <div>
       <div onClick={handleOpen} className="flex">

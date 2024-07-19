@@ -25,22 +25,24 @@ const View = () => {
 
   return (
     <Form {...form}>
-      <div className="grid grid-cols-2 gap-8 grid-rows-[1/3] ">
-        <TaskNameFormField />
-        <TaskDescriptionFormField />
-        <div className="flex flex-col gap-4">
-          <FormLabel>任务状态</FormLabel>
-          <ChangeStatusTrigger
-            statusId={statusForm.getValues("status.id")!}
-            statusPool={statusPool!}
-            Control={() => (
-              <StatusControl statusId={statusForm.getValues("status.id")!} />
-            )}
-          />
+      <Form {...statusForm}>
+        <div className="grid grid-cols-2 gap-8 grid-rows-[1/3] ">
+          <TaskNameFormField />
+          <TaskDescriptionFormField />
+          <div className="flex flex-col gap-4">
+            <FormLabel>任务状态</FormLabel>
+            <ChangeStatusTrigger
+              statusId={statusForm.getValues("status.id")!}
+              statusPool={statusPool!}
+              Control={() => (
+                <StatusControl statusId={statusForm.getValues("status.id")!} />
+              )}
+            />
+          </div>
+          <DeadlineFormField />
+          <PrView />
         </div>
-        <DeadlineFormField />
-        <PrView />
-      </div>
+      </Form>
     </Form>
   );
 };
