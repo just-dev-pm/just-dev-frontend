@@ -2,6 +2,7 @@
 import { useMarkNotifications } from "@/app/api/notification/mark-as-read";
 import { BASE_URL } from "@/lib/global";
 import { useUserStore } from "@/store/userStore";
+import { Notification } from "@/types/notification";
 import { createContext, useContext } from "react";
 import useSWR from "swr";
 
@@ -55,7 +56,8 @@ export const NotificationsProvider = ({ children }) => {
     mutate();
   };
 
-  const sortedNotifications = data.notifications.sort((a, b) => a.handled);
+  const sortedNotifications = data.notifications.sort((a:Notification, b:Notification) => a.handled - b.handled);
+  console.log(sortedNotifications)
 
   const unreadCount = data.notifications.filter(
     (notification) => !notification.handled,
