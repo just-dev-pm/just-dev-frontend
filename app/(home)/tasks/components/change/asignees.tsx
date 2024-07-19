@@ -41,7 +41,7 @@ const AssigneesFormField: React.FC<FormFieldProps> = ({ data }) => {
               showControls={false}
               {...field}
             >
-              <TagPicker data={data} block />
+              <TagPicker defaultValue={[]} data={data} block />
             </InlineEdit>
           </FormControl>
           <FormMessage />
