@@ -2,6 +2,7 @@
 import { useStatusPool } from "@/app/(home)/components/status/context";
 import { StatusControl } from "@/app/(home)/components/status/status-pool/status/control";
 import { Form, FormLabel } from "@/components/ui/form";
+import { useChangeStatusContext } from "../change-status/context";
 import { ChangeStatusTrigger } from "../change-status/trigger";
 import { useChangeTaskContext } from "./context";
 import { DeadlineFormField } from "./deadline";
@@ -11,14 +12,16 @@ import { TaskNameFormField } from "./task-name";
 
 const View = () => {
   const context = useChangeTaskContext();
+  const statusContext = useChangeStatusContext();
 
   const { statusPool } = useStatusPool();
 
-  if (!context) {
+  if (!context || !statusContext) {
     throw new Error("未包裹 ChangeTaskContextProvider");
   }
 
   const { form } = context;
+  const { form: statusForm } = statusContext;
 
   return (
     <Form {...form}>
@@ -28,10 +31,10 @@ const View = () => {
         <div className="flex flex-col gap-4">
           <FormLabel>任务状态</FormLabel>
           <ChangeStatusTrigger
-            statusId={form.getValues("status.id")!}
+            statusId={statusForm.getValues("status.id")!}
             statusPool={statusPool!}
             Control={() => (
-              <StatusControl statusId={form.getValues("status.id")!} />
+              <StatusControl statusId={statusForm.getValues("status.id")!} />
             )}
           />
         </div>

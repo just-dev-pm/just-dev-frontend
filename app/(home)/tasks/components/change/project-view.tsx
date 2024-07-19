@@ -6,6 +6,7 @@ import { Form, FormLabel } from "@/components/ui/form";
 import { User } from "@/types/user";
 import React from "react";
 import { Loader } from "rsuite";
+import { useChangeStatusContext } from "../change-status/context";
 import { ChangeStatusTrigger } from "../change-status/trigger";
 import { AssigneesFormField } from "./asignees";
 import { useChangeTaskContext } from "./context";
@@ -19,6 +20,7 @@ interface ViewProps {
 }
 const View: React.FC<ViewProps> = ({ projectId }) => {
   const context = useChangeTaskContext();
+  const statusContext = useChangeStatusContext();
 
   if (!context) {
     throw new Error("未包裹 ChangeTaskContextProvider");
@@ -26,6 +28,7 @@ const View: React.FC<ViewProps> = ({ projectId }) => {
 
   const { form } = context;
 
+  const { form: statusForm } = statusContext;
   const { data, isLoading } = useUsersInProject({ project_id: projectId });
 
   const { statusPool } = useProjectStatusPool();
@@ -55,10 +58,12 @@ const View: React.FC<ViewProps> = ({ projectId }) => {
         <div className="flex flex-col gap-4">
           <FormLabel>任务状态</FormLabel>
           <ChangeStatusTrigger
-            statusId={form.getValues("status.id")!}
+            statusId={statusForm.getValues("status.id")!}
             statusPool={statusPool!}
             Control={() => (
-              <ProjectStatusControl statusId={form.getValues("status.id")!} />
+              <ProjectStatusControl
+                statusId={statusForm.getValues("status.id")!}
+              />
             )}
           />
         </div>
