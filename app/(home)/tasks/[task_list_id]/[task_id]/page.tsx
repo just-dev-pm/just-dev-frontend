@@ -17,6 +17,8 @@ import { ChangeTaskContextProvider } from "../../components/change/context";
 import { UserTaskView } from "../../components/change/user-view";
 import { UserTasksProvider } from "../../components/list/user/context";
 import { TaskRelationView } from "../../components/relation/view";
+import Link from "next/link";
+import { ChevronLeft } from "lucide-react";
 
 interface IProps {
   params: {
@@ -123,6 +125,9 @@ export default function ConcreteTaskPage({ params }: IProps) {
             taskId={cardData?.id}
           />
         )}
+        <Link href={`./`}>
+          <ChevronLeft className="fixed left-[20vw] bottom-10" />
+        </Link>
       </div>
     </UserTasksProvider>
   );

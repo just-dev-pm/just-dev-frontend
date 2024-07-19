@@ -14,6 +14,8 @@ import useTasksFromTaskList from "@/app/api/task/get-tasks-from-tasklist";
 import useTaskLink from "@/app/api/tasklink/get-tasklink";
 import Loading from "@/components/ui/loading";
 import { toast } from "@/components/ui/use-toast";
+import { ChevronLeft } from "lucide-react";
+import Link from "next/link";
 import CopyToClipboard from "react-copy-to-clipboard";
 import { Button } from "rsuite";
 import { mutate } from "swr";
@@ -119,6 +121,9 @@ export default function ConcreteTaskPage({ params }: IProps) {
           />
         )}
       </div>
+      <Link href={`./`}>
+          <ChevronLeft className="fixed left-[20vw] bottom-10" />
+        </Link>
     </ProjectTasksProvider>
   );
 }
