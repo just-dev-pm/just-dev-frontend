@@ -5,7 +5,7 @@ import {
   FormItem,
   FormLabel,
 } from "@/components/ui/form";
-import { SelectStatus } from "../change-status/select-status";
+import { SelectStatus } from "../change-status/deprecated-select-status";
 import { useChangeTaskContext } from "./context";
 import { useGetUserStatusPool } from "./get-status-pool";
 

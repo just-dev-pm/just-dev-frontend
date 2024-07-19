@@ -37,6 +37,7 @@ const TaskDescriptionFormField = () => {
               className="min-w-36 block"
               size="lg"
               onSave={form.handleSubmit(onSubmit)}
+              showControls={false}
               {...field}
             >
               <Input as="textarea" rows={5} id="description" />

@@ -1,14 +1,17 @@
 "use client";
+import { useProjectStatusPool } from "@/app/(home)/components/status/status-pool/project/context";
+import { ProjectStatusControl } from "@/app/(home)/components/status/status-pool/project/projectStatusControl";
 import useUsersInProject from "@/app/api/project/get-users-in-project";
-import { Form } from "@/components/ui/form";
+import { Form, FormLabel } from "@/components/ui/form";
 import { User } from "@/types/user";
 import React from "react";
 import { Loader } from "rsuite";
+import { useChangeStatusContext } from "../change-status/context";
+import { ChangeStatusTrigger } from "../change-status/trigger";
 import { AssigneesFormField } from "./asignees";
 import { useChangeTaskContext } from "./context";
 import { DeadlineFormField } from "./deadline";
 import { PrView } from "./pr";
-import { StatusFormField } from "./status";
 import { TaskDescriptionFormField } from "./task-description";
 import { TaskNameFormField } from "./task-name";
 
@@ -17,6 +20,7 @@ interface ViewProps {
 }
 const View: React.FC<ViewProps> = ({ projectId }) => {
   const context = useChangeTaskContext();
+  const statusContext = useChangeStatusContext();
 
   if (!context) {
     throw new Error("未包裹 ChangeTaskContextProvider");
@@ -24,7 +28,10 @@ const View: React.FC<ViewProps> = ({ projectId }) => {
 
   const { form } = context;
 
+  const { form: statusForm } = statusContext;
   const { data, isLoading } = useUsersInProject({ project_id: projectId });
+
+  const { statusPool } = useProjectStatusPool();
 
   if (isLoading) return <Loader />;
 
@@ -43,16 +50,31 @@ const View: React.FC<ViewProps> = ({ projectId }) => {
     }));
   };
 
+  console.log(form.getValues())
+
   return (
     <Form {...form}>
-      <div className="grid grid-cols-2 gap-8 grid-rows-[1/3] ">
-        <TaskNameFormField />
-        <TaskDescriptionFormField />
-        <StatusFormField />
-        <AssigneesFormField data={convertUsersToOptions(data.users)} />
-        <DeadlineFormField />
-        <PrView />
-      </div>
+        <div className="grid grid-cols-2 gap-8 grid-rows-[1/3] ">
+          <TaskNameFormField />
+          <TaskDescriptionFormField />
+      <Form {...statusForm}>
+          {statusForm.getValues("status.id") && <div className="flex flex-col gap-4">
+            <FormLabel>任务状态</FormLabel>
+            <ChangeStatusTrigger
+              statusId={statusForm.getValues("status.id")!}
+              statusPool={statusPool!}
+              Control={() => (
+                <ProjectStatusControl
+                  statusId={statusForm.getValues("status.id")!}
+                />
+              )}
+              />
+          </div>}
+              </Form>
+          <AssigneesFormField data={convertUsersToOptions(data.users)} />
+          <DeadlineFormField />
+          <PrView />
+        </div>
     </Form>
   );
 };

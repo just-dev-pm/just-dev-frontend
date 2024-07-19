@@ -34,7 +34,11 @@ const useCustomContext = () => useContext<ContextReturn | null>(Context);
  * @param initialData
  * @returns React.FC<>
  */
-const ContextProvider: React.FC<ContextProps> = ({ children, initialData,handleTaskChange }) => {
+const ContextProvider: React.FC<ContextProps> = ({
+  children,
+  initialData,
+  handleTaskChange,
+}) => {
   const form: UseFormReturn<FormSchema> = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: initialData,
@@ -42,8 +46,8 @@ const ContextProvider: React.FC<ContextProps> = ({ children, initialData,handleT
   });
 
   function onSubmit(data: FormSchema) {
-    handleTaskChange(data)
-    console.log(JSON.stringify(data));
+    handleTaskChange(data);
+    console.log(data)
     /*
 
 {"id":"12","name":"合你其规月","description":"张料于放出厂关便着务育与放对。此度低三油安将史并工产克很维看平方料。百被合往难根定段张们本济适日细理。会派备非没光近省品青本强于极。准观商件改主院极情难圆消是。","assignees":[{"id":"53"},{"id":"71"}],"status":{"category":"complete","id":""},"deadline":"nostrud eu dolore adipisicing","pr":{"owner":"dolor fugiat","repo":"ad","pull_number":98}}

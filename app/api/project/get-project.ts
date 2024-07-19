@@ -1,11 +1,10 @@
 "use client";
 import { BASE_URL } from "@/lib/global";
 import { handleResponse } from "@/lib/handle-response";
-import { useEffect } from "react";
-import useSWRImmutable from "swr/immutable";
+import useSWR from "swr";
 
 export const useProject = (projectId: string) => {
-  const { data, mutate, error, isLoading } = useSWRImmutable(
+  const { data, mutate, error, isLoading } = useSWR(
     projectId ? ["/api/projects/", projectId] : null,
     ([url, projectId]) =>
       fetch(`${BASE_URL}${url}${projectId}`, {
@@ -15,7 +14,7 @@ export const useProject = (projectId: string) => {
         credentials: "include",
       })
         .then(handleResponse("获取项目信息"))
-        .then(res => res.json()),
+        .then((res) => res.json()),
     {
       fallbackData: {
         id: "",
@@ -27,7 +26,7 @@ export const useProject = (projectId: string) => {
           incomplete: [],
         },
       },
-    }
+    },
   );
 
   return { data, mutate, error, isLoading };

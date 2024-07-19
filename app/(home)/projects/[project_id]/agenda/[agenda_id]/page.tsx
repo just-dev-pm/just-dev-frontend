@@ -2,22 +2,22 @@
 
 import Calendar from "@/app/(home)/agenda/components/calendar";
 // import WithDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop'
-import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
-import { useRouter } from "next/navigation";
-import useAgenda from "@/app/api/agenda/get-agenda";
-import useEvent from "@/app/api/event/get-events";
-import moment from "moment";
-import Loading from "@/components/ui/loading";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { AddEventContextProvider } from "@/app/(home)/agenda/components/add-event/context";
 import EventDialog from "@/app/(home)/agenda/components/eventDialog";
+import useAgenda from "@/app/api/agenda/get-agenda";
 import useEventAdd from "@/app/api/event/add-event";
+import useEvent from "@/app/api/event/get-events";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import Loading from "@/components/ui/loading";
+import moment from "moment";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 import { mutate } from "swr";
 
 interface IProps {
-  params: { agenda_id: string };
+  params: { project_id: string; agenda_id: string };
 }
 
 type event_res = {
@@ -46,10 +46,10 @@ type event = {
 };
 
 export default function ConcreteAgendaPage({ params }: IProps) {
-  const { agenda_id } = params;
+  const { project_id, agenda_id } = params;
 
   const router = useRouter();
-  const {trigger} = useEventAdd({agenda_id})
+  const { trigger } = useEventAdd({ agenda_id });
   const {
     data: agenda_data,
     error: agenda_error,
@@ -68,11 +68,11 @@ export default function ConcreteAgendaPage({ params }: IProps) {
   events.map((event: event_res) => {
     const startDate = moment(
       event.start_time,
-      "YYYY-MM-DDThh:mm:ss[.mmm]TZD"
+      "YYYY-MM-DDThh:mm:ss[.mmm]TZD",
     ).toDate();
     const endDate = moment(
       event.end_time,
-      "YYYY-MM-DDThh:mm:ss[.mmm]TZD"
+      "YYYY-MM-DDThh:mm:ss[.mmm]TZD",
     ).toDate();
     let event_new = {
       id: event.id,
@@ -93,11 +93,10 @@ export default function ConcreteAgendaPage({ params }: IProps) {
     // console.log(event.title);
   };
 
-  function handleEventAdd(event:event_res){
+  function handleEventAdd(event: event_res) {
     trigger(event);
-    mutate(["/api/agendas/",agenda_id,"/events"]);
+    mutate(["/api/agendas/", agenda_id, "/events"]);
   }
-
 
   if (!agenda_data || agenda_loading || event_loading) return <Loading />;
 
@@ -111,8 +110,8 @@ export default function ConcreteAgendaPage({ params }: IProps) {
         <AddEventContextProvider handleEventAdd={handleEventAdd}>
           <EventDialog
             project={{
-              isProject: false,
-              project_id: "",
+              isProject: true,
+              project_id,
             }}
             className=""
           >

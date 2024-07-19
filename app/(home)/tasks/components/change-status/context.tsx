@@ -20,7 +20,7 @@ const Context = createContext<any>(null);
 interface ContextProps extends PropsWithChildren {
   initialData?: FormSchema;
   handleTaskChange: (res: any, task_id: string) => void;
-  task_id: string
+  task_id: string;
 }
 // 自定义钩子，用于快速访问上下文数据
 const useCustomContext = () => useContext(Context);
@@ -31,7 +31,14 @@ const useCustomContext = () => useContext(Context);
  * @param initialData
  * @returns React.FC<>
  */
-const ContextProvider: React.FC<ContextProps> = ({ children, initialData,handleTaskChange,task_id }) => {
+const ContextProvider: React.FC<ContextProps> = ({
+  children,
+  initialData,
+  handleTaskChange,
+  task_id,
+}) => {
+
+  console.log(initialData)
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: initialData,
@@ -39,7 +46,7 @@ const ContextProvider: React.FC<ContextProps> = ({ children, initialData,handleT
   });
 
   function onSubmit(data: FormSchema) {
-    handleTaskChange(data,task_id)
+    handleTaskChange(data, task_id);
     // console.log(JSON.stringify(data));
     /*
 

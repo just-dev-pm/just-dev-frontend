@@ -1,31 +1,28 @@
 "use client";
+import { useMyProjects } from "@/app/api/project/get-my-projects";
+import { useUserInfo } from "@/app/api/useUserInfo";
+import { useProfile } from "@/app/api/user/get-profile";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import MenuItem from "./menu-item";
-import MenuTitle from "./menu-title";
 import { Button } from "@/components/ui/button";
 import LightDarkToggle from "@/components/ui/light-dark-toggle";
-import Link from "next/link";
-import ProjectsSelect from "../projects/components/projects-select";
-import ProjectMenu from "../projects/components/project-menu";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import useSWR, { mutate } from "swr";
-import useSWRMutation from "swr/mutation";
-import { BASE_URL } from "@/lib/global";
-import { useUserStore } from "@/store/userStore";
-import { error } from "console";
 import { Separator } from "@/components/ui/separator";
-import useMenuTabStore from "@/store/menuTabStore";
-import { useEffect } from "react";
-import { useMyProjects } from "@/app/api/project/get-my-projects";
-import { Project } from "@/types/projects";
-import { useProject } from "@/app/api/project/get-project";
-import { useUserInfo } from "@/app/api/useUserInfo";
-import { AvatarImage } from "@radix-ui/react-avatar";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ClearUserInfo } from "@/lib/clear-user-info";
-import { useProfile } from "@/app/api/user/get-profile";
+import { BASE_URL } from "@/lib/global";
+import useMenuTabStore from "@/store/menuTabStore";
+import { useUserStore } from "@/store/userStore";
+import { AvatarImage } from "@radix-ui/react-avatar";
+import Link from "next/link";
+import { useEffect } from "react";
+import useSWRMutation from "swr/mutation";
+import { NotificationsProvider } from "../inbox/components/context";
+import ProjectMenu from "../projects/components/project-menu";
+import MenuItem from "./menu-item";
+import MenuTitle from "./menu-title";
+import { NotificationMenuItem } from "./notify/item";
 
 export default function MainMenu() {
-  const userId = useUserStore(state => state.userId);
+  const userId = useUserStore((state) => state.userId);
   const { data: user_data, error: user_error } = useUserInfo({ userId });
   const { profile, mutate } = useProfile();
 
@@ -38,7 +35,7 @@ export default function MainMenu() {
     fetch(url, {
       method: "POST",
       credentials: "include",
-    }).then(res => {
+    }).then((res) => {
       if (!res.ok) {
         throw new Error("Error! status:" + res.status);
       }
@@ -52,8 +49,8 @@ export default function MainMenu() {
     if (error) alert(error);
   };
 
-  const tabValue = useMenuTabStore(s => s.value);
-  const setTabValue = useMenuTabStore(s => s.setValue);
+  const tabValue = useMenuTabStore((s) => s.value);
+  const setTabValue = useMenuTabStore((s) => s.setValue);
   function handleTabValueChange(newValue: string) {
     setTabValue(newValue as "person" | "project");
   }
@@ -85,7 +82,9 @@ export default function MainMenu() {
             <MenuItem href="/tasks">任务</MenuItem>
             <MenuItem href="/draft">草稿</MenuItem>
             <Separator className="my-2" />
-            <MenuItem href="/inbox">收件箱</MenuItem>
+            <NotificationsProvider>
+              <NotificationMenuItem />
+            </NotificationsProvider>
             <MenuItem href="/profile">个人资料</MenuItem>
           </TabsContent>
           <TabsContent value="project">

@@ -9,7 +9,7 @@ export default function useAccepteInvitation({
 }: {
   invitation_token: string;
 }) {
-  const {toast} = useToast();
+  const { toast } = useToast();
   const urlPrefix = `/api/invitation/accept`;
   const { data, error, trigger } = useSWRMutation(
     invitation_token ? [urlPrefix] : null,
@@ -19,21 +19,19 @@ export default function useAccepteInvitation({
         headers: {
           "Content-Type": "application/json;charset=UTF-8",
         },
-        body: JSON.stringify({invitation_token}),
+        body: JSON.stringify({ invitation_token }),
         credentials: "include",
       }).then((res) => {
         if (!res.ok) {
           throw new Error(`Error! Status:${res.status}`);
         }
         return res.json();
-      }),{
-        onError(){
-          toast({description:"加入失败"})
-        },
-        onSuccess(){
-          toast({description:"加入成功"})
-        }
-      }
+      }),
+    {
+      onSuccess() {
+        toast({ description: "加入成功" });
+      },
+    },
   );
   return {
     data,

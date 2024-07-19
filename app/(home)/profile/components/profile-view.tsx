@@ -1,32 +1,41 @@
-import React from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { toast } from "@/components/ui/use-toast";
+import { User } from "@/types/user";
+import CopyToClipboard from "react-copy-to-clipboard";
+import { Button, Divider } from "rsuite";
+import { StatusPoolControl } from "../../components/status/status-pool/control";
 import EditProfileController from "./edit-profile-controller";
-import { Incomplete, User } from "@/types/user";
 import UserAvatar from "./user-avatar";
 import UserId from "./user-id";
-import {
-  CompleteStatusView,
-  InCompleteStatusView,
-} from "../../projects/components/status-view";
 
 export const ProfileView = ({ userData }: { userData: User }) => {
   return (
-    <Card className="shadow-md rounded-lg">
+    <Card className="shadow-md rounded-lg max-w-[33vw]">
       <CardHeader>
+        <h5>基本信息</h5>
         <div className="flex justify-center items-center md:flex-row flex-col">
           <div className="flex gap-4 items-center mr-8">
             <UserAvatar avatar={userData?.avatar} className="w-12 h-12" />
             <div className="flex flex-col gap-2">
               <div>{userData?.username || ""}</div>
-              <div>
+              <div className="flex gap-4 items-center">
                 ID: <UserId id={userData?.id} />
+                <CopyToClipboard
+                  text={userData?.id}
+                  onCopy={() => {
+                    toast({
+                      title: `成功复制个人ID`,
+                      description: userData?.id,
+                    });
+                  }}
+                >
+                  <Button
+                    appearance="link"
+                    className="underline-offset-1 decoration-dashed"
+                  >
+                    复制ID
+                  </Button>
+                </CopyToClipboard>
               </div>
             </div>
           </div>
@@ -35,16 +44,14 @@ export const ProfileView = ({ userData }: { userData: User }) => {
       </CardHeader>
       <CardContent>邮箱: {userData?.email || "未设置"}</CardContent>
       {userData.status_pool && (
-        <CardContent>
-          <div className="flex gap-2">
-            <span className="truncate">状态池</span>
-            <CompleteStatusView status={userData.status_pool.complete} />
+        <>
+          <Divider />
+          <CardContent>
+            <h5>个人任务状态池</h5>
 
-            {userData.status_pool.incomplete.map((task: Incomplete) => (
-              <InCompleteStatusView c={task} key={task.id} />
-            ))}
-          </div>
-        </CardContent>
+            <StatusPoolControl />
+          </CardContent>
+        </>
       )}
     </Card>
   );

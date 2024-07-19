@@ -271,7 +271,7 @@ function TaskDialog({ message, members, project, task_list_id }: Props) {
                           <FormLabel>选择绑定的pr</FormLabel>
                           <Select
                             onValueChange={(v) => {
-                              const parts = v.split("-");
+                              const parts = v.split("/");
                               const pull_number = parseInt(parts[2]);
                               form.setValue("pr.owner", parts[0]);
                               form.setValue("pr.repo", parts[1]);
@@ -292,20 +292,20 @@ function TaskDialog({ message, members, project, task_list_id }: Props) {
                                   <SelectItem
                                     value={
                                       pr.owner +
-                                      "-" +
+                                      "/" +
                                       pr.repo +
-                                      "-" +
+                                      "/" +
                                       pr.pull_number +
-                                      "-" +
+                                      "/" +
                                       pr.title
                                     }
                                   >
                                     {pr.owner +
-                                      "-" +
+                                      "/" +
                                       pr.repo +
-                                      "-" +
+                                      "/" +
                                       pr.pull_number +
-                                      "-" +
+                                      "/" +
                                       pr.title}
                                   </SelectItem>
                                 </div>

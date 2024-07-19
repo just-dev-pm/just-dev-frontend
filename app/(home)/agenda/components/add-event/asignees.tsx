@@ -7,7 +7,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { InlineEdit, TagPicker } from "rsuite";
-import { useChangeTaskContext } from "./context";
+import { useAddEventContext } from "./context";
 
 /**
  * @description Arrange
@@ -19,7 +19,7 @@ interface FormFieldProps {
   data: { label: string; value: string }[];
 }
 const AssigneesFormField: React.FC<FormFieldProps> = ({ data }) => {
-  const context = useChangeTaskContext();
+  const context = useAddEventContext();
 
   if (!context) {
     throw new Error("未包裹 ChangeTaskContextProvider");
@@ -27,29 +27,35 @@ const AssigneesFormField: React.FC<FormFieldProps> = ({ data }) => {
 
   const { form, onSubmit } = context;
 
+  console.log(form.getValues("participants"));
+
   return (
     <FormField
       control={form.control}
-      name="assignees"
+      name="participants"
       render={({ field }) => (
         <FormItem className="flex flex-col gap-4 justify-center">
           <FormLabel htmlFor="asignees">分配给</FormLabel>
           <FormControl>
             <InlineEdit
               placeholder="请选择"
-              onSave={form.handleSubmit(onSubmit)}
               showControls={false}
-              value={(form.getValues("assignees") || []).map(
+              value={(form.getValues("participants") || []).map(
                 ({ id }: { id: string }) => id,
               )}
               onChange={(ids: string[]) => {
                 form.setValue(
-                  "assignees",
+                  "participants",
                   ids.map((id) => ({ id })),
                 );
               }}
             >
-              <TagPicker defaultValue={[]} data={data} block />
+              <TagPicker
+                defaultValue={[]}
+                data={data}
+                block
+                menuClassName="z-50"
+              />
             </InlineEdit>
           </FormControl>
           <FormMessage />

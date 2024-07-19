@@ -1,3 +1,5 @@
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -5,13 +7,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { Incomplete, Project } from "@/types/project";
-import { CompleteStatusView, InCompleteStatusView } from "./status-view";
+import { Project } from "@/types/project";
 import Link from "next/link";
-import ChangeProjectInfoController from "./change-project-info-controller";
+import { Divider } from "rsuite";
+import { ProjectStatusPoolControl } from "../../components/status/status-pool/project/control";
 import UserId from "../../profile/components/user-id";
+import ChangeProjectInfoController from "./change-project-info-controller";
 
 /**
  * @params onEnterProject 进入项目: 更改 menuTab
@@ -70,16 +71,12 @@ export default function ProjectCard({
       <CardContent>
         <p>{data.description}</p>
       </CardContent>
+      <Divider className="my-2" />
       {data.status_pool && (
         <CardContent>
-          <div className="flex gap-2">
-            <span className="truncate">状态池</span>
-            <CompleteStatusView status={data.status_pool.complete} />
+          <h5>项目任务状态池</h5>
 
-            {data.status_pool.incomplete.map((task: Incomplete) => (
-              <InCompleteStatusView c={task} key={task.id} />
-            ))}
-          </div>
+          <ProjectStatusPoolControl />
         </CardContent>
       )}
     </Card>

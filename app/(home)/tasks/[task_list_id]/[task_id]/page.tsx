@@ -1,13 +1,20 @@
 "use client";
 
+import { StatusPoolProvider } from "@/app/(home)/components/status/context";
 import useTaskChange from "@/app/api/task/change-task";
 import useTasksFromTaskList from "@/app/api/task/get-tasks-from-tasklist";
 import useTaskLink from "@/app/api/tasklink/get-tasklink";
 import Loading from "@/components/ui/loading";
+import { toast } from "@/components/ui/use-toast";
+import { ChevronLeft } from "lucide-react";
+import Link from "next/link";
+import { CopyToClipboard } from "react-copy-to-clipboard";
+import { Button } from "rsuite";
 import { mutate } from "swr";
 import { NewRelationContextProvider } from "../../components/add-relation/context";
 import { useSWRNewRelation } from "../../components/add-relation/swr";
 import { AddRelationTrigger } from "../../components/add-relation/trigger";
+import { ChangeStatusContextProvider } from "../../components/change-status/context";
 import { ChangeTaskContextProvider } from "../../components/change/context";
 import { UserTaskView } from "../../components/change/user-view";
 import { UserTasksProvider } from "../../components/list/user/context";
@@ -47,13 +54,9 @@ export default function ConcreteTaskPage({ params }: IProps) {
     mutate(["/api/task_lists/", task_list_id, "/tasks"]);
   }
   // const cardData = data;
-  // console.log(data);
   // const cardData = data.find((task: { id: string; })=> task.id === task_id)
 
-  console.log("cardDate:", cardData);
-
   async function handleSubmit(data: any) {
-    console.log(data);
     await relationAddTrigger(data);
     mutate(["/api/links/tasks/", task_id]);
   }
@@ -67,13 +70,44 @@ export default function ConcreteTaskPage({ params }: IProps) {
         collaborators={cardData.assignees}
         isProject={false}
       ></TaskItemCard> */}
-        <h4>任务信息</h4>
-        <ChangeTaskContextProvider
-          initialData={cardData}
-          handleTaskChange={handleTaskChange}
+        <div className="flex gap-4 items-center">
+          <h4>任务信息</h4>
+          <CopyToClipboard
+            text={cardData.id}
+            onCopy={() => {
+              toast({
+                title: `成功复制任务${cardData.name}的ID`,
+                description: cardData.id,
+              });
+            }}
+          >
+            <Button
+              appearance="link"
+              className="underline-offset-1 decoration-dashed"
+            >
+              复制ID
+            </Button>
+          </CopyToClipboard>
+        </div>
+        <div
+          className="border-1 
+       border border-gray-200 rounded p-4"
         >
-          <UserTaskView />
-        </ChangeTaskContextProvider>
+          <ChangeTaskContextProvider
+            initialData={cardData}
+            handleTaskChange={handleTaskChange}
+          >
+            <StatusPoolProvider>
+              <ChangeStatusContextProvider
+                handleTaskChange={handleTaskChange}
+                initialData={cardData}
+                task_id={cardData.id}
+              >
+                <UserTaskView />
+              </ChangeStatusContextProvider>
+            </StatusPoolProvider>
+          </ChangeTaskContextProvider>
+        </div>
         <div className="flex gap-4">
           <h4>任务关联</h4>
           <NewRelationContextProvider
@@ -91,6 +125,9 @@ export default function ConcreteTaskPage({ params }: IProps) {
             taskId={cardData?.id}
           />
         )}
+        <Link href={`./`}>
+          <ChevronLeft className="fixed left-[20vw] bottom-10" />
+        </Link>
       </div>
     </UserTasksProvider>
   );

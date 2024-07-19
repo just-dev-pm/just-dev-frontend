@@ -7,7 +7,9 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { useEffect } from "react";
 import { useChangeTaskContext } from "./context";
+import { dateSchema } from "./zod";
 
 /**
  * @description Arrange
@@ -24,6 +26,13 @@ const DeadlineFormField = () => {
   }
 
   const { form, onSubmit } = context;
+  const check = dateSchema.safeParse(form.getValues("deadline"));
+
+  useEffect(() => {
+    if (check.success) {
+      form.setValue("deadline", check.data);
+    }
+  }, [check]);
   return (
     <FormField
       control={form.control}
@@ -33,6 +42,7 @@ const DeadlineFormField = () => {
           <FormLabel htmlFor="deadline">截止时间</FormLabel>
           <FormControl>
             <DatetimePicker
+              defaultValue={check.data}
               {...field}
               onSelect={() => form.handleSubmit(onSubmit)()}
             />

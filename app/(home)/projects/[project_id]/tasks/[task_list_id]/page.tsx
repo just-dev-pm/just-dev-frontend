@@ -6,6 +6,8 @@ import useTasksFromTaskList from "@/app/api/task/get-tasks-from-tasklist";
 import useTaskList from "@/app/api/useTaskList";
 import Loading from "@/components/ui/loading";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ChevronLeft } from "lucide-react";
+import Link from "next/link";
 
 interface IProps {
   params: {
@@ -52,6 +54,9 @@ export default function TaskListPage({ params }: IProps) {
           <TasksTable task_list_id={task_list_id} data={dialog_data}></TasksTable>
         </TabsContent>
       </Tabs>
+      <Link href={`./`}>
+          <ChevronLeft className="fixed left-[20vw] bottom-10" />
+        </Link>
     </div>
   );
 }

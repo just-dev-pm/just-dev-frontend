@@ -1,5 +1,6 @@
 //TODO : 删除的路由回退应该只发生在删除成功的情况下
 
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -9,15 +10,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { NoStyleInput } from "../../components/noStyleInput";
-import { useState } from "react";
 import { Edit3 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { useUserInfo } from "@/app/api/useUserInfo";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useRouter } from "next/navigation";
-import ParticipantAvatar from "./user-avatar";
 
 type Props = {
   title: string;
@@ -65,16 +60,6 @@ export default function AgendaItemCard({
             <Label className="w-full tracking-wider leading-5">
               预计于: {end_time} 结束
             </Label>
-          </div>
-          <div className="flex flex-col gap-4">
-            <Label className="font-bold text-xl ">参与者</Label>
-            <div className="flex gap-2">
-              {participants.map(participant => (
-                <div key={participant.id}>
-                  <ParticipantAvatar participantId={participant.id} />
-                </div>
-              ))}
-            </div>
           </div>
         </div>
       </CardContent>
