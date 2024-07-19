@@ -30,7 +30,7 @@ const AssigneesFormField: React.FC<FormFieldProps> = ({ data }) => {
   return (
     <FormField
       control={form.control}
-      name="asignees"
+      name="assignees"
       render={({ field }) => (
         <FormItem className="flex flex-col gap-4 justify-center">
           <FormLabel htmlFor="asignees">分配给</FormLabel>
@@ -39,12 +39,12 @@ const AssigneesFormField: React.FC<FormFieldProps> = ({ data }) => {
               placeholder="请选择"
               onSave={form.handleSubmit(onSubmit)}
               showControls={false}
-              value={(form.getValues("asignees") || []).map(
+              value={(form.getValues("assignees") || []).map(
                 ({ id }: { id: string }) => id,
               )}
               onChange={(ids: string[]) => {
                 form.setValue(
-                  "asignees",
+                  "assignees",
                   ids.map((id) => ({ id })),
                 );
               }}
