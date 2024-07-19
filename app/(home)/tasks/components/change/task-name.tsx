@@ -36,6 +36,7 @@ const TaskNameFormField = () => {
               className="min-w-36 block"
               size="lg"
               onSave={form.handleSubmit(onSubmit)}
+              showControls={false}
               {...field}
             >
               <Input id="name" {...field} />

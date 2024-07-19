@@ -38,6 +38,7 @@ const AssigneesFormField: React.FC<FormFieldProps> = ({ data }) => {
             <InlineEdit
               placeholder="请选择"
               onSave={form.handleSubmit(onSubmit)}
+              showControls={false}
               {...field}
             >
               <TagPicker data={data} block />

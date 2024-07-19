@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { statusSchema } from "../form/create-task-context";
 
 export const changeTaskSchema = z.object({
   name: z.string().min(1, "任务名不能为空").default(""),
@@ -11,7 +10,6 @@ export const changeTaskSchema = z.object({
     repo: z.string(),
     pull_number: z.coerce.number(),
   }),
-  status: statusSchema.default({ category: "complete" }),
 });
 
 export type ChangeTaskSchema = z.infer<typeof changeTaskSchema>;
