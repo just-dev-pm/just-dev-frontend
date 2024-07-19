@@ -3,10 +3,10 @@ import { useMarkNotifications } from "@/app/api/notification/mark-as-read";
 import { BASE_URL } from "@/lib/global";
 import { useUserStore } from "@/store/userStore";
 import { Notification } from "@/types/notification";
-import { createContext, useContext } from "react";
+import { PropsWithChildren, createContext, useContext } from "react";
 import useSWR from "swr";
 
-const handleResponse = (msg) => (response) => {
+const handleResponse = (msg: string) => (response: any) => {
   if (!response.ok) {
     throw new Error(`${msg} failed`);
   }
@@ -46,7 +46,7 @@ const useNotifications = () => {
 
 const NotificationsContext = createContext<any | null>(null);
 
-export const NotificationsProvider = ({ children }) => {
+export const NotificationsProvider = ({ children }: PropsWithChildren) => {
   const { data, mutate, isLoading } = useNotifications();
   const { trigger } = useMarkNotifications();
 
@@ -56,11 +56,13 @@ export const NotificationsProvider = ({ children }) => {
     mutate();
   };
 
-  const sortedNotifications = data.notifications.sort((a:Notification, b:Notification) => a.handled - b.handled);
-  console.log(sortedNotifications)
+  const sortedNotifications = data.notifications.sort(
+    (a: Notification, b: Notification) => +a.handled - +b.handled,
+  );
+  console.log(sortedNotifications);
 
   const unreadCount = data.notifications.filter(
-    (notification) => !notification.handled,
+    (notification: Notification) => !notification.handled,
   ).length;
 
   return (
