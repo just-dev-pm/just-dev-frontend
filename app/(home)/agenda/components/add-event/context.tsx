@@ -42,7 +42,7 @@ const ContextProvider: React.FC<ContextProps> = ({
 
   function onSubmit(data: FormSchema) {
     console.log(handleEventAdd);
-    handleEventAdd({...data,participants:[]})
+    handleEventAdd({ ...data, participants: [] });
     console.log(JSON.stringify(data));
     /*
 	{"name":"sfsf","description":"sdfsdf","start_time":"2024-07-16T10:27:57.856Z","end_time":"2024-07-16T10:27:39.795Z"}
