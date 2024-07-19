@@ -6,6 +6,8 @@ import useTasksFromTaskList from "@/app/api/task/get-tasks-from-tasklist";
 import useTaskLink from "@/app/api/tasklink/get-tasklink";
 import Loading from "@/components/ui/loading";
 import { toast } from "@/components/ui/use-toast";
+import { ChevronLeft } from "lucide-react";
+import Link from "next/link";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { Button } from "rsuite";
 import { mutate } from "swr";
@@ -17,8 +19,6 @@ import { ChangeTaskContextProvider } from "../../components/change/context";
 import { UserTaskView } from "../../components/change/user-view";
 import { UserTasksProvider } from "../../components/list/user/context";
 import { TaskRelationView } from "../../components/relation/view";
-import Link from "next/link";
-import { ChevronLeft } from "lucide-react";
 
 interface IProps {
   params: {

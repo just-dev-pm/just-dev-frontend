@@ -18,12 +18,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { ToastAction } from "@/components/ui/toast";
-import { toast, useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import { BASE_URL, CLIENT_URL } from "@/lib/global";
 import { useUserStore } from "@/store/userStore";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus } from "lucide-react";
+import CopyToClipboard from "react-copy-to-clipboard";
 import { useForm } from "react-hook-form";
 import useSWRMutation from "swr/mutation";
 import { z } from "zod";
@@ -45,8 +45,8 @@ export default function InviteDialog({ project_id }: { project_id: string }) {
   const fetcher = (url: string, { arg }: { arg: Data }) =>
     fetch(url, {
       method: "POST",
-      headers:{
-        "Content-Type":"application/json;charset=UTF-8"
+      headers: {
+        "Content-Type": "application/json;charset=UTF-8",
       },
       body: JSON.stringify(arg),
       credentials: "include",
@@ -63,12 +63,17 @@ export default function InviteDialog({ project_id }: { project_id: string }) {
         title: "",
         description: JSON.stringify(data.invitation_token),
         action: (
-          <ToastAction
-            altText="Copy"
-            onClick={() => navigator.clipboard.writeText(CLIENT_URL+"/invite/"+data.invitation_token)}
+          <CopyToClipboard
+            text={CLIENT_URL + "/invite/" + data.invitation_token}
+            onCopy={() => {
+              toast({
+                title: `成功复制邀请链接`,
+                description: CLIENT_URL + "/invite/" + data.invitation_token,
+              });
+            }}
           >
-            Copy
-          </ToastAction>
+            <Button>复制</Button>
+          </CopyToClipboard>
         ),
       });
     },
