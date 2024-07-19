@@ -57,14 +57,12 @@ const formSchema = z.object({
   description: z.string().min(1, "任务描述不能为空"),
   assignees: z.array(z.object({ id: z.string() })),
   deadline: z.date({ required_error: "截止时间不能为空" }),
-  pr: z
-    .object({
+  pr: z.object({
       owner: z.string(),
       repo: z.string(),
       pull_number: z.number(),
       title: z.string(),
-    })
-    .optional(),
+    }).optional(),
   status: statusSchema,
 });
 

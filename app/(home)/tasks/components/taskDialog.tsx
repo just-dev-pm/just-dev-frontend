@@ -47,48 +47,52 @@ export function TasksBoardView({
   const incomplete_tasks = dialog_tasks.filter(
     (task) => task.status.category === "incomplete",
   );
+  
+  if(status_pool){
+    const complete_status_title = status_pool.complete.name;
+    const imcomplete_status = status_pool.incomplete;
+    return (
+      <div className="flex gap-8">
+        {imcomplete_status.map(
+          (
+            imcomplete: { status: { name: string }; id: string | undefined },
+            index: Key | null | undefined,
+          ) => (
+            <TasksList
+              key={index}
+              todoListIcon={
+                <div className="flex gap-2 items-center">
+                  <CircleX />
+                  {imcomplete.status.name}
+                </div>
+              }
+              tasks={incomplete_tasks.filter(
+                (task) => task.status.id === imcomplete.id,
+              )}
+              project={project}
+              dialogMessage={""}
+              dialogMembers={[]}
+              task_list_id={task_list_id}
+            ></TasksList>
+          ),
+        )}
+        <TasksList
+          todoListIcon={
+            <div className="flex gap-2 items-center text-green-700">
+              <CircleCheck />
+              {complete_status_title}
+            </div>
+          }
+          tasks={complete_tasks}
+          project={project}
+          dialogMessage={""}
+          dialogMembers={[]}
+          task_list_id={task_list_id}
+        ></TasksList>
+      </div>
+    );
+  }
+  }
 
-  const complete_status_title = status_pool.complete.name;
-  const imcomplete_status = status_pool.incomplete;
 
-  return (
-    <div className="flex gap-8">
-      {imcomplete_status.map(
-        (
-          imcomplete: { status: { name: string }; id: string | undefined },
-          index: Key | null | undefined,
-        ) => (
-          <TasksList
-            key={index}
-            todoListIcon={
-              <div className="flex gap-2 items-center">
-                <CircleX />
-                {imcomplete.status.name}
-              </div>
-            }
-            tasks={incomplete_tasks.filter(
-              (task) => task.status.id === imcomplete.id,
-            )}
-            project={project}
-            dialogMessage={""}
-            dialogMembers={[]}
-            task_list_id={task_list_id}
-          ></TasksList>
-        ),
-      )}
-      <TasksList
-        todoListIcon={
-          <div className="flex gap-2 items-center text-green-700">
-            <CircleCheck />
-            {complete_status_title}
-          </div>
-        }
-        tasks={complete_tasks}
-        project={project}
-        dialogMessage={""}
-        dialogMembers={[]}
-        task_list_id={task_list_id}
-      ></TasksList>
-    </div>
-  );
-}
+
