@@ -42,17 +42,12 @@ export default function ConcreteTaskPage({ params }: IProps) {
     return <Loading />;
   }
   if (!taskLink || loadingTaskLink) return <Loading />;
-  console.log(data);
-  console.log("link", taskLink);
-
-  console.log("cardDate:", cardData);
 
   async function handleTaskChange(res: any) {
     await trigger({ res, task_id });
     mutate(["/api/task_lists/", task_list_id, "/tasks"]);
   }
   async function handleSubmit(data: any) {
-    console.log(data);
     await newRelation(data);
     mutate(["/api/links/tasks/", task_id]);
   }

@@ -42,7 +42,6 @@ const ContextProvider: React.FC<ContextProps> = ({
     defaultValues: initialData,
     mode: "onChange",
   });
-  console.log("任务状态", initialData);
 
   function onSubmit(data: FormSchema) {
     handleTaskChange(data, task_id);

@@ -52,13 +52,9 @@ export default function ConcreteTaskPage({ params }: IProps) {
     mutate(["/api/task_lists/", task_list_id, "/tasks"]);
   }
   // const cardData = data;
-  // console.log(data);
   // const cardData = data.find((task: { id: string; })=> task.id === task_id)
 
-  console.log("cardDate:", cardData);
-
   async function handleSubmit(data: any) {
-    console.log(data);
     await relationAddTrigger(data);
     mutate(["/api/links/tasks/", task_id]);
   }

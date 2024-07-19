@@ -59,7 +59,6 @@ export const NotificationsProvider = ({ children }: PropsWithChildren) => {
   const sortedNotifications = data.notifications.sort(
     (a: Notification, b: Notification) => +a.handled - +b.handled,
   );
-  console.log(sortedNotifications);
 
   const unreadCount = data.notifications.filter(
     (notification: Notification) => !notification.handled,
