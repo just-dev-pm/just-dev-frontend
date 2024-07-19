@@ -50,13 +50,15 @@ const View: React.FC<ViewProps> = ({ projectId }) => {
     }));
   };
 
+  console.log(form.getValues())
+
   return (
     <Form {...form}>
-      <Form {...statusForm}>
         <div className="grid grid-cols-2 gap-8 grid-rows-[1/3] ">
           <TaskNameFormField />
           <TaskDescriptionFormField />
-          <div className="flex flex-col gap-4">
+      <Form {...statusForm}>
+          {statusForm.getValues("status.id") && <div className="flex flex-col gap-4">
             <FormLabel>任务状态</FormLabel>
             <ChangeStatusTrigger
               statusId={statusForm.getValues("status.id")!}
@@ -66,13 +68,13 @@ const View: React.FC<ViewProps> = ({ projectId }) => {
                   statusId={statusForm.getValues("status.id")!}
                 />
               )}
-            />
-          </div>
+              />
+          </div>}
+              </Form>
           <AssigneesFormField data={convertUsersToOptions(data.users)} />
           <DeadlineFormField />
           <PrView />
         </div>
-      </Form>
     </Form>
   );
 };

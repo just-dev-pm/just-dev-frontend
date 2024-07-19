@@ -37,6 +37,8 @@ const ContextProvider: React.FC<ContextProps> = ({
   handleTaskChange,
   task_id,
 }) => {
+
+  console.log(initialData)
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: initialData,

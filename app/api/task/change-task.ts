@@ -47,6 +47,7 @@ export default function useTaskChange({
   const { toast } = useToast();
   const urlPrefix = `/api/task_lists/`;
   const urlMidfix = `/tasks/`;
+  console.log(task_list_id)
   const { data, error, trigger } = useSWRMutation(
     task_list_id
       ? [urlPrefix, task_list_id, urlMidfix]
