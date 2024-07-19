@@ -39,7 +39,15 @@ const AssigneesFormField: React.FC<FormFieldProps> = ({ data }) => {
               placeholder="请选择"
               onSave={form.handleSubmit(onSubmit)}
               showControls={false}
-              {...field}
+              value={(form.getValues("asignees") || []).map(
+                ({ id }: { id: string }) => id,
+              )}
+              onChange={(ids: string[]) => {
+                form.setValue(
+                  "asignees",
+                  ids.map((id) => ({ id })),
+                );
+              }}
             >
               <TagPicker defaultValue={[]} data={data} block />
             </InlineEdit>
