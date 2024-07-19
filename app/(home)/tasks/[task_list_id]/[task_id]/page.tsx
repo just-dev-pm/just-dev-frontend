@@ -87,20 +87,25 @@ export default function ConcreteTaskPage({ params }: IProps) {
             </Button>
           </CopyToClipboard>
         </div>
-        <ChangeTaskContextProvider
-          initialData={cardData}
-          handleTaskChange={handleTaskChange}
+        <div
+          className="border-1 
+       border border-gray-200 rounded p-4"
         >
-          <StatusPoolProvider>
-            <ChangeStatusContextProvider
-              handleTaskChange={handleTaskChange}
-              initialData={cardData}
-              task_id={cardData.id}
-            >
-              <UserTaskView />
-            </ChangeStatusContextProvider>
-          </StatusPoolProvider>
-        </ChangeTaskContextProvider>
+          <ChangeTaskContextProvider
+            initialData={cardData}
+            handleTaskChange={handleTaskChange}
+          >
+            <StatusPoolProvider>
+              <ChangeStatusContextProvider
+                handleTaskChange={handleTaskChange}
+                initialData={cardData}
+                task_id={cardData.id}
+              >
+                <UserTaskView />
+              </ChangeStatusContextProvider>
+            </StatusPoolProvider>
+          </ChangeTaskContextProvider>
+        </div>
         <div className="flex gap-4">
           <h4>任务关联</h4>
           <NewRelationContextProvider

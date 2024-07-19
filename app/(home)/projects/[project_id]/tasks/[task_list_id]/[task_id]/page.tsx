@@ -54,7 +54,7 @@ export default function ConcreteTaskPage({ params }: IProps) {
 
   return (
     <ProjectTasksProvider projectId={project_id}>
-      <div className="p-8 flex flex-col gap-4">
+      <div className="p-8 flex flex-col gap-4 ">
         {/* <TaskItemCard
         title={cardData.name}
         description={cardData.description}
@@ -81,20 +81,25 @@ export default function ConcreteTaskPage({ params }: IProps) {
             </Button>
           </CopyToClipboard>
         </div>
-        <ChangeTaskContextProvider
-          initialData={cardData}
-          handleTaskChange={handleTaskChange}
+        <div
+          className="border-1 
+       border border-gray-200 rounded p-4"
         >
-          <ProjectStatusPoolProvider projectId={project_id}>
-            <ChangeStatusContextProvider
-              handleTaskChange={handleTaskChange}
-              task_id={cardData.id}
-              initialData={cardData}
-            >
-              <ProjectTaskView projectId={project_id} />
-            </ChangeStatusContextProvider>
-          </ProjectStatusPoolProvider>
-        </ChangeTaskContextProvider>
+          <ChangeTaskContextProvider
+            initialData={cardData}
+            handleTaskChange={handleTaskChange}
+          >
+            <ProjectStatusPoolProvider projectId={project_id}>
+              <ChangeStatusContextProvider
+                handleTaskChange={handleTaskChange}
+                task_id={cardData.id}
+                initialData={cardData}
+              >
+                <ProjectTaskView projectId={project_id} />
+              </ChangeStatusContextProvider>
+            </ProjectStatusPoolProvider>
+          </ChangeTaskContextProvider>
+        </div>
         <div className="flex gap-4">
           {" "}
           <h4>任务关联</h4>
